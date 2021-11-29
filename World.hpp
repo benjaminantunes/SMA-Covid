@@ -60,7 +60,7 @@ class World{
         void addAgent(string,int,float, RandMT* ,int sicks = 0);
         void initialize(int, RandMT*, int sicks = 0);
         map<string,vector<Position*>> vision (int,int,int);
-        void contamination(int,int,RandMT*);
+        void contamination(int,int,RandMT*, int, int);
         void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);
         Position * moveHuman(int,int, RandMT*);
         void nextIteration(RandMT*);

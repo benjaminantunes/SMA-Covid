@@ -13,13 +13,21 @@ int main(void){
 	string valueParam;
 	ifstream readFile("config.txt");
 	int i = 0;
+	
+	
+
+	string delimiter = ";";
+	
+	
+	
 	while (getline (readFile, valueParam)) {
 	
+		string token = valueParam.substr(0, valueParam.find(delimiter));
 		if(i == 1){
-			params[i] = stof(valueParam);
+			params[i] = stof(token);
 			i++;
 		}else{
-			params[i] = stoi(valueParam);
+			params[i] = stoi(token);
 			i++;
 		}
 		

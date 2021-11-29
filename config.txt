@@ -1,7 +1,7 @@
-650
-0.8
-150000
-50
-1000
-1000
-100
+100;size
+0.8;taux_contamination_voisin
+5000;nbHumain
+100;nbMalade
+50;nbIteration
+1000;nbPlaceHospital
+100;nbPlaceReanimation

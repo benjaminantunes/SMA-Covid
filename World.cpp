@@ -234,7 +234,9 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
     return neighborhood;
 }
 
-void World::contamination(int row, int column, RandMT * rand){
+void World::contamination(int row, int column, RandMT * rand, int currentRow, int currentColumn){
+
+	float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
 
     map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
     for(Position * pos : target_v1["human"]){
@@ -246,7 +248,10 @@ void World::contamination(int row, int column, RandMT * rand){
         	// De plus, on est contagieux que 2 jours avant symptomes + 2 jours après. (Pas pris en compte ici)
         	// Cela peut devenir un paramètre propre a la classe Humain, pour établir une variable, genre moins contagieux avec le vaccin ?
 		// Resistance virus = 180 lors d'une contamination. Il y a donc 80 jours d'invulnérabilité. (2mois et demi). 
+		/*
         	if(randomValue < this->taux_contamination_voisin - (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()/100)){
+        */
+			if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] - (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()/100)){        
         		this->carte[pos->getPosX()][pos->getPosY()]->contamine();
         		this->nbNouveauxCas++;
             	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
@@ -283,7 +288,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 
     map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
     // Chaque state est un jour
-    if(this->carte[row][column]->getState() > 10){
+    if(this->carte[row][column]->getState() > 11){
     
     	if(this->carte[row][column]->getIsHospital()){
     		this->nbPersonneHospital--;
@@ -309,7 +314,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
     if(this->carte[row][column]->isSick()){
     	
         this->carte[row][column]->incrementState();
-        if(this->carte[row][column]->getState() == 4){
+        if(this->carte[row][column]->getState() == 2){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
     		float randValue = rand->genrand_real1();
 	    	if(randValue < 0.8){
@@ -325,7 +330,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         Mais sans les if, alors des gars qui n'ont rien meurent d'un coup, etc. Mais ça serait surement plus fiable de cette manière, en retirant les if.
         
         */
-        if(this->carte[row][column]->getState() == 5){
+        if(this->carte[row][column]->getState() == 3){
 			//if(this->carte[row][column]->getIsConfined()){
 			float randValue = rand->genrand_real1();
 
@@ -349,7 +354,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         	//}
         	
         }
-        if(this->carte[row][column]->getState() == 6){
+        if(this->carte[row][column]->getState() == 4){
 			//if(this->carte[row][column]->getIsHospital()){
 			float randValue = rand->genrand_real1();
 
@@ -379,7 +384,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         	
         }
         
-        if(this->carte[row][column]->getState() == 7){
+        if(this->carte[row][column]->getState() == 5){
 			//if(this->carte[row][column]->getIsReanimation()){
 			float randValue = rand->genrand_real1();
 
@@ -407,19 +412,19 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 
 		/*
 		L'individu ne contamine que si il se déplace. 
-		Il y a 4 tour ou tous le monde est forcément asymptomatique (4jours de contamination potentielle)
+		Il y a 2 tour ou tous le monde est forcément asymptomatique (2jours de contamination potentielle)
 		Ensuite, si on est malade, on se confine, si on est a l'hopital, on est confiné, et si on est en réanimation ou mort, on est confiné aussi.
 		Si on est malade, on ne se déplace pas.
-		De plus, on est contagieux que pendant 5 jours.
+		De plus, on est contagieux que pendant 9 jours. (2 jours avant symptomes + 9 jours après)
 		*/
-        if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 6){
+        if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 12){
 		    if(target_v1["empty"].size() != 0){
 		  
 		    	int taille = target_v1.at("empty").size();
 		    	int randomValue = ((long)floor(rand->genrand_int32()))%taille;
 
 		        Position * newPosition = target_v1.at("empty").at(randomValue);
-		        this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand);
+		        this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
 
 		        
 		        this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
