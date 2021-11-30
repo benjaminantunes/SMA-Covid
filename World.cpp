@@ -286,7 +286,7 @@ void World::humanGoFromTo(int fromRow, int fromColumn, int toRow, int toColumn,R
 
 Position * World::moveHuman(int row, int column, RandMT * rand){
 
-    map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
+    
     // Chaque state est un jour
     if(this->carte[row][column]->getState() > 11){
     
@@ -420,6 +420,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 		De plus, on est contagieux que pendant 9 jours. (2 jours avant symptomes + 9 jours après)
 		*/
         if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 12){
+        	map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
 		    if(target_v1["empty"].size() != 0){
 		  
 		    	int taille = target_v1.at("empty").size();
@@ -442,6 +443,8 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 		}
         
     }else{
+    	//Si il n'est pas malade
+    	map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
         if(target_v1["empty"].size() != 0){
             // Demander a Bruno bachelet si dans un cas comme ça, pour le return, on privilégie pointeur ou valeur.
             int taille = target_v1.at("empty").size();
