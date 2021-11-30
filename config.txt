@@ -5,3 +5,5 @@
 50;nbIteration
 1000;nbPlaceHospital
 100;nbPlaceReanimation
+4;multMortToHosp
+

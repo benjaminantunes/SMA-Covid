@@ -1,0 +1,24 @@
+Note 30/11/2021 :
+
+Faire des listHumanRea, listHumanHosp, listHumanContamine, etc
+
+Pourquoi ne pas le faire ?
+Actuellement, parcours sur la liste des humains ( O(n) avec n le nb d'humain).
+Si on divise en X liste, au final ça reviens au meme, on doit parcourir tous les humains.
+
+Le test que j'effectue dans ma fonction avec une seule liste d'humain sont des tests en O(1), test sur un boolean ou sur un int. 
+Donc, d'un point de vue complexité, cela ne pose pas de problème.
+
+En soit, faire les autres listes serait simplement une manière différente de coder, pas forcément plus efficace.
+
+Comment j'aurai fait ? :
+Division en 5 listes : listRea, listHosp, listContamine, listAsymptomatique, listSain.
+Ensuite, je créé 5 fonction de déplacement différentes : 1 pour les réa, une pour les hosp, ...
+
+moveHumanSafe, moveHumanAsymp, moveHumanContamine, ...
+
+Pour les réa, hosp et contamine : Pas de déplacement. On va juste tester si le gars meurt, passe en Réa, passe à hosp. ( ce que je fais dans mes if actuellement dans une unique fonction).
+
+Pour asymp et sain , oui déplacement.
+
+Selon moi, pas de différences entre ces deux façon de faire, simplement que ça me prendrait du temps en réfactoring (2h ?). Ke pourrais virer les attributs de humains isContamined, is Hosp, IsRea  car ça ne servivrai plus, et j'aurai 5 fonctions différentes au lieu d'une.

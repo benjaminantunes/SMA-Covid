@@ -4,7 +4,7 @@
 #include <math.h>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, bool log){
+World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, bool log){
 
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -19,6 +19,9 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     }
     
     this->taux_contamination_voisin = taux_contamination_voisin;
+    for(int i = 0; i<9;i++){
+    	this->table_taux_hospitalisation_by_age_by_10[i] = this->table_taux_mortalite_by_age_by_10[i] * multMortToHosp;
+    }
     this->size = size;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
@@ -333,82 +336,83 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         
         */
         if(this->carte[row][column]->getState() == 3){
-			//if(this->carte[row][column]->getIsConfined()){
-			float randValue = rand->genrand_real1();
+			if(this->carte[row][column]->getIsConfined()){
+				//Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
+				float randValue = rand->genrand_real1();
 
-			if(randValue < this->table_taux_hospitalisation_by_age_by_10[this->carte[row][column]->getAge()]/100){
-				if(this->nbPersonneHospital < this->nbPlaceHospital){
-					this->carte[row][column]->goToHospital();
-					this->nbNouveauxHospitalisation++;
-					this->nbPersonneHospital++;
-				}else{
-					// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
-					if(randValue < 0.2){
-						this->humanGoFromTo(row,column, 0,0,rand,  true);
-						
-						this->nbMorts++;
-				        ////delete newPosition;
-				        return nullptr;
+				if(randValue < this->table_taux_hospitalisation_by_age_by_10[this->carte[row][column]->getAge()]/100){
+					if(this->nbPersonneHospital < this->nbPlaceHospital){
+						this->carte[row][column]->goToHospital();
+						this->nbNouveauxHospitalisation++;
+						this->nbPersonneHospital++;
+					}else{
+						// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
+						if(randValue < 0.2){
+							this->humanGoFromTo(row,column, 0,0,rand,  true);
+							
+							this->nbMorts++;
+						    ////delete newPosition;
+						    return nullptr;
+						}
 					}
+					
 				}
-				
-			}
-        	//}
+        	}
         	
         }
         if(this->carte[row][column]->getState() == 4){
-			//if(this->carte[row][column]->getIsHospital()){
-			float randValue = rand->genrand_real1();
+			if(this->carte[row][column]->getIsHospital()){
+				float randValue = rand->genrand_real1();
 
-			if(randValue < this->table_taux_reanimation_by_age_by_10[this->carte[row][column]->getAge()]/100){
-			
-				if(this->nbPersonneReanimation < this->nbPlaceReanimation){
-					if(this->carte[row][column]->getIsHospital()){
-						this->nbPersonneHospital--;
-					}
-					this->carte[row][column]->goToReanimation();
-					this->nbNouveauxReanimation++;
-					this->nbPersonneReanimation++;
-				}else{
-					// Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
-					if(this->carte[row][column]->getIsHospital()){
-						this->nbPersonneHospital--;
-					}
-					this->humanGoFromTo(row,column, 0,0,rand,  true);
-					this->nbMorts++;
-					
-				    ////delete newPosition;
-				    return nullptr;
-				}
+				if(randValue < this->table_taux_reanimation_by_age_by_10[this->carte[row][column]->getAge()]/100){
 				
-			}
-        	//}
+					if(this->nbPersonneReanimation < this->nbPlaceReanimation){
+						if(this->carte[row][column]->getIsHospital()){
+							this->nbPersonneHospital--;
+						}
+						this->carte[row][column]->goToReanimation();
+						this->nbNouveauxReanimation++;
+						this->nbPersonneReanimation++;
+					}else{
+						// Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
+						if(this->carte[row][column]->getIsHospital()){
+							this->nbPersonneHospital--;
+						}
+						this->humanGoFromTo(row,column, 0,0,rand,  true);
+						this->nbMorts++;
+						
+						////delete newPosition;
+						return nullptr;
+					}
+					
+				}
+        	}
         	
         }
         
         if(this->carte[row][column]->getState() == 5){
-			//if(this->carte[row][column]->getIsReanimation()){
-			float randValue = rand->genrand_real1();
+			if(this->carte[row][column]->getIsReanimation()){
+				float randValue = rand->genrand_real1();
 
-			if(randValue < this->table_taux_mortalite_by_age_by_10[this->carte[row][column]->getAge()]/100){
-				/*
-				this->carte[row][column] = nullptr;
-				//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
-				this->updateStats("dead",rand);
-				*/
-				if(this->carte[row][column]->getIsHospital()){
-					this->nbPersonneHospital--;
+				if(randValue < this->table_taux_mortalite_by_age_by_10[this->carte[row][column]->getAge()]/100){
+					/*
+					this->carte[row][column] = nullptr;
+					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
+					this->updateStats("dead",rand);
+					*/
+					if(this->carte[row][column]->getIsHospital()){
+						this->nbPersonneHospital--;
+					}
+					if(this->carte[row][column]->getIsReanimation()){
+						this->nbPersonneReanimation--;
+					}
+					this->humanGoFromTo(row,column, 0,0,rand,  true);
+					this->nbMorts++;
+					
+					////delete newPosition;
+					return nullptr;
 				}
-				if(this->carte[row][column]->getIsReanimation()){
-					this->nbPersonneReanimation--;
-				}
-				this->humanGoFromTo(row,column, 0,0,rand,  true);
-				this->nbMorts++;
-				
-				////delete newPosition;
-				return nullptr;
-			}
-        	//}
+        	}
         	
         }
 

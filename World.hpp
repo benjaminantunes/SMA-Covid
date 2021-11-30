@@ -23,8 +23,10 @@ class World{
 	// On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
 	// Ces chiffres sont purement arbitraires, à mettre en param
 	float table_taux_mortalite_by_age_by_10[9] = {0, 0.2, 0.2, 0.2, 0.4, 1.3, 3.6, 8, 14.8};
-	float table_taux_reanimation_by_age_by_10[9] = {0, 0.4, 0.4, 0.4, 0.8, 2.6, 7.2, 16, 29.6};
-	float table_taux_hospitalisation_by_age_by_10[9] = {0, 0.8, 0.8, 0.8, 1.6, 5.2, 14.4, 32, 59.2};
+	//float table_taux_reanimation_by_age_by_10[9] = {0, 0.4, 0.4, 0.4, 0.8, 2.6, 7.2, 16, 29.6};
+	//float table_taux_hospitalisation_by_age_by_10[9] = {0, 0.8, 0.8, 0.8, 1.6, 5.2, 14.4, 32, 59.2};
+	//float table_taux_reanimation_by_age_by_10[9];
+	float table_taux_hospitalisation_by_age_by_10[9];
 
         //Position humansPosition[80] = NULL;
         vector<Position *> humansPosition;
@@ -46,7 +48,7 @@ class World{
 
 
     public:
-        World(int,float,int,int,bool);
+        World(int,float,int,int,int,bool);
         //Pour le __exit__
         ~World();
         void writeLog(string);
