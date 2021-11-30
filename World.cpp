@@ -316,9 +316,11 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         this->carte[row][column]->incrementState();
         if(this->carte[row][column]->getState() == 2){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
+        	// https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
+        	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 15.0)/100;
     		float randValue = rand->genrand_real1();
-	    	if(randValue < 0.8){
-	    		// 20% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
+	    	if(randValue < 1 - pourcentAsymptomatique){
+	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
 	    		this->carte[row][column]->getConfined();
 	    	}
         	
