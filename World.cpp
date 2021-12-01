@@ -2,6 +2,7 @@
 #include <typeinfo>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 using namespace std;
 World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, bool log){
@@ -19,7 +20,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     }
     
     this->taux_contamination_voisin = taux_contamination_voisin;
-    for(int i = 0; i<9;i++){
+    for(int i = 0; i<8;i++){
     	this->table_taux_hospitalisation_by_age_by_10[i] = this->table_taux_mortalite_by_age_by_10[i] * multMortToHosp;
     }
     this->size = size;
@@ -34,6 +35,47 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     if(this->log){
         this->logfile.open("log.txt",ios::out);
     }
+    
+    // Récupération des données de la timeline
+    //////////////////////
+    string valueParam;
+	ifstream readFile("current-covid-patients-hospital.csv");
+	int i = 0;
+	size_t pos = 0;
+	string delimiter = ",";
+		
+	while (getline (readFile, valueParam)) {
+	
+		while ((pos = valueParam.find(delimiter)) != std::string::npos) {
+			valueParam.substr(0, pos);
+			valueParam.erase(0, pos + delimiter.length());
+		}
+
+		this->timeline_hospitalisation_21_11_2021[i] = stoi(valueParam);
+		i++;
+	}
+
+	readFile.close();
+	
+	//////////////////////////////////////
+	valueParam = "";
+	ifstream readFileRea("current-covid-patients-icu.csv");
+	i = 0;
+	pos = 0;
+	delimiter = ",";
+		
+	while (getline (readFileRea, valueParam)) {
+	
+		while ((pos = valueParam.find(delimiter)) != std::string::npos) {
+			valueParam.substr(0, pos);
+			valueParam.erase(0, pos + delimiter.length());
+		}
+		this->timeline_reanimation_21_11_2021[i] = stoi(valueParam);
+		i++;
+	}
+
+	readFileRea.close();
+
 
 }
 
@@ -50,7 +92,7 @@ void World::writeLog(string msg){
 
 
 void World::pause(){
-    cout << "Hit <Return to continue" << endl ;
+    //cout << "Hit <Return to continue" << endl ;
 }
 
 void World::display(){
@@ -291,20 +333,34 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 
     
     // Chaque state est un jour
-    if(this->carte[row][column]->getState() > 11){
+    if(this->carte[row][column]->getState() > 11 && !this->carte[row][column]->getIsReanimation()){
     
     	if(this->carte[row][column]->getIsHospital()){
     		this->nbPersonneHospital--;
     	}
-    	if(this->carte[row][column]->getIsReanimation()){
-    		this->nbPersonneReanimation--;
-    	}
+    	
     	this->carte[row][column]->resetState();
     	this->updateStats("recovered",rand);
     	
     	
     	
     }
+    
+    if(this->carte[row][column]->getIsReanimation()){
+    
+    	if(this->carte[row][column]->getState() > 28){
+    		this->nbPersonneReanimation--;
+    	}
+    	
+    	this->carte[row][column]->resetState();
+    	this->updateStats("recovered",rand);
+    	
+    	
+    	
+    }
+    if(this->carte[row][column]->getIsReanimation()){
+    		
+    	}
     
     if(this->carte[row][column]->getResistanceVirus() > 0 ){
     	this->carte[row][column]->decreaseResistance();
@@ -363,8 +419,29 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         if(this->carte[row][column]->getState() == 4){
 			if(this->carte[row][column]->getIsHospital()){
 				float randValue = rand->genrand_real1();
-
-				if(randValue < this->table_taux_reanimation_by_age_by_10[this->carte[row][column]->getAge()]/100){
+				float tauxReaIfHosp;
+				
+				// On utilise la timeline, qui possède 642 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
+				if(this->iteration < 642){
+					
+					/*
+					!!! Problème : Les données que j'ai n'ont pas exactement les mêmes jours sur les mêmes lignes, ni les meme jours tout court
+					Il y a donc des soucis de correspondance.
+					Solution : Faire un dictionnaire en fonction des dates.
+					Mais grosse compléxité : Je dois parcourir un fichier, et pour chaque date je parcours l'autre fichier entier pour trouver
+					la valeur de a la date correspondante. Si je ne trouve pas la date, alors je ne considère pas cette date.
+					*/
+					if(this->timeline_reanimation_21_11_2021[iteration] > this->timeline_hospitalisation_21_11_2021[iteration]){
+						tauxReaIfHosp = 0.15;
+					}else{
+						tauxReaIfHosp = (float)this->timeline_reanimation_21_11_2021[iteration] / (float)this->timeline_hospitalisation_21_11_2021[iteration];
+					}
+					
+				}else{
+				
+					tauxReaIfHosp = 0.15;
+				}
+				if(randValue < tauxReaIfHosp){
 				
 					if(this->nbPersonneReanimation < this->nbPlaceReanimation){
 						if(this->carte[row][column]->getIsHospital()){
@@ -393,8 +470,12 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         if(this->carte[row][column]->getState() == 5){
 			if(this->carte[row][column]->getIsReanimation()){
 				float randValue = rand->genrand_real1();
-
-				if(randValue < this->table_taux_mortalite_by_age_by_10[this->carte[row][column]->getAge()]/100){
+				// 50% de chances de mourir si on était en réa.
+				// L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
+				// Pour retrouver 14 % : sur 100% de contaminé -> 60% d'aller a l'hopital -> 15% d'aller en réa -> 50% de mourir.
+				// En partant de contaminé, la chance de mourir : 0.6 * 0.15 * 0.5 = 0.045. Très très loin de 0.14.
+				// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
+				if(randValue < 0.5){
 					/*
 					this->carte[row][column] = nullptr;
 					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")

@@ -8,30 +8,26 @@ Human::Human(RandMT* rand){
 	this->pos = new Position();
     this->symbol = Human::SYMBOL;
     float randAge = rand->genrand_real1();
-    // En proportion, la population française est assez équitablement réparti
-    // On considère ici : 10% moins de 10 ans, 30 % entre 10 et 20 ans, 10% entre 20 et 30 ans , ..... 15% >= 80 ans
-    // pour l'instant je reste la dessus, mais je vais prendre des vrais chiffres.
-    // 0 = [0;10] 1 = 10;20  2 = 20;30  3 = 30;40  4 = 40;50  5 = 50;60  6 = 60;70  7 = 70;80  8 = 80 ++ 
-    if(randAge < 0.1){
+    
+    
+    // https://www.insee.fr/fr/statistiques/2381474#figure1_radio2
+    // 8 Tranches : 0 - 15, 15 - 25 , 25 - 35 , 35 - 45 , 45 - 55, 55 - 65, 65 - 75, 75 +
+    if(randAge < 0.177){
     	this->age = 0; // 0%
-    }else if(randAge >= 0.1 && randAge < 0.2){
+    }else if(randAge >= 0.177 && randAge < 0.296){
     	this->age = 1; // 0.2%
-    }else if(randAge >= 0.2 && randAge < 0.3){
+    }else if(randAge >= 0.296 && randAge < 0.411){
     	this->age = 2; // 0.2%
-    }else if(randAge >= 0.3 && randAge < 0.4){
-    	this->age = 3; //0.2%
-    }else if(randAge >= 0.4 && randAge < 0.5){
-    	this->age = 4; //0.4%
-    }else if(randAge >= 0.5 && randAge < 0.6){
-    	this->age = 5; //1.3%
-    }else if(randAge >= 0.6 && randAge < 0.7){
-    	this->age = 6; //3.6%
-    }else if(randAge >= 0.7 && randAge < 0.8){
-    	this->age = 7; // 8%
-    }else if(randAge >= 0.8 && randAge < 0.85){
-    	this->age = 8; // 14.8%
-    }else if(randAge >= 0.85){
-    	this->age = 1; // Pour avoir 25% dans la tranche 10 à 20 ans, donc un total de 35% de 20 ans et moins.
+    }else if(randAge >= 0.411 && randAge < 0.535){
+    	this->age = 3; //0.4%
+    }else if(randAge >= 0.535 && randAge < 0.667){
+    	this->age = 4; //1.3%
+    }else if(randAge >= 0.667 && randAge < 0.793){
+    	this->age = 5; //3.6%
+    }else if(randAge >= 0.793 && randAge < 0.905){
+    	this->age = 6; //8%
+    }else if(randAge >= 0.905){
+    	this->age = 7; // 14.8%
     }
     
     
@@ -45,7 +41,7 @@ Human::Human(RandMT* rand){
 
 void Human::contamine(){
     this->state = 1;
-    this->resistanceVirus = 180; //6mois, 180 jours/itérations
+    this->resistanceVirus = this->resistanceValuesByAge[this->age]; //6mois, 180 jours/itérations
 }
 
 bool Human::isSick(){

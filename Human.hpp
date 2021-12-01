@@ -22,6 +22,7 @@ class Human {
         bool isReanimation = false;
         int resistanceVirus = 0;
         int vaccin = 0;
+        int resistanceValuesByAge[8] = {300,270,250,220,200,180, 180 ,180};
 
     public:
         Human(RandMT*);

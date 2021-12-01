@@ -19,7 +19,6 @@ int main(void){
 	string delimiter = ";";
 	
 	
-	
 	while (getline (readFile, valueParam)) {
 	
 		string token = valueParam.substr(0, valueParam.find(delimiter));
