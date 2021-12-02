@@ -1,8 +1,8 @@
 100;size
 0.8;taux_contamination_voisin
 5000;nbHumain
-500;nbMalade
-100;nbIteration
-1000;nbPlaceHospital
-100;nbPlaceReanimation
+1500;nbMalade
+200;nbIteration
+100000;nbPlaceHospital
+100000;nbPlaceReanimation
 4;multMortToHosp

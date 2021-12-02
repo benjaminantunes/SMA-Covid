@@ -39,12 +39,14 @@ class World{
         static const char SYMBOL_EMPTY = '.';
         static constexpr float MAX_HUMANS = 0.8;
         
+        vector<int> ageOfDeadHumansDaily;
         int nbNouveauxCas = 0;
         int nbPersonneHospital = 0 ;
         int nbPersonneReanimation = 0;
         int nbNouveauxHospitalisation = 0;
         int nbNouveauxReanimation = 0;
         int nbMorts = 0;
+        int nbCasCovidConnuTotal = 0;
         int timeline_hospitalisation_21_11_2021[642];
         int timeline_reanimation_21_11_2021[642];
 

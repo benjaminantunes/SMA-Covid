@@ -298,6 +298,7 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
         */
 			if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] - (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()/100)){        
         		this->carte[pos->getPosX()][pos->getPosY()]->contamine();
+        		// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
         		this->nbNouveauxCas++;
             	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
 			
@@ -350,18 +351,11 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
     
     	if(this->carte[row][column]->getState() > 28){
     		this->nbPersonneReanimation--;
-    	}
-    	
-    	this->carte[row][column]->resetState();
-    	this->updateStats("recovered",rand);
-    	
-    	
-    	
+    		this->carte[row][column]->resetState();
+    		this->updateStats("recovered",rand);
+    	}	
     }
-    if(this->carte[row][column]->getIsReanimation()){
-    		
-    	}
-    
+
     if(this->carte[row][column]->getResistanceVirus() > 0 ){
     	this->carte[row][column]->decreaseResistance();
     }
@@ -380,6 +374,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
     		float randValue = rand->genrand_real1();
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
+	    		this->nbCasCovidConnuTotal++;
 	    		this->carte[row][column]->getConfined();
 	    	}
         	
@@ -404,6 +399,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 					}else{
 						// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
 						if(randValue < 0.2){
+							this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 							this->humanGoFromTo(row,column, 0,0,rand,  true);
 							
 							this->nbMorts++;
@@ -431,6 +427,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 					Mais grosse compléxité : Je dois parcourir un fichier, et pour chaque date je parcours l'autre fichier entier pour trouver
 					la valeur de a la date correspondante. Si je ne trouve pas la date, alors je ne considère pas cette date.
 					*/
+
 					if(this->timeline_reanimation_21_11_2021[iteration] > this->timeline_hospitalisation_21_11_2021[iteration]){
 						tauxReaIfHosp = 0.15;
 					}else{
@@ -442,12 +439,13 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 					tauxReaIfHosp = 0.15;
 				}
 				if(randValue < tauxReaIfHosp){
-				
+					
 					if(this->nbPersonneReanimation < this->nbPlaceReanimation){
 						if(this->carte[row][column]->getIsHospital()){
 							this->nbPersonneHospital--;
 						}
 						this->carte[row][column]->goToReanimation();
+						cout << "Je vais en réa " << endl;
 						this->nbNouveauxReanimation++;
 						this->nbPersonneReanimation++;
 					}else{
@@ -455,6 +453,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 						if(this->carte[row][column]->getIsHospital()){
 							this->nbPersonneHospital--;
 						}
+						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 						this->humanGoFromTo(row,column, 0,0,rand,  true);
 						this->nbMorts++;
 						
@@ -469,13 +468,16 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         
         if(this->carte[row][column]->getState() == 5){
 			if(this->carte[row][column]->getIsReanimation()){
+				cout << "Je suis en réanimation et peut etre que je vais mourir" << endl;
 				float randValue = rand->genrand_real1();
 				// 50% de chances de mourir si on était en réa.
 				// L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
 				// Pour retrouver 14 % : sur 100% de contaminé -> 60% d'aller a l'hopital -> 15% d'aller en réa -> 50% de mourir.
 				// En partant de contaminé, la chance de mourir : 0.6 * 0.15 * 0.5 = 0.045. Très très loin de 0.14.
 				// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
+				
 				if(randValue < 0.5){
+					cout << "Je meurs après la réa " << endl;
 					/*
 					this->carte[row][column] = nullptr;
 					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
@@ -487,6 +489,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 					if(this->carte[row][column]->getIsReanimation()){
 						this->nbPersonneReanimation--;
 					}
+					this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 					this->humanGoFromTo(row,column, 0,0,rand,  true);
 					this->nbMorts++;
 					
@@ -555,7 +558,15 @@ void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->nbNouveauxHospitalisation));
 	this->writeLog(to_string(this->nbNouveauxReanimation));
 	this->writeLog(to_string(this->nbMorts));
+	this->writeLog(to_string(this->nbCasCovidConnuTotal));
+	//this->writeLog("XX");
+	for (int age: this->ageOfDeadHumansDaily) {
+        this->writeLog("Age:" + to_string(age));
+    }
+	//this->writeLog("XX");
+	
 	this->writeLog("##########");
+	this->ageOfDeadHumansDaily.clear();
 	this->nbNouveauxCas = 0;
     this->nbNouveauxHospitalisation = 0;
     this->nbNouveauxReanimation = 0;
