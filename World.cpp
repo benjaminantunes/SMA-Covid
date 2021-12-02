@@ -445,7 +445,6 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 							this->nbPersonneHospital--;
 						}
 						this->carte[row][column]->goToReanimation();
-						cout << "Je vais en réa " << endl;
 						this->nbNouveauxReanimation++;
 						this->nbPersonneReanimation++;
 					}else{
@@ -468,7 +467,6 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         
         if(this->carte[row][column]->getState() == 5){
 			if(this->carte[row][column]->getIsReanimation()){
-				cout << "Je suis en réanimation et peut etre que je vais mourir" << endl;
 				float randValue = rand->genrand_real1();
 				// 50% de chances de mourir si on était en réa.
 				// L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
@@ -477,7 +475,6 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 				// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
 				
 				if(randValue < 0.5){
-					cout << "Je meurs après la réa " << endl;
 					/*
 					this->carte[row][column] = nullptr;
 					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
