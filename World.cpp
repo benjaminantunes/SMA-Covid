@@ -375,6 +375,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
 	    		this->nbCasCovidConnuTotal++;
+	    		this->ageOfSymptomaticDailyHuman.push_back(this->carte[row][column]->getAge());
 	    		this->carte[row][column]->getConfined();
 	    	}
         	
@@ -550,6 +551,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->iteration));
 	this->writeLog(to_string(this->nbNouveauxCas));
+
 	this->writeLog(to_string(this->nbPersonneHospital));
 	this->writeLog(to_string(this->nbPersonneReanimation));
 	this->writeLog(to_string(this->nbNouveauxHospitalisation));
@@ -557,12 +559,16 @@ void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->nbMorts));
 	this->writeLog(to_string(this->nbCasCovidConnuTotal));
 	//this->writeLog("XX");
+	for (int age: this->ageOfSymptomaticDailyHuman) {
+        this->writeLog("AgeC:" + to_string(age));
+    }
 	for (int age: this->ageOfDeadHumansDaily) {
-        this->writeLog("Age:" + to_string(age));
+        this->writeLog("AgeD:" + to_string(age));
     }
 	//this->writeLog("XX");
 	
 	this->writeLog("##########");
+	this->ageOfSymptomaticDailyHuman.clear();
 	this->ageOfDeadHumansDaily.clear();
 	this->nbNouveauxCas = 0;
     this->nbNouveauxHospitalisation = 0;

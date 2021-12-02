@@ -40,6 +40,7 @@ class World{
         static constexpr float MAX_HUMANS = 0.8;
         
         vector<int> ageOfDeadHumansDaily;
+        vector<int> ageOfSymptomaticDailyHuman;
         int nbNouveauxCas = 0;
         int nbPersonneHospital = 0 ;
         int nbPersonneReanimation = 0;
