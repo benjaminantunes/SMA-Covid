@@ -22,7 +22,7 @@ int main(void){
 	while (getline (readFile, valueParam)) {
 	
 		string token = valueParam.substr(0, valueParam.find(delimiter));
-		if(i == 1){
+		if(i == 1 || i == 8){
 			params[i] = stof(token);
 			i++;
 		}else{

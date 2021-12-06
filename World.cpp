@@ -37,45 +37,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
         this->logfile.open("log.txt",ios::out);
     }
     
-    // Récupération des données de la timeline
-    //////////////////////
-    string valueParam;
-	ifstream readFile("current-covid-patients-hospital.csv");
-	int i = 0;
-	size_t pos = 0;
-	string delimiter = ",";
-		
-	while (getline (readFile, valueParam)) {
-	
-		while ((pos = valueParam.find(delimiter)) != std::string::npos) {
-			valueParam.substr(0, pos);
-			valueParam.erase(0, pos + delimiter.length());
-		}
-
-		this->timeline_hospitalisation_21_11_2021[i] = stoi(valueParam);
-		i++;
-	}
-
-	readFile.close();
-	
-	//////////////////////////////////////
-	valueParam = "";
-	ifstream readFileRea("current-covid-patients-icu.csv");
-	i = 0;
-	pos = 0;
-	delimiter = ",";
-		
-	while (getline (readFileRea, valueParam)) {
-	
-		while ((pos = valueParam.find(delimiter)) != std::string::npos) {
-			valueParam.substr(0, pos);
-			valueParam.erase(0, pos + delimiter.length());
-		}
-		this->timeline_reanimation_21_11_2021[i] = stoi(valueParam);
-		i++;
-	}
-
-	readFileRea.close();
+    
 
 
 }
