@@ -9,7 +9,7 @@ int main(void){
     // Initialisation par défaut comme Matsumoto
     RandMT * rand = new RandMT();
 
-    float params[8]; 
+    float params[9]; 
 	string valueParam;
 	ifstream readFile("config.txt");
 	int i = 0;
@@ -42,8 +42,9 @@ int main(void){
 	//Param [5] = nbPlaceHospital : int
 	//Param [6] = nbPlaceReanimation : int
 	//Param [7] = multMortToHosp : int
+	//Param [8] = tauxMortRea : float
 
-    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],true);
+    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8],true);
 
     world->initialize((int)params[2],rand,(int)params[3]);
 

@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, bool log){
+World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, bool log){
 
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -24,6 +24,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     	this->table_taux_hospitalisation_by_age_by_10[i] = this->table_taux_mortalite_by_age_by_10[i] * multMortToHosp;
     }
     this->size = size;
+    this->tauxMortRea = tauxMortRea;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
     this->log = log;
@@ -317,7 +318,7 @@ void World::humanGoFromTo(int fromRow, int fromColumn, int toRow, int toColumn,R
         this->carte[toRow][toColumn] = this->carte[fromRow][fromColumn];
         this->carte[toRow][toColumn]->setPosition(toRow,toColumn);
         this->carte[fromRow][fromColumn] = nullptr;
-        // Interet de rajouter cette ligne ?
+        // Interet de rajouter cette ligne ? Bizarre
         this->carte[toRow][toColumn]->setPosition(toRow,toColumn);
 
         //self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn})\n")
@@ -349,7 +350,16 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
     
     if(this->carte[row][column]->getIsReanimation()){
     
-    	if(this->carte[row][column]->getState() > 28){
+    	/*
+    	Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet, a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. Entre les 2 périodes, l'âge médian est passé de 61 ans à 64 ans.
+    	
+    	Dans le service de réanimation du Pr Demoule, "la durée de séjour en réanimation est de 5 jours pour les patients non intubés. S'ils sont intubés ils restent quand même 3 semaines (même si on manque encore de recul par rapport à la 2e vague)".
+    	
+    	https://www.apmnews.com/depeche/1/355843/covid-19-en-reanimation-une-prise-en-charge-amelioree%2C-des-patients-un-peu-moins-severes
+    	*/
+    	double dureeReanimation = (rand->genrand_int32()%16) + 5; // Entre 5 jours et 21 jours de réanimation.
+    	
+    	if(this->carte[row][column]->getState() > dureeReanimation){
     		this->nbPersonneReanimation--;
     		this->carte[row][column]->resetState();
     		this->updateStats("recovered",rand);
@@ -418,26 +428,14 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 				float randValue = rand->genrand_real1();
 				float tauxReaIfHosp;
 				
-				// On utilise la timeline, qui possède 642 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
-				if(this->iteration < 642){
+				// On utilise la timeline, qui possède 633 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
+				if(this->iteration < 633){
+						tauxReaIfHosp = ratioHospRea[this->iteration];
 					
-					/*
-					!!! Problème : Les données que j'ai n'ont pas exactement les mêmes jours sur les mêmes lignes, ni les meme jours tout court
-					Il y a donc des soucis de correspondance.
-					Solution : Faire un dictionnaire en fonction des dates.
-					Mais grosse compléxité : Je dois parcourir un fichier, et pour chaque date je parcours l'autre fichier entier pour trouver
-					la valeur de a la date correspondante. Si je ne trouve pas la date, alors je ne considère pas cette date.
-					*/
-
-					if(this->timeline_reanimation_21_11_2021[iteration] > this->timeline_hospitalisation_21_11_2021[iteration]){
-						tauxReaIfHosp = 0.15;
-					}else{
-						tauxReaIfHosp = (float)this->timeline_reanimation_21_11_2021[iteration] / (float)this->timeline_hospitalisation_21_11_2021[iteration];
-					}
 					
 				}else{
 				
-					tauxReaIfHosp = 0.15;
+					tauxReaIfHosp = 0.15; // La moyenne est 0.1474089554531037
 				}
 				if(randValue < tauxReaIfHosp){
 					
@@ -475,7 +473,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 				// En partant de contaminé, la chance de mourir : 0.6 * 0.15 * 0.5 = 0.045. Très très loin de 0.14.
 				// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
 				
-				if(randValue < 0.5){
+				if(randValue < this->tauxMortRea){
 					/*
 					this->carte[row][column] = nullptr;
 					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")

@@ -6,3 +6,4 @@
 1000000;nbPlaceHospital
 1000000;nbPlaceReanimation
 4;multMortToHosp
+0.5;tauxMortRea
