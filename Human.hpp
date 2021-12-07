@@ -21,21 +21,19 @@ class Human {
         bool isHospital = false;
         bool isReanimation = false;
         int resistanceVirus = 0;
-        int vaccin = 0;
-        int resistanceValuesByAge[8] = {300,270,250,220,200,180, 180 ,180};
+        //int vaccin = 0;
+        float resistanceValuesByAge[8] = {0.95,0.90,0.90,0.90,0.85,0.85, 0.80 ,0.80};
+        int daysSinceLastInfectionOrInjection = 0;
 
     public:
         Human(RandMT*);
         void contamine();
+        void vaccine();
         bool isSick();
         int getState();
         int getAge();
         int getResistanceVirus();
-        int getVaccin();
-        //void setResistanceVirus(int);
         void decreaseResistance();
-        void decreaseVaccin();
-        void setVaccin(int);
         void resetState();
         void incrementState();
         char to_string();

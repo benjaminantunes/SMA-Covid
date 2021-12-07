@@ -55,7 +55,7 @@ void World::writeLog(string msg){
 
 
 void World::pause(){
-    //cout << "Hit <Return to continue" << endl ;
+    cout << "Hit <Return to continue" << endl ;
 }
 
 void World::display(){
@@ -200,7 +200,6 @@ void World::initialize(int humans, RandMT * rand, int sicks){
 map<string,vector<Position*>> World::vision(int length, int row, int column){
 
     map<string, vector<Position*>> neighborhood;
-    
     neighborhood["empty"];
     neighborhood["human"];
     
@@ -224,7 +223,7 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
 
             delete test;
             // Tous ça pour ça : and (elt_1, elt_2) not in neighborhood
-            if((elt_1 != 0 && elt_2 !=0) && (abs(elt_1) == length || abs(elt_2) == length) && !isInNeighborhood ){
+            if((elt_1 != 0 || elt_2 !=0) && !isInNeighborhood ){
                 Position * pos = new Position(row+elt_1,column+elt_2);
                 
                 if(this->isHuman(pos->getPosX(),pos->getPosY())){
@@ -246,31 +245,52 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 
 	float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
 
-    map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
+    map<string, vector<Position*>> target_v1 = this->vision(2,row,column);
     for(Position * pos : target_v1["human"]){
-
+    
         if(!this->carte[pos->getPosX()][pos->getPosY()]->isSick()){
+        
         	float randomValue = rand->genrand_real1();
-        	/// % de chance de contaminer une personne de qui on passe à côté
-        	// Ce n'est pas 100%, loin de la
-        	// De plus, on est contagieux que 2 jours avant symptomes + 2 jours après. (Pas pris en compte ici)
-        	// Cela peut devenir un paramètre propre a la classe Humain, pour établir une variable, genre moins contagieux avec le vaccin ?
-		// Resistance virus = 180 lors d'une contamination. Il y a donc 80 jours d'invulnérabilité. (2mois et demi). 
-		/*
-        	if(randomValue < this->taux_contamination_voisin - (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()/100)){
-        */
-			if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] - (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()/100)){        
-        		this->carte[pos->getPosX()][pos->getPosY()]->contamine();
-        		// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
-        		this->nbNouveauxCas++;
-            	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
-			
-            	this->updateStats("contamined", rand);
-        	}
-            
 
-        }
-    }
+			int distanceRow = abs(row - pos->getPosX());
+			int distanceColumn = abs(column - pos->getPosY());
+			int distance;
+			
+			if(distanceRow > distanceColumn){
+				distance = distanceRow;
+			}else{
+				distance = distanceColumn;
+			}
+
+			if(distance == 1){
+			
+				if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){        
+					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
+					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
+					this->nbNouveauxCas++;
+			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
+				
+			    	this->updateStats("contamined", rand);
+				}
+			
+			}else if(distance == 2){
+				if(randomValue < (histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.      
+					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
+					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
+					this->nbNouveauxCas++;
+			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
+				
+			    	this->updateStats("contamined", rand);
+				}
+			
+			}
+    		
+    		
+    		
+		}
+	}
+	
+	
 }
 
 
@@ -332,14 +352,12 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
     	this->carte[row][column]->decreaseResistance();
     }
     
-    if(this->carte[row][column]->getVaccin() > 0 ){
-    	this->carte[row][column]->decreaseVaccin();
-    }
+
     
     if(this->carte[row][column]->isSick()){
     	
         this->carte[row][column]->incrementState();
-        if(this->carte[row][column]->getState() == 2){
+        if(this->carte[row][column]->getState() == 3){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
         	// https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
         	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 15.0)/100;
@@ -354,12 +372,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         	
         }
         
-        /*
-        Les if faussent les probabilités ...
-        Mais sans les if, alors des gars qui n'ont rien meurent d'un coup, etc. Mais ça serait surement plus fiable de cette manière, en retirant les if.
-        
-        */
-        if(this->carte[row][column]->getState() == 3){
+        if(this->carte[row][column]->getState() == 4){
 			if(this->carte[row][column]->getIsConfined()){
 				//Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
 				float randValue = rand->genrand_real1();
@@ -373,6 +386,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 						// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
 						if(randValue < 0.2){
 							this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
+							this->updateStats("dead",rand);
 							this->humanGoFromTo(row,column, 0,0,rand,  true);
 							
 							this->nbMorts++;
@@ -385,7 +399,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         	}
         	
         }
-        if(this->carte[row][column]->getState() == 4){
+        if(this->carte[row][column]->getState() == 5){
 			if(this->carte[row][column]->getIsHospital()){
 				float randValue = rand->genrand_real1();
 				float tauxReaIfHosp;
@@ -414,6 +428,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 							this->nbPersonneHospital--;
 						}
 						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
+						this->updateStats("dead",rand);
 						this->humanGoFromTo(row,column, 0,0,rand,  true);
 						this->nbMorts++;
 						
@@ -426,7 +441,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         	
         }
         
-        if(this->carte[row][column]->getState() == 5){
+        if(this->carte[row][column]->getState() == 6){
 			if(this->carte[row][column]->getIsReanimation()){
 				float randValue = rand->genrand_real1();
 				// 50% de chances de mourir si on était en réa.
@@ -439,7 +454,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 					/*
 					this->carte[row][column] = nullptr;
 					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
-					this->updateStats("dead",rand);
+					
 					*/
 					if(this->carte[row][column]->getIsHospital()){
 						this->nbPersonneHospital--;
@@ -448,6 +463,8 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 						this->nbPersonneReanimation--;
 					}
 					this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
+					this->updateStats("dead",rand);
+					this->updateStats("dead",rand);
 					this->humanGoFromTo(row,column, 0,0,rand,  true);
 					this->nbMorts++;
 					
@@ -465,8 +482,11 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 		Si on est malade, on ne se déplace pas.
 		De plus, on est contagieux que pendant 9 jours. (2 jours avant symptomes + 9 jours après)
 		*/
-        if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 12){
-        	map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
+        if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 13){
+        
+        	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+        	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+        	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
 		    if(target_v1["empty"].size() != 0){
 		  
 		    	int taille = target_v1.at("empty").size();
@@ -480,6 +500,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 		        return newPosition;
 		        
 		    }else{
+		    	this->contamination(row,column, rand, row, column);
 		        //self.writeLog (f"Human ({row}, {column}) stay at the same position\n")
 		        return new Position(row,column);
 		    }
@@ -490,7 +511,9 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
         
     }else{
     	//Si il n'est pas malade
-    	map<string, vector<Position*>> target_v1 = this->vision(1,row,column);
+    	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+        int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+        map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
         if(target_v1["empty"].size() != 0){
             // Demander a Bruno bachelet si dans un cas comme ça, pour le return, on privilégie pointeur ou valeur.
             int taille = target_v1.at("empty").size();
@@ -553,7 +576,7 @@ void World::nextIteration(RandMT * rand){
 void World::startSimulation(int maxIterations, RandMT * rand){
     for(int iteration = 0;iteration<maxIterations;iteration++){
     	//this->displayStats();
-        //this->display();
+        this->display();
         
         World::pause();
         this->nextIteration(rand);

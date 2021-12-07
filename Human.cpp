@@ -41,7 +41,13 @@ Human::Human(RandMT* rand){
 
 void Human::contamine(){
     this->state = 1;
-    this->resistanceVirus = this->resistanceValuesByAge[this->age]; //6mois, 180 jours/itérations
+    this->resistanceVirus = this->resistanceValuesByAge[this->age];
+    this->daysSinceLastInfectionOrInjection = 0;
+}
+
+void Human::vaccine(){
+	this->resistanceVirus = this->resistanceValuesByAge[this->age];
+    this->daysSinceLastInfectionOrInjection = 0;
 }
 
 bool Human::isSick(){
@@ -132,21 +138,14 @@ int Human::getResistanceVirus(){
 	return this->resistanceVirus;
 }
 
-int Human::getVaccin(){
-	return this->vaccin;
-}
-/*
-void Human::setResistanceVirus(int res){
-	this->resistanceVirus = res;
-}
-*/
+
 void Human::decreaseResistance(){
-	this->resistanceVirus = this->resistanceVirus - 1;
+	if(this->daysSinceLastInfectionOrInjection < 90){
+		return;
+	}else if(this->daysSinceLastInfectionOrInjection >= 90 && daysSinceLastInfectionOrInjection < 160){
+		this->resistanceVirus = this->resistanceVirus - 0.01;
+	}
+	
 }
-void Human::decreaseVaccin(){
-	this->vaccin = this->vaccin - 1;
-}
-void Human::setVaccin(int res){
-	this->vaccin = res;
-}
+
 
