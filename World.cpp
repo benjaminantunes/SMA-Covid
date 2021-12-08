@@ -576,9 +576,9 @@ void World::nextIteration(RandMT * rand){
 void World::startSimulation(int maxIterations, RandMT * rand){
     for(int iteration = 0;iteration<maxIterations;iteration++){
     	//this->displayStats();
-        this->display();
+        //this->display();
         
-        World::pause();
+        //World::pause();
         this->nextIteration(rand);
         if(this->humansPosition.size() == 0){
         	cout << "no more humans in the simulation" << endl;
