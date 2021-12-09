@@ -69,8 +69,8 @@ class World{
         bool isValid(int,int);
         bool isHuman(int,int);
         bool isEmpty(int,int);
-        void addAgent(string,int,float, RandMT* ,int sicks = 0);
-        void initialize(int, RandMT*, int sicks = 0);
+        void addAgent(string,int,float, RandMT* ,int,int sicks = 0);
+        void initialize(int, RandMT*,int, int sicks = 0);
         map<string,vector<Position*>> vision (int,int,int);
         void contamination(int,int,RandMT*, int, int);
         void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);

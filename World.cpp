@@ -126,7 +126,7 @@ bool World::isEmpty(int row, int column){
 }
 
 
-void World::addAgent(string agent_name, int agents, float world_max, RandMT * rand, int sicks){
+void World::addAgent(string agent_name, int agents, float world_max, RandMT * rand,  int isVaccin ,int sicks){
 
 
     int max_agents = pow(this->size,2) * world_max;
@@ -157,6 +157,13 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 
         	
 		this->carte[row][column] = new Human(rand);
+		if(isVaccin == 1){
+			float randValue = rand->genrand_real1();
+			if(randValue < 0.6){
+				this->carte[row][column]->vaccine();
+			}
+			
+		}
 		this->updateStats("safe", rand);
 		this->humansPosition.push_back(new Position(row,column));
 		//this->writeLog("Human cree sur xxxxx");
@@ -189,10 +196,10 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 
 }
 
-void World::initialize(int humans, RandMT * rand, int sicks){
+void World::initialize(int humans, RandMT * rand,int isVaccin, int sicks){
 
     //this->writeLog("******Initialization******");
-    this->addAgent("Human", humans, World::MAX_HUMANS, rand, sicks);
+    this->addAgent("Human", humans, World::MAX_HUMANS, rand, sicks, isVaccin);
 
 }
 
