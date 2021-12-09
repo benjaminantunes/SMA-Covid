@@ -199,7 +199,7 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 void World::initialize(int humans, RandMT * rand,int isVaccin, int sicks){
 
     //this->writeLog("******Initialization******");
-    this->addAgent("Human", humans, World::MAX_HUMANS, rand, sicks, isVaccin);
+    this->addAgent("Human", humans, World::MAX_HUMANS, rand, isVaccin, sicks);
 
 }
 
