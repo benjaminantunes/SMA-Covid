@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, bool log){
+World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int nbContactHumainJournalierMalade, bool log){
 
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -25,6 +25,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     }
     this->size = size;
     this->tauxMortRea = tauxMortRea;
+	this->nbContactHumainJournalierMalade = nbContactHumainJournalierMalade;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
     this->log = log;
@@ -186,6 +187,7 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
         this->carte[row][column] = new Human(rand);
         this->updateStats("safe",rand);
         this->carte[row][column]->contamine();
+		this->nbAsymptomatique[this->iteration]++;
         this->updateStats("contamined",rand);
         this->humansPosition.push_back(new Position(row,column));
         //this->writeLog("Humain crée sur xxxx");
@@ -196,9 +198,14 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 
 }
 
-void World::initialize(int humans, RandMT * rand,int isVaccin, int sicks){
+void World::initialize(int humans, RandMT * rand,int isVaccin, int nbIteration, int sicks){
 
     //this->writeLog("******Initialization******");
+	this->nbAsymptomatique = (int*) malloc(nbIteration * sizeof(int));
+	for(int i = 0; i<nbIteration; i++){
+		this->nbAsymptomatique[i] = 0 ;
+	}
+	
     this->addAgent("Human", humans, World::MAX_HUMANS, rand, isVaccin, sicks);
 
 }
@@ -251,7 +258,7 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
 void World::contamination(int row, int column, RandMT * rand, int currentRow, int currentColumn){
 
 	float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
-
+	this->sommeContactHumainAsymptomatiqueJournalier++;
     map<string, vector<Position*>> target_v1 = this->vision(2,row,column);
     for(Position * pos : target_v1["human"]){
     
@@ -275,6 +282,7 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
 					this->nbNouveauxCas++;
+					this->nbAsymptomatique[this->iteration+1]++;
 			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
 				
 			    	this->updateStats("contamined", rand);
@@ -285,6 +293,7 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
 					this->nbNouveauxCas++;
+					this->nbAsymptomatique[this->iteration+1]++;
 			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
 				
 			    	this->updateStats("contamined", rand);
@@ -372,6 +381,7 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
 	    		this->nbCasCovidConnuTotal++;
+				this->nbAsymptomatique[this->iteration]--;
 	    		this->ageOfSymptomaticDailyHuman.push_back(this->carte[row][column]->getAge());
 	    		this->carte[row][column]->getConfined();
 	    	}
@@ -491,26 +501,44 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 		*/
         if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 13){
         
-        	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-        	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-        	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
-		    if(target_v1["empty"].size() != 0){
-		  
-		    	int taille = target_v1.at("empty").size();
-		    	int randomValue = ((long)floor(rand->genrand_int32()))%taille;
+			Position * newPosition = nullptr;
+			// En moyenne, les malades asymptomatiques doivent visiter le nombre de personne prévu, ni plus ni moins
+			// PROBLEME avec cette méthode : 1 seul malade va contaminer toutes les personnes. Ca devrait fonctionner, mais on perd l'esprit multi agent. 
+			cout << this->sommeContactHumainAsymptomatiqueJournalier << endl;
+			cout << this->nbAsymptomatique[this->iteration] << endl;
+			cout << this->nbContactHumainJournalierMalade << endl;
+			while(this->sommeContactHumainAsymptomatiqueJournalier/this->nbAsymptomatique[this->iteration] < this->nbContactHumainJournalierMalade){
 
-		        Position * newPosition = target_v1.at("empty").at(randomValue);
-		        this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
+				int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+		    	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+		    	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
+				if(target_v1["empty"].size() != 0){
+			  
+					int taille = target_v1.at("empty").size();
+					int randomValue = ((long)floor(rand->genrand_int32()))%taille;
 
-		        
-		        this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
-		        return newPosition;
-		        
-		    }else{
-		    	this->contamination(row,column, rand, row, column);
-		        //self.writeLog (f"Human ({row}, {column}) stay at the same position\n")
-		        return new Position(row,column);
-		    }
+				    newPosition = target_v1.at("empty").at(randomValue);
+				    this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
+
+				    
+				    this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
+
+
+				    //return newPosition;
+				    
+				}else{
+					this->contamination(row,column, rand, row, column);
+				    //self.writeLog (f"Human ({row}, {column}) stay at the same position\n")
+				    return new Position(row,column);
+				}
+
+			}
+			if(newPosition == nullptr){
+				return new Position(row,column);
+			}else{
+				return newPosition;
+			}
+        	
         
 		}else{
 			return new Position(row,column);
@@ -564,6 +592,7 @@ void World::nextIteration(RandMT * rand){
     this->nbNouveauxHospitalisation = 0;
     this->nbNouveauxReanimation = 0;
     this->nbMorts = 0;
+	this->sommeContactHumainAsymptomatiqueJournalier = 0;
     this->iteration += 1;
     vector<Position*> newHumansPosition;
     //self.writeLog (f'\n\n**** Iteration #{self._iteration} ****\n')
@@ -581,6 +610,8 @@ void World::nextIteration(RandMT * rand){
 }
 
 void World::startSimulation(int maxIterations, RandMT * rand){
+
+
     for(int iteration = 0;iteration<maxIterations;iteration++){
     	//this->displayStats();
         //this->display();

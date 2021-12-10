@@ -25,6 +25,7 @@ class Human {
         float resistanceValuesByAge[8] = {0.95,0.90,0.90,0.90,0.85,0.85, 0.80 ,0.80};
         int daysSinceLastInfectionOrInjection = 0;
 
+
     public:
         Human(RandMT*);
         void contamine();

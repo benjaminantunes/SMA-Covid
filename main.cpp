@@ -9,7 +9,7 @@ int main(void){
     // Initialisation par défaut comme Matsumoto
     RandMT * rand = new RandMT();
 
-    float params[10]; 
+    float params[11]; 
 	string valueParam;
 	ifstream readFile("config.txt");
 	int i = 0;
@@ -44,10 +44,13 @@ int main(void){
 	//Param [7] = multMortToHosp : int
 	//Param [8] = tauxMortRea : float
 	//Param [9] = isVaccin : int ( 0 ou 1 pour vacciner 60% de la population completement d'un coup)
+	//Param [10] = nbContactHumainJournalierMalade : int = > permet de définir le nombre d'humain que les malades vont tenter de contaminer en moyenne
+	// Je ne peux pas mettre de R0/effectif car cela reviendrai à forcer les contaminations même lorsque les humains sont immunisés.
+	// Sinon il faudrait suivre une timeline de Reffectif au cours des deux dernieres années.
 
-    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8],true);
+    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8], (int)params[10],true);
 
-    world->initialize((int)params[2],rand,(int)params[9],(int)params[3]);
+    world->initialize((int)params[2],rand,(int)params[9],(int)params[4],(int)params[3]);
 
     world->startSimulation((int)params[4],rand);
 }

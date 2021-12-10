@@ -149,3 +149,4 @@ void Human::decreaseResistance(){
 }
 
 
+

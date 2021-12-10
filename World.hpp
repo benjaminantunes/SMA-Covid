@@ -42,6 +42,9 @@ class World{
         vector<int> ageOfDeadHumansDaily;
         vector<int> ageOfSymptomaticDailyHuman;
         float tauxMortRea;
+	int nbContactHumainJournalierMalade;
+	int * nbAsymptomatique;
+	int sommeContactHumainAsymptomatiqueJournalier = 0;
         int nbNouveauxCas = 0;
         int nbPersonneHospital = 0 ;
         int nbPersonneReanimation = 0;
@@ -58,7 +61,7 @@ class World{
 
 
     public:
-        World(int,float,int,int,int,float,bool);
+        World(int,float,int,int,int,float,int,bool);
         //Pour le __exit__
         ~World();
         void writeLog(string);
@@ -70,7 +73,7 @@ class World{
         bool isHuman(int,int);
         bool isEmpty(int,int);
         void addAgent(string,int,float, RandMT* ,int,int sicks = 0);
-        void initialize(int, RandMT*,int, int sicks = 0);
+        void initialize(int, RandMT*,int,int, int sicks = 0);
         map<string,vector<Position*>> vision (int,int,int);
         void contamination(int,int,RandMT*, int, int);
         void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);
