@@ -667,7 +667,14 @@ void World::nextIteration(RandMT * rand){
 
     }
     
-    
+	cout << "nb d'humain safe : " << this->humanSafePositions.size() << endl;
+	cout << "nb d'humain asymptomatique : " << this->humanAsymptomatiquePositions.size() << endl;
+	cout << "nb d'humain confined : " << this->humanConfinedPositions.size() << endl;
+	cout << "nb d'humain hospital : " << this->humanHospitalPositions .size() << endl;
+	cout << "nb d'humain reanimation : " << this->humanReanimationPositions.size() << endl;
+
+	cout << "nb de mort total : " << this->nbMorts << endl;
+    cout << "############################\n################" << endl;
     this->humanSafePositions = this->newHumanSafePositions;
     //this->humanAsymptomatiquePositions = this->newHumanAsymptomatiquePositions;
     // Pour les asymptomatiques j'ai deux vecteurs, donc je dois les concatener pour les mettres dans le vecteur courant
