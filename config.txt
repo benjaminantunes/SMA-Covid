@@ -2,10 +2,10 @@
 0.8;taux_contamination_voisin
 20000;nbHumain
 200;nbMalade
-600;nbIteration
+10;nbIteration
 1000000;nbPlaceHospital
 1000000;nbPlaceReanimation
 4;multMortToHosp
 0.5;tauxMortRea
 1;isVaccin60%(0ou1)
-5;nbContactHumainJournalierMalade
+3;r0

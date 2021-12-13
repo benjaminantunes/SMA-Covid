@@ -44,7 +44,7 @@ int main(void){
 	//Param [7] = multMortToHosp : int
 	//Param [8] = tauxMortRea : float
 	//Param [9] = isVaccin : int ( 0 ou 1 pour vacciner 60% de la population completement d'un coup)
-	//Param [10] = nbContactHumainJournalierMalade : int = > permet de définir le nombre d'humain que les malades vont tenter de contaminer en moyenne
+	//Param [10] = r0 : int = > permet de définir le nombre d'humain que les malades vont tenter de contaminer en moyenne
 	// Je ne peux pas mettre de R0/effectif car cela reviendrai à forcer les contaminations même lorsque les humains sont immunisés.
 	// Sinon il faudrait suivre une timeline de Reffectif au cours des deux dernieres années.
 

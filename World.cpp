@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int nbContactHumainJournalierMalade, bool log){
+World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int r0, bool log){
 
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -25,7 +25,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     }
     this->size = size;
     this->tauxMortRea = tauxMortRea;
-	this->nbContactHumainJournalierMalade = nbContactHumainJournalierMalade;
+	this->r0 = r0;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
     this->log = log;
@@ -166,7 +166,7 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 			
 		}
 		this->updateStats("safe", rand);
-		this->humansPosition.push_back(new Position(row,column));
+		this->humanSafePositions.push_back(new Position(row,column));
 		//this->writeLog("Human cree sur xxxxx");
         
     }
@@ -187,9 +187,8 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
         this->carte[row][column] = new Human(rand);
         this->updateStats("safe",rand);
         this->carte[row][column]->contamine();
-		this->nbAsymptomatique[this->iteration]++;
         this->updateStats("contamined",rand);
-        this->humansPosition.push_back(new Position(row,column));
+        this->humanAsymptomatiquePositions.push_back(new Position(row,column));
         //this->writeLog("Humain crée sur xxxx");
         
 
@@ -201,11 +200,6 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 void World::initialize(int humans, RandMT * rand,int isVaccin, int nbIteration, int sicks){
 
     //this->writeLog("******Initialization******");
-	this->nbAsymptomatique = (int*) malloc(nbIteration * sizeof(int));
-	for(int i = 0; i<nbIteration; i++){
-		this->nbAsymptomatique[i] = 0 ;
-	}
-	
     this->addAgent("Human", humans, World::MAX_HUMANS, rand, isVaccin, sicks);
 
 }
@@ -258,7 +252,6 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
 void World::contamination(int row, int column, RandMT * rand, int currentRow, int currentColumn){
 
 	float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
-	this->sommeContactHumainAsymptomatiqueJournalier++;
     map<string, vector<Position*>> target_v1 = this->vision(2,row,column);
     for(Position * pos : target_v1["human"]){
     
@@ -278,31 +271,43 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 
 			if(distance == 1){
 			
-				if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){        
+				if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){ 
+				       
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
-					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
 					this->nbNouveauxCas++;
-					this->nbAsymptomatique[this->iteration+1]++;
-			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
-				
+					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
+					
+					Position * test = new Position(pos->getPosX(), pos->getPosY());
+					int index = 0;
+					for(Position * temp: this->newHumanSafePositions ){
+				        if(*temp == *test){
+				            this->newHumanSafePositions.erase(this->newHumanSafePositions.begin()+index);
+				        }
+				        index++;
+				    }
+
 			    	this->updateStats("contamined", rand);
 				}
 			
 			}else if(distance == 2){
-				if(randomValue < (histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.      
+				if(randomValue < (histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.
+				      
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
-					// Hmmmmm, les nouveaux cas, on peut peut etre les considérer que si ils sont symptomatiques ?
 					this->nbNouveauxCas++;
-					this->nbAsymptomatique[this->iteration+1]++;
-			    	//self.writeLog(f"Human ({position[0]}, {position[1]} is contamined\n")
-				
+					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
+					Position * test = new Position(pos->getPosX(), pos->getPosY());
+					int index = 0;
+					for(Position * temp: this->newHumanSafePositions ){
+				        if(*temp == *test){
+				            this->newHumanSafePositions.erase(this->newHumanSafePositions.begin()+index);
+				        }
+				        index++;
+				    }
 			    	this->updateStats("contamined", rand);
 				}
 			
 			}
-    		
-    		
-    		
+	
 		}
 	}
 	
@@ -329,51 +334,47 @@ void World::humanGoFromTo(int fromRow, int fromColumn, int toRow, int toColumn,R
     }
 }
 
-Position * World::moveHuman(int row, int column, RandMT * rand){
+void World::moveHumanSafe(int row, int column, RandMT * rand){
 
-    
-    // Chaque state est un jour
-    if(this->carte[row][column]->getState() > 11 && !this->carte[row][column]->getIsReanimation()){
-    
-    	if(this->carte[row][column]->getIsHospital()){
-    		this->nbPersonneHospital--;
-    	}
-    	
-    	this->carte[row][column]->resetState();
-    	this->updateStats("recovered",rand);
-    	
-    	
-    	
-    }
-    
-    if(this->carte[row][column]->getIsReanimation()){
-    
-    	/*
-    	Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet, a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. Entre les 2 périodes, l'âge médian est passé de 61 ans à 64 ans.
-    	
-    	Dans le service de réanimation du Pr Demoule, "la durée de séjour en réanimation est de 5 jours pour les patients non intubés. S'ils sont intubés ils restent quand même 3 semaines (même si on manque encore de recul par rapport à la 2e vague)".
-    	
-    	https://www.apmnews.com/depeche/1/355843/covid-19-en-reanimation-une-prise-en-charge-amelioree%2C-des-patients-un-peu-moins-severes
-    	*/
-    	double dureeReanimation = (rand->genrand_int32()%16) + 5; // Entre 5 jours et 21 jours de réanimation.
-    	
-    	if(this->carte[row][column]->getState() > dureeReanimation){
-    		this->nbPersonneReanimation--;
-    		this->carte[row][column]->resetState();
-    		this->updateStats("recovered",rand);
-    	}	
-    }
-
-    if(this->carte[row][column]->getResistanceVirus() > 0 ){
+	if(this->carte[row][column]->getResistanceVirus() > 0 ){
     	this->carte[row][column]->decreaseResistance();
     }
     
+	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+    int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+    map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
+    if(target_v1["empty"].size() != 0){
+        // Demander a Bruno bachelet si dans un cas comme ça, pour le return, on privilégie pointeur ou valeur.
+        int taille = target_v1.at("empty").size();
+        int randomValue = ((long)floor(rand->genrand_int32()))%taille;
+        Position * newPosition = target_v1.at("empty").at(randomValue);
+        this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
+        this->newHumanSafePositions.push_back(newPosition);
+    }else{
+    	this->newHumanSafePositions.push_back(new Position(row, column));
+    }
 
+
+}
+
+
+void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
+
+	/*
+	
+	ATTENTION :
+	INCREMENTSTATE()
+	*/
+
+	if(this->carte[row][column]->getState() > 10){
+       	this->carte[row][column]->resetState();
+    	this->updateStats("recovered",rand);
+    	this->newHumanSafePositions.push_back(new Position(row, column)); 
+    	return;
+    	 	
+    }
     
-    if(this->carte[row][column]->isSick()){
-    	
-        this->carte[row][column]->incrementState();
-        if(this->carte[row][column]->getState() == 3){
+    if(this->carte[row][column]->getState() == 3){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
         	// https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
         	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 15.0)/100;
@@ -381,187 +382,211 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
 	    		this->nbCasCovidConnuTotal++;
-				this->nbAsymptomatique[this->iteration]--;
 	    		this->ageOfSymptomaticDailyHuman.push_back(this->carte[row][column]->getAge());
 	    		this->carte[row][column]->getConfined();
-	    	}
-        	
-        	
-        }
-        
-        if(this->carte[row][column]->getState() == 4){
-			if(this->carte[row][column]->getIsConfined()){
-				//Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
-				float randValue = rand->genrand_real1();
+	    		this->newHumanConfinedPositions.push_back(new Position(row, column));
+        		return;
+	    	}     	
+	}
+	
+	/*
+	L'individu ne contamine que si il se déplace. 
+	Il y a 2 tour ou tous le monde est forcément asymptomatique (2jours de contamination potentielle)
+	Ensuite, si on est malade, on se confine, si on est a l'hopital, on est confiné, et si on est en réanimation ou mort, on est confiné aussi.
+	Si on est malade, on ne se déplace pas.
+	De plus, on est contagieux que pendant 9 jours. (2 jours avant symptomes + 9 jours après)
+	*/
+	
+    if(this->carte[row][column]->getState() < 12){
+    
 
-				if(randValue < this->table_taux_hospitalisation_by_age_by_10[this->carte[row][column]->getAge()]/100){
-					if(this->nbPersonneHospital < this->nbPlaceHospital){
-						this->carte[row][column]->goToHospital();
-						this->nbNouveauxHospitalisation++;
-						this->nbPersonneHospital++;
-					}else{
-						// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
-						if(randValue < 0.2){
-							this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
-							this->updateStats("dead",rand);
-							this->humanGoFromTo(row,column, 0,0,rand,  true);
-							
-							this->nbMorts++;
-						    ////delete newPosition;
-						    return nullptr;
-						}
-					}
-					
-				}
-        	}
-        	
-        }
-        if(this->carte[row][column]->getState() == 5){
-			if(this->carte[row][column]->getIsHospital()){
-				float randValue = rand->genrand_real1();
-				float tauxReaIfHosp;
-				
-				// On utilise la timeline, qui possède 633 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
-				if(this->iteration < 633){
-						tauxReaIfHosp = ratioHospRea[this->iteration];
-					
-					
+		int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+    	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
+    	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
+		if(target_v1["empty"].size() != 0){
+	  
+			int taille = target_v1.at("empty").size();
+			int randomValue = ((long)floor(rand->genrand_int32()))%taille;
+
+		    Position * newPosition = target_v1.at("empty").at(randomValue);
+		    this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
+
+		    
+		    this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
+
+
+		    this->newCurrentHumanAsymptomatiquePositions.push_back(newPosition);
+		    
+		}else{
+			this->contamination(row,column, rand, row, column);
+		    this->newCurrentHumanAsymptomatiquePositions.push_back(new Position(row,column));
+		}
+	
+	}
+}
+
+void World::moveHumanConfined(int row, int column, RandMT * rand){
+
+	if(this->carte[row][column]->getState() > 10){   	
+    	this->carte[row][column]->resetState();
+    	this->newHumanSafePositions.push_back(new Position(row,column));
+    	this->updateStats("recovered",rand);
+    	return;
+	
+    }
+    
+    if(this->carte[row][column]->getState() == 4){
+			
+			//Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
+			float randValue = rand->genrand_real1();
+
+			if(randValue < this->table_taux_hospitalisation_by_age_by_10[this->carte[row][column]->getAge()]/100){
+				if(this->nbPersonneHospital < this->nbPlaceHospital){
+					this->carte[row][column]->goToHospital();
+					this->newHumanHospitalPositions.push_back(new Position(row,column));
+					this->nbNouveauxHospitalisation++;
+					this->nbPersonneHospital++;
 				}else{
-				
-					tauxReaIfHosp = 0.15; // La moyenne est 0.1474089554531037
-				}
-				if(randValue < tauxReaIfHosp){
-					
-					if(this->nbPersonneReanimation < this->nbPlaceReanimation){
-						if(this->carte[row][column]->getIsHospital()){
-							this->nbPersonneHospital--;
-						}
-						this->carte[row][column]->goToReanimation();
-						this->nbNouveauxReanimation++;
-						this->nbPersonneReanimation++;
-					}else{
-						// Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
-						if(this->carte[row][column]->getIsHospital()){
-							this->nbPersonneHospital--;
-						}
+					// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
+					if(randValue < 0.2){
 						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 						this->updateStats("dead",rand);
 						this->humanGoFromTo(row,column, 0,0,rand,  true);
-						this->nbMorts++;
 						
-						////delete newPosition;
-						return nullptr;
+						this->nbMorts++;
+					    ////delete newPosition;
+					    return;
 					}
-					
 				}
-        	}
-        	
-        }
-        
-        if(this->carte[row][column]->getState() == 6){
-			if(this->carte[row][column]->getIsReanimation()){
-				float randValue = rand->genrand_real1();
-				// 50% de chances de mourir si on était en réa.
-				// L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
-				// Pour retrouver 14 % : sur 100% de contaminé -> 60% d'aller a l'hopital -> 15% d'aller en réa -> 50% de mourir.
-				// En partant de contaminé, la chance de mourir : 0.6 * 0.15 * 0.5 = 0.045. Très très loin de 0.14.
-				// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
 				
-				if(randValue < this->tauxMortRea){
-					/*
-					this->carte[row][column] = nullptr;
-					//self.writeLog(f"Human ({fromRow},{fromColumn}) go to ({toRow},{toColumn} and die)\n")
+			}else{
+				this->newHumanConfinedPositions.push_back(new Position(row,column));
+				
+			}	
+        }else{
+        	this->newHumanConfinedPositions.push_back(new Position(row,column));
+        }
+    
+    this->carte[row][column]->incrementState();
+
+}
+
+void World::moveHumanHospital(int row, int column, RandMT * rand){
+
+    if(this->carte[row][column]->getState() > 10){ 
+      	this->newHumanSafePositions.push_back(new Position(row,column));
+    	this->nbPersonneHospital--;
+    	this->carte[row][column]->resetState();
+    	this->updateStats("recovered",rand);
+    	return;
+    }
+    
+    if(this->carte[row][column]->getState() == 5){
+    
+			float randValue = rand->genrand_real1();
+			float tauxReaIfHosp;
+			
+			// On utilise la timeline, qui possède 633 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
+			if(this->iteration < 633){
+					tauxReaIfHosp = ratioHospRea[this->iteration];
+				
+				
+			}else{
+			
+				tauxReaIfHosp = 0.15; // La moyenne est 0.1474089554531037
+			}
+			if(randValue < tauxReaIfHosp){
+				
+				if(this->nbPersonneReanimation < this->nbPlaceReanimation){
 					
-					*/
-					if(this->carte[row][column]->getIsHospital()){
-						this->nbPersonneHospital--;
-					}
-					if(this->carte[row][column]->getIsReanimation()){
-						this->nbPersonneReanimation--;
-					}
+					this->nbPersonneHospital--;
+					this->newHumanReanimationPositions.push_back(new Position(row,column));
+					this->carte[row][column]->goToReanimation();
+					this->nbNouveauxReanimation++;
+					this->nbPersonneReanimation++;
+				}else{
+					// Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
+					this->nbPersonneHospital--;
+					
 					this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
-					this->updateStats("dead",rand);
 					this->updateStats("dead",rand);
 					this->humanGoFromTo(row,column, 0,0,rand,  true);
 					this->nbMorts++;
-					
-					////delete newPosition;
-					return nullptr;
+					return;
 				}
-        	}
-        	
-        }
-
-		/*
-		L'individu ne contamine que si il se déplace. 
-		Il y a 2 tour ou tous le monde est forcément asymptomatique (2jours de contamination potentielle)
-		Ensuite, si on est malade, on se confine, si on est a l'hopital, on est confiné, et si on est en réanimation ou mort, on est confiné aussi.
-		Si on est malade, on ne se déplace pas.
-		De plus, on est contagieux que pendant 9 jours. (2 jours avant symptomes + 9 jours après)
-		*/
-        if(!this->carte[row][column]->getIsConfined() && !this->carte[row][column]->getIsHospital() && !this->carte[row][column]->getIsReanimation() && this->carte[row][column]->getState() < 13){
-        
-			Position * newPosition = nullptr;
-			// En moyenne, les malades asymptomatiques doivent visiter le nombre de personne prévu, ni plus ni moins
-			// PROBLEME avec cette méthode : 1 seul malade va contaminer toutes les personnes. Ca devrait fonctionner, mais on perd l'esprit multi agent. 
-			cout << this->sommeContactHumainAsymptomatiqueJournalier << endl;
-			cout << this->nbAsymptomatique[this->iteration] << endl;
-			cout << this->nbContactHumainJournalierMalade << endl;
-			while(this->sommeContactHumainAsymptomatiqueJournalier/this->nbAsymptomatique[this->iteration] < this->nbContactHumainJournalierMalade){
-
-				int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-		    	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-		    	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
-				if(target_v1["empty"].size() != 0){
-			  
-					int taille = target_v1.at("empty").size();
-					int randomValue = ((long)floor(rand->genrand_int32()))%taille;
-
-				    newPosition = target_v1.at("empty").at(randomValue);
-				    this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
-
-				    
-				    this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
-
-
-				    //return newPosition;
-				    
-				}else{
-					this->contamination(row,column, rand, row, column);
-				    //self.writeLog (f"Human ({row}, {column}) stay at the same position\n")
-				    return new Position(row,column);
-				}
-
-			}
-			if(newPosition == nullptr){
-				return new Position(row,column);
+				
 			}else{
-				return newPosition;
+				this->newHumanHospitalPositions.push_back(new Position(row,column));
 			}
         	
-        
-		}else{
-			return new Position(row,column);
-		}
-        
-    }else{
-    	//Si il n'est pas malade
-    	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-        int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
-        map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
-        if(target_v1["empty"].size() != 0){
-            // Demander a Bruno bachelet si dans un cas comme ça, pour le return, on privilégie pointeur ou valeur.
-            int taille = target_v1.at("empty").size();
-            int randomValue = ((long)floor(rand->genrand_int32()))%taille;
-            Position * newPosition = target_v1.at("empty").at(randomValue);
-            this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
-            return newPosition;
+        	
         }else{
-            //self.writeLog (f"Human ({row}, {column}) stay at the same position\n")
-            return new Position(row, column);
+        	this->newHumanHospitalPositions.push_back(new Position(row,column));
         }
+        
+    
+    
+   	this->carte[row][column]->incrementState();
 
+}
+
+void World::moveHumanReanimation(int row, int column, RandMT * rand){
+   
+
+    
+	/*
+	Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet, a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. Entre les 2 périodes, l'âge médian est passé de 61 ans à 64 ans.
+	
+	Dans le service de réanimation du Pr Demoule, "la durée de séjour en réanimation est de 5 jours pour les patients non intubés. S'ils sont intubés ils restent quand même 3 semaines (même si on manque encore de recul par rapport à la 2e vague)".
+	
+	https://www.apmnews.com/depeche/1/355843/covid-19-en-reanimation-une-prise-en-charge-amelioree%2C-des-patients-un-peu-moins-severes
+	*/
+	
+	
+	// Ici ça ne va pas car appelé a chaque boucle => attribut durée réanimation propre a chaque humain fixé au départ?
+	double dureeReanimation = (rand->genrand_int32()%16) + 5; // Entre 5 jours et 21 jours de réanimation.
+	
+	if(this->carte[row][column]->getState() > dureeReanimation){
+		this->newHumanSafePositions.push_back(new Position(row,column));
+		this->nbPersonneReanimation--;
+		this->carte[row][column]->resetState();
+		this->updateStats("recovered",rand);
+		return;
+	}	
+ 
+
+        
+        
+        
+        
+    if(this->carte[row][column]->getState() == 6){
+		
+		float randValue = rand->genrand_real1();
+		// 50% de chances de mourir si on était en réa.
+		// L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
+		// Pour retrouver 14 % : sur 100% de contaminé -> 60% d'aller a l'hopital -> 15% d'aller en réa -> 50% de mourir.
+		// En partant de contaminé, la chance de mourir : 0.6 * 0.15 * 0.5 = 0.045. Très très loin de 0.14.
+		// Meme en prenant 100% de anciens a l'hopital, 0.15% *0.5 = 0.075. Il faudrait que les anciens aient quasi 100% de chances de mourir en réa
+		
+		if(randValue < this->tauxMortRea){
+
+			this->nbPersonneReanimation--;
+			
+			this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
+			this->updateStats("dead",rand);
+			this->humanGoFromTo(row,column, 0,0,rand,  true);
+			this->nbMorts++;
+
+
+		}else{
+			this->newHumanReanimationPositions.push_back(new Position(row,column));
+		}
+    	
+    	
+    }else{
+    	this->newHumanReanimationPositions.push_back(new Position(row,column));
     }
+    this->carte[row][column]->incrementState();
 
 }
 
@@ -569,21 +594,20 @@ Position * World::moveHuman(int row, int column, RandMT * rand){
 void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->iteration));
 	this->writeLog(to_string(this->nbNouveauxCas));
-
 	this->writeLog(to_string(this->nbPersonneHospital));
 	this->writeLog(to_string(this->nbPersonneReanimation));
 	this->writeLog(to_string(this->nbNouveauxHospitalisation));
 	this->writeLog(to_string(this->nbNouveauxReanimation));
 	this->writeLog(to_string(this->nbMorts));
 	this->writeLog(to_string(this->nbCasCovidConnuTotal));
-	//this->writeLog("XX");
+
 	for (int age: this->ageOfSymptomaticDailyHuman) {
         this->writeLog("AgeC:" + to_string(age));
     }
 	for (int age: this->ageOfDeadHumansDaily) {
         this->writeLog("AgeD:" + to_string(age));
     }
-	//this->writeLog("XX");
+
 	
 	this->writeLog("##########");
 	this->ageOfSymptomaticDailyHuman.clear();
@@ -592,22 +616,90 @@ void World::nextIteration(RandMT * rand){
     this->nbNouveauxHospitalisation = 0;
     this->nbNouveauxReanimation = 0;
     this->nbMorts = 0;
-	this->sommeContactHumainAsymptomatiqueJournalier = 0;
     this->iteration += 1;
-    vector<Position*> newHumansPosition;
-    //self.writeLog (f'\n\n**** Iteration #{self._iteration} ****\n')
-    for(Position * temp: this->humansPosition){
 
-        Position * newPosition = this->moveHuman(temp->getPosX(),temp->getPosY(), rand);
 
-        if(newPosition != nullptr){
-            //self.writeLog(f' [DEBUG] -  Adding {newPosition}\n')
-            newHumansPosition.push_back(newPosition);
-            //delete newPosition;
-        }
+    for(Position * temp: this->humanSafePositions){
+
+        this->moveHumanSafe(temp->getPosX(),temp->getPosY(), rand);
     }
-    this->humansPosition = newHumansPosition;
+    
+//////////////////////////////////////////////////////////////////// 
+	// Ce code est provisoire, afin de connaitre le nombre d'iteration à avoir sur Paris pour avoir un r0 de 3 sur les premiers jours de l'épidémie.
+	int nbBoucle = 0;
+  	while(this->nbNouveauxCas < this->humanAsymptomatiquePositions.size() * this->r0 ){
+  		nbBoucle++;
+  		cout << "nbNouvCas : " << nbNouveauxCas << endl;
+  		cout << "nb human asymptomatique" << this->humanAsymptomatiquePositions.size() << endl;
+  		for(Position * temp: this->humanAsymptomatiquePositions){
+
+        	this->moveHumanAsymptomatique(temp->getPosX(),temp->getPosY(), rand);
+    	}
+    	this->humanAsymptomatiquePositions = this->newCurrentHumanAsymptomatiquePositions;
+    	this->newCurrentHumanAsymptomatiquePositions.clear();
+  	}
+    for(Position * temp: this->humanAsymptomatiquePositions){
+
+    	this->carte[temp->getPosX()][temp->getPosY()]->incrementState();
+	}
+	cout << "nb boucle total : " << nbBoucle << endl;
+    
+//////////////////////////////////////////////////////////   
+	cout << "jui la 1"<< endl;
+    for(Position * temp: this->humanConfinedPositions){
+
+        this->moveHumanConfined(temp->getPosX(),temp->getPosY(), rand);
+
+    }
+    
+////////////////////////////////////////////////////////////   
+	cout << "jui la 2"<< endl;
+    for(Position * temp: this->humanHospitalPositions){
+
+        this->moveHumanHospital(temp->getPosX(),temp->getPosY(), rand);
+
+    }
+    
+///////////////////////////////////////////////////////////////
+    cout << "jui la 3"<< endl;
+    for(Position * temp: this->humanReanimationPositions){
+
+        this->moveHumanReanimation(temp->getPosX(),temp->getPosY(), rand);
+
+
+    }
+    
+    
+    this->humanSafePositions = this->newHumanSafePositions;
+    //this->humanAsymptomatiquePositions = this->newHumanAsymptomatiquePositions;
+    // Pour les asymptomatiques j'ai deux vecteurs, donc je dois les concatener pour les mettres dans le vecteur courant
+    
+    cout << "current size = " << this->newCurrentHumanAsymptomatiquePositions.size() << endl;
+    cout << "nouv contamine size = " << this->newNextHumanAsymptomatiquePositions.size() << endl;
+    cout << "ancien contamine size = " << this->humanAsymptomatiquePositions.size() << endl;
+    
+    
+	this->humanAsymptomatiquePositions.insert(this->humanAsymptomatiquePositions.end(), this->newNextHumanAsymptomatiquePositions.begin(), this->newNextHumanAsymptomatiquePositions.end());
+	
+	cout << "ancien contamine size + nouv contamine size = " << this->humanAsymptomatiquePositions.size() << endl;
+	
+    this->humanConfinedPositions = this->newHumanConfinedPositions;
+    this->humanHospitalPositions = this->newHumanHospitalPositions;
+    this->humanReanimationPositions = this->newHumanReanimationPositions;
+    // Cette section ne va fonctionner que si le "=" fait une copie, car si le "=" passe le pointeur au début du vecteur, alors le clear() va également écraser le nouveau.
+    
+    this->newHumanSafePositions.clear();
+    this->newCurrentHumanAsymptomatiquePositions.clear();
+    this->newNextHumanAsymptomatiquePositions.clear();
+    this->newHumanConfinedPositions.clear();
+    this->newHumanHospitalPositions.clear();
+    this->newHumanReanimationPositions.clear();
+    
 }
+
+
+
+
 
 void World::startSimulation(int maxIterations, RandMT * rand){
 
@@ -618,11 +710,13 @@ void World::startSimulation(int maxIterations, RandMT * rand){
         
         //World::pause();
         this->nextIteration(rand);
+        /*
         if(this->humansPosition.size() == 0){
         	cout << "no more humans in the simulation" << endl;
             //self.writeLog('[STOP] No more human in the simulation !\n')
             break;
         }
+        */
     }
     
     

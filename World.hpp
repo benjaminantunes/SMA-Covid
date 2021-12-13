@@ -15,24 +15,37 @@ class World{
         // Problème pour la taille dynamique de la map : Agent *** _map sera mieux, je ferai ça
         Human *** carte;
         
-	float taux_contamination_voisin;
+		float taux_contamination_voisin;
 	
-	int nbPlaceHospital;
-	int nbPlaceReanimation;
+		int nbPlaceHospital;
+		int nbPlaceReanimation;
 	
-	// On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
-	// Ces chiffres sont purement arbitraires, à mettre en param
-	float table_taux_mortalite_by_age_by_10[8] = {0, 0.2, 0.2, 0.4, 1.3, 3.6, 8, 14.8};
-	//float table_taux_reanimation_by_age_by_10[9] = {0, 0.4, 0.4, 0.4, 0.8, 2.6, 7.2, 16, 29.6};
-	//float table_taux_hospitalisation_by_age_by_10[9] = {0, 0.8, 0.8, 0.8, 1.6, 5.2, 14.4, 32, 59.2};
-	//float table_taux_reanimation_by_age_by_10[9];
-	float table_taux_hospitalisation_by_age_by_10[8];
+		// On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
+		// Ces chiffres sont purement arbitraires, à mettre en param
+		float table_taux_mortalite_by_age_by_10[8] = {0, 0.2, 0.2, 0.4, 1.3, 3.6, 8, 14.8};
+		//float table_taux_reanimation_by_age_by_10[9] = {0, 0.4, 0.4, 0.4, 0.8, 2.6, 7.2, 16, 29.6};
+		//float table_taux_hospitalisation_by_age_by_10[9] = {0, 0.8, 0.8, 0.8, 1.6, 5.2, 14.4, 32, 59.2};
+		//float table_taux_reanimation_by_age_by_10[9];
+		float table_taux_hospitalisation_by_age_by_10[8];
 
         //Position humansPosition[80] = NULL;
-        vector<Position *> humansPosition;
+        vector<Position *> humanSafePositions;
+        vector<Position *> humanAsymptomatiquePositions;
+        vector<Position *> humanConfinedPositions;
+        vector<Position *> humanHospitalPositions;
+        vector<Position *> humanReanimationPositions;
+        
+        vector<Position*> newHumanSafePositions;
+		vector<Position*> newCurrentHumanAsymptomatiquePositions;
+		vector<Position*> newNextHumanAsymptomatiquePositions;
+		vector<Position*> newHumanConfinedPositions;
+		vector<Position*> newHumanHospitalPositions;
+		vector<Position*> newHumanReanimationPositions;
+	
         bool log = false;
         fstream logfile;
         int iteration = 0;
+        int r0;
 
         map<string, int> stats;
 
@@ -42,9 +55,6 @@ class World{
         vector<int> ageOfDeadHumansDaily;
         vector<int> ageOfSymptomaticDailyHuman;
         float tauxMortRea;
-	int nbContactHumainJournalierMalade;
-	int * nbAsymptomatique;
-	int sommeContactHumainAsymptomatiqueJournalier = 0;
         int nbNouveauxCas = 0;
         int nbPersonneHospital = 0 ;
         int nbPersonneReanimation = 0;
@@ -77,7 +87,14 @@ class World{
         map<string,vector<Position*>> vision (int,int,int);
         void contamination(int,int,RandMT*, int, int);
         void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);
-        Position * moveHuman(int,int, RandMT*);
+        
+        // Si on avait eu plusieurs classes héritant de human pour asymp, hops, etc, on aurait pu utiliser le polymorphisme sur une seule fonction.
+        void moveHumanSafe(int,int, RandMT*);
+        void moveHumanAsymptomatique(int,int, RandMT*);
+        void moveHumanConfined(int,int, RandMT*);
+        void moveHumanHospital(int,int, RandMT*);
+        void moveHumanReanimation(int,int, RandMT*);
+        
         void nextIteration(RandMT*);
         void startSimulation(int, RandMT*);
 
