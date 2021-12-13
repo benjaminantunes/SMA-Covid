@@ -545,7 +545,7 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 	
 	
 	// Ici ça ne va pas car appelé a chaque boucle => attribut durée réanimation propre a chaque humain fixé au départ?
-	double dureeReanimation = (rand->genrand_int32()%16) + 5; // Entre 5 jours et 21 jours de réanimation.
+	double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
 	
 	if(this->carte[row][column]->getState() > dureeReanimation){
 		this->newHumanSafePositions.push_back(new Position(row,column));
@@ -577,6 +577,7 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 			this->updateStats("dead",rand);
 			this->humanGoFromTo(row,column, 0,0,rand,  true);
 			this->nbMorts++;
+			return;
 
 
 		}else{
