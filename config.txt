@@ -2,7 +2,7 @@
 0.8;taux_contamination_voisin
 20000;nbHumain
 200;nbMalade
-10;nbIteration
+600;nbIteration
 1000000;nbPlaceHospital
 1000000;nbPlaceReanimation
 4;multMortToHosp

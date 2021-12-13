@@ -363,7 +363,8 @@ void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
 	/*
 	
 	ATTENTION :
-	INCREMENTSTATE()
+	INCREMENTSTATE() dans le code apellant. On peut faire plusieurs déplacement dans 1 seule journée (sans augmenter le state)
+	
 	*/
 
 	if(this->carte[row][column]->getState() > 10){
@@ -626,11 +627,10 @@ void World::nextIteration(RandMT * rand){
     
 //////////////////////////////////////////////////////////////////// 
 	// Ce code est provisoire, afin de connaitre le nombre d'iteration à avoir sur Paris pour avoir un r0 de 3 sur les premiers jours de l'épidémie.
-	int nbBoucle = 0;
-  	while(this->nbNouveauxCas < this->humanAsymptomatiquePositions.size() * this->r0 ){
-  		nbBoucle++;
-  		cout << "nbNouvCas : " << nbNouveauxCas << endl;
-  		cout << "nb human asymptomatique" << this->humanAsymptomatiquePositions.size() << endl;
+	//int nbBoucle = 0;
+  	//while(this->nbNouveauxCas < this->humanAsymptomatiquePositions.size() * this->r0 ){
+  		//nbBoucle++;
+  	for(int x = 0; x < 88; x++){
   		for(Position * temp: this->humanAsymptomatiquePositions){
 
         	this->moveHumanAsymptomatique(temp->getPosX(),temp->getPosY(), rand);
@@ -642,10 +642,9 @@ void World::nextIteration(RandMT * rand){
 
     	this->carte[temp->getPosX()][temp->getPosY()]->incrementState();
 	}
-	cout << "nb boucle total : " << nbBoucle << endl;
+
     
 //////////////////////////////////////////////////////////   
-	cout << "jui la 1"<< endl;
     for(Position * temp: this->humanConfinedPositions){
 
         this->moveHumanConfined(temp->getPosX(),temp->getPosY(), rand);
@@ -653,7 +652,6 @@ void World::nextIteration(RandMT * rand){
     }
     
 ////////////////////////////////////////////////////////////   
-	cout << "jui la 2"<< endl;
     for(Position * temp: this->humanHospitalPositions){
 
         this->moveHumanHospital(temp->getPosX(),temp->getPosY(), rand);
@@ -661,7 +659,6 @@ void World::nextIteration(RandMT * rand){
     }
     
 ///////////////////////////////////////////////////////////////
-    cout << "jui la 3"<< endl;
     for(Position * temp: this->humanReanimationPositions){
 
         this->moveHumanReanimation(temp->getPosX(),temp->getPosY(), rand);
@@ -674,14 +671,10 @@ void World::nextIteration(RandMT * rand){
     //this->humanAsymptomatiquePositions = this->newHumanAsymptomatiquePositions;
     // Pour les asymptomatiques j'ai deux vecteurs, donc je dois les concatener pour les mettres dans le vecteur courant
     
-    cout << "current size = " << this->newCurrentHumanAsymptomatiquePositions.size() << endl;
-    cout << "nouv contamine size = " << this->newNextHumanAsymptomatiquePositions.size() << endl;
-    cout << "ancien contamine size = " << this->humanAsymptomatiquePositions.size() << endl;
     
     
 	this->humanAsymptomatiquePositions.insert(this->humanAsymptomatiquePositions.end(), this->newNextHumanAsymptomatiquePositions.begin(), this->newNextHumanAsymptomatiquePositions.end());
 	
-	cout << "ancien contamine size + nouv contamine size = " << this->humanAsymptomatiquePositions.size() << endl;
 	
     this->humanConfinedPositions = this->newHumanConfinedPositions;
     this->humanHospitalPositions = this->newHumanHospitalPositions;
