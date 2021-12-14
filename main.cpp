@@ -5,9 +5,11 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-int main(void){
+int main(int argc, char ** argv){
+
+	
     // Initialisation par défaut comme Matsumoto
-    RandMT * rand = new RandMT();
+    RandMT * rand = new RandMT(argv[1]);
 
     float params[11]; 
 	string valueParam;
@@ -52,5 +54,8 @@ int main(void){
 
     world->initialize((int)params[2],rand,(int)params[9],(int)params[4],(int)params[3]);
 
-    world->startSimulation((int)params[4],rand);
+	//for(int i = 0; i < atoi(argv[2]) ; i ++){
+	world->startSimulation((int)params[4],rand);
+	//}
+    
 }

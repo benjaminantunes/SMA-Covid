@@ -161,7 +161,7 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 		if(isVaccin == 1){
 			float randValue = rand->genrand_real1();
 			if(randValue < 0.6){
-				this->carte[row][column]->vaccine();
+				this->carte[row][column]->vaccine(rand);
 			}
 			
 		}
@@ -378,7 +378,7 @@ void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
     if(this->carte[row][column]->getState() == 3){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
         	// https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
-        	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 15.0)/100;
+        	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 16.0)/100;
     		float randValue = rand->genrand_real1();
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
@@ -451,7 +451,7 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 					// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
 					if(randValue < 0.2){
 						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
-						this->updateStats("dead",rand);
+						//this->updateStats("dead",rand);
 						this->humanGoFromTo(row,column, 0,0,rand,  true);
 						
 						this->nbMorts++;
@@ -510,7 +510,7 @@ void World::moveHumanHospital(int row, int column, RandMT * rand){
 					this->nbPersonneHospital--;
 					
 					this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
-					this->updateStats("dead",rand);
+					//this->updateStats("dead",rand);
 					this->humanGoFromTo(row,column, 0,0,rand,  true);
 					this->nbMorts++;
 					return;
@@ -574,7 +574,7 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 			this->nbPersonneReanimation--;
 			
 			this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
-			this->updateStats("dead",rand);
+			//this->updateStats("dead",rand);
 			this->humanGoFromTo(row,column, 0,0,rand,  true);
 			this->nbMorts++;
 			return;
@@ -620,18 +620,20 @@ void World::nextIteration(RandMT * rand){
     this->nbMorts = 0;
     this->iteration += 1;
 
-
+	cout << "nb d'humain safe que l'on va traiter : " << this->humanSafePositions.size() << endl;
     for(Position * temp: this->humanSafePositions){
 
         this->moveHumanSafe(temp->getPosX(),temp->getPosY(), rand);
     }
-    
+    cout << "nb d'humain safe que l'on aura a la prochaine iteration (doit etre égal) : " << this->newHumanSafePositions.size() << endl;
 //////////////////////////////////////////////////////////////////// 
 	// Ce code est provisoire, afin de connaitre le nombre d'iteration à avoir sur Paris pour avoir un r0 de 3 sur les premiers jours de l'épidémie.
 	//int nbBoucle = 0;
   	//while(this->nbNouveauxCas < this->humanAsymptomatiquePositions.size() * this->r0 ){
   		//nbBoucle++;
-  	for(int x = 0; x < 88; x++){
+
+	cout << "nb d'humain asymptomatique que l'on va traiter : " << this->humanAsymptomatiquePositions.size() << endl;
+  	for(int x = 0; x < 12; x++){
   		for(Position * temp: this->humanAsymptomatiquePositions){
 
         	this->moveHumanAsymptomatique(temp->getPosX(),temp->getPosY(), rand);
@@ -644,28 +646,49 @@ void World::nextIteration(RandMT * rand){
     	this->carte[temp->getPosX()][temp->getPosY()]->incrementState();
 	}
 
-    
-//////////////////////////////////////////////////////////   
+	cout << "nb d'humain asymptomatique ensuite (doivent etre les meme moins ceux envoyé en safe et en confined) : " << this->humanAsymptomatiquePositions.size() << endl;
+	cout << "nb d'humain safe que l'on aura a la prochaine iteration (ici on retire les nouveaux asymptomatiques et on ajoute les nouveaux safe) : " << this->newHumanSafePositions.size() << endl;
+	cout << "nb de nouveaux humain confined : " << this->newHumanConfinedPositions.size() << endl;
+    cout << "nb de nouveaux humain asymptomatique : " << this->newNextHumanAsymptomatiquePositions.size() << endl;
+	
+//////////////////////////////////////////////////////////  
+	cout << "nb humains confined actuellement : " << this->humanConfinedPositions.size() << endl;
+	 
     for(Position * temp: this->humanConfinedPositions){
 
         this->moveHumanConfined(temp->getPosX(),temp->getPosY(), rand);
 
     }
-    
-////////////////////////////////////////////////////////////   
+    cout << "nb humains confined futur (on retire ceux qu'on envoi a l'hopital + safe) : " << this->newHumanConfinedPositions.size() << endl;
+	cout << "nb humains hospital futur : " << this->newHumanHospitalPositions.size() << endl;
+	cout << "nb d'humain safe que l'on aura a la prochaine iteration (on ajoute ceux qui sortent de l'hospital) : " << this->newHumanSafePositions.size() << endl;
+////////////////////////////////////////////////////////////
+
+	cout << "nb humains hospital acutel : " << this->humanHospitalPositions.size() << endl;  
     for(Position * temp: this->humanHospitalPositions){
 
         this->moveHumanHospital(temp->getPosX(),temp->getPosY(), rand);
 
     }
-    
+    cout << "nb humains hospital futur (on retire ceux qu'on envoi en rea + mort + safe) : " << this->newHumanHospitalPositions.size() << endl;
+	cout << "nb humains réa futur : " << this->newHumanReanimationPositions.size() << endl;
+	cout << "nb humains safe futur : " << this->newHumanSafePositions.size() << endl;
+	cout << "nb mort : " << this->nbMorts << endl;
+	
 ///////////////////////////////////////////////////////////////
+
+	cout << "nb humains reanimlation acutel : " << this->humanReanimationPositions.size() << endl;
     for(Position * temp: this->humanReanimationPositions){
 
         this->moveHumanReanimation(temp->getPosX(),temp->getPosY(), rand);
 
 
     }
+
+	cout << "nb humains reanimation futur (on retire ceux qu'on envoi  mort + safe : " << this->newHumanReanimationPositions.size() << endl;
+	cout << "nb humains safe futur : " << this->newHumanSafePositions.size() << endl;
+	cout << "nb mort : " << this->nbMorts << endl;
+	
     
 	cout << "nb d'humain safe : " << this->humanSafePositions.size() << endl;
 	cout << "nb d'humain asymptomatique : " << this->humanAsymptomatiquePositions.size() << endl;

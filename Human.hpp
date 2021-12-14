@@ -22,14 +22,17 @@ class Human {
         bool isReanimation = false;
         int resistanceVirus = 0;
         //int vaccin = 0;
-        float resistanceValuesByAge[8] = {0.95,0.90,0.90,0.90,0.85,0.85, 0.80 ,0.80};
+        float resistanceInfectionValuesByAge[8] = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
+	float maxResistanceInjectionValuesByAge[8] = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
+	float minResistanceInjectionValuesByAge[8] = {0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3};
+
         int daysSinceLastInfectionOrInjection = 0;
 
 
     public:
         Human(RandMT*);
         void contamine();
-        void vaccine();
+        void vaccine(RandMT*);
         bool isSick();
         int getState();
         int getAge();
