@@ -71,7 +71,7 @@ class World{
 
 
     public:
-        World(int,float,int,int,int,float,int,bool);
+        World(int,float,int,int,int,float,int,char *, bool);
         //Pour le __exit__
         ~World();
         void writeLog(string);

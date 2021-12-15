@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int r0, bool log){
+World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int r0, char * nomFichierLog, bool log){
 
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -35,7 +35,7 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     this->stats["safe"] = 0;
 
     if(this->log){
-        this->logfile.open("log.txt",ios::out);
+        this->logfile.open(nomFichierLog,ios::out);
     }
     
     
