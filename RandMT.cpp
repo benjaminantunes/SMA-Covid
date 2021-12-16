@@ -163,8 +163,12 @@ uint32_t RandMT::genrand_int32(void)
 	y ^= (y << 7) & 0x9d2c5680UL;
 	y ^= (y << 15) & 0xefc60000UL;
 	y ^= (y >> 18);
-
+	compteur++;
 	return y;
+}
+
+int RandMT::getCompteur(){
+	return compteur;
 }
 
 /* generates a random number on [0,0x7fffffff]-interval */

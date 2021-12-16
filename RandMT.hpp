@@ -34,11 +34,12 @@ typdef uint32_t unsigned __int32;
 using namespace std;
 
 static uint32_t	mag01[2] = {0x0UL, MATRIX_A};
-
+static int compteur = 0;
 class RandMT {
 
 	uint32_t mt[N];
 	int mti = N +1;
+	
 
 
 public:
@@ -54,6 +55,7 @@ public:
 	double genrand_real2(void);
 	double genrand_real3(void);
 	double genrand_res53(void);
+	int getCompteur();
 	void saveStatus(string inFileName);
 	void restoreStatus(string inFileName);
 

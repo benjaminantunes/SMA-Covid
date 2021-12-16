@@ -620,19 +620,19 @@ void World::nextIteration(RandMT * rand){
     this->nbMorts = 0;
     this->iteration += 1;
 
-	cout << "nb d'humain safe que l'on va traiter : " << this->humanSafePositions.size() << endl;
+	
     for(Position * temp: this->humanSafePositions){
 
         this->moveHumanSafe(temp->getPosX(),temp->getPosY(), rand);
     }
-    cout << "nb d'humain safe que l'on aura a la prochaine iteration (doit etre égal) : " << this->newHumanSafePositions.size() << endl;
+
 //////////////////////////////////////////////////////////////////// 
 	// Ce code est provisoire, afin de connaitre le nombre d'iteration à avoir sur Paris pour avoir un r0 de 3 sur les premiers jours de l'épidémie.
 	//int nbBoucle = 0;
   	//while(this->nbNouveauxCas < this->humanAsymptomatiquePositions.size() * this->r0 ){
   		//nbBoucle++;
 
-	cout << "nb d'humain asymptomatique que l'on va traiter : " << this->humanAsymptomatiquePositions.size() << endl;
+	
   	for(int x = 0; x < 12; x++){
   		for(Position * temp: this->humanAsymptomatiquePositions){
 
@@ -646,38 +646,30 @@ void World::nextIteration(RandMT * rand){
     	this->carte[temp->getPosX()][temp->getPosY()]->incrementState();
 	}
 
-	cout << "nb d'humain asymptomatique ensuite (doivent etre les meme moins ceux envoyé en safe et en confined) : " << this->humanAsymptomatiquePositions.size() << endl;
-	cout << "nb d'humain safe que l'on aura a la prochaine iteration (ici on retire les nouveaux asymptomatiques et on ajoute les nouveaux safe) : " << this->newHumanSafePositions.size() << endl;
-	cout << "nb de nouveaux humain confined : " << this->newHumanConfinedPositions.size() << endl;
-    cout << "nb de nouveaux humain asymptomatique : " << this->newNextHumanAsymptomatiquePositions.size() << endl;
+	
 	
 //////////////////////////////////////////////////////////  
-	cout << "nb humains confined actuellement : " << this->humanConfinedPositions.size() << endl;
+
 	 
     for(Position * temp: this->humanConfinedPositions){
 
         this->moveHumanConfined(temp->getPosX(),temp->getPosY(), rand);
 
     }
-    cout << "nb humains confined futur (on retire ceux qu'on envoi a l'hopital + safe) : " << this->newHumanConfinedPositions.size() << endl;
-	cout << "nb humains hospital futur : " << this->newHumanHospitalPositions.size() << endl;
-	cout << "nb d'humain safe que l'on aura a la prochaine iteration (on ajoute ceux qui sortent de l'hospital) : " << this->newHumanSafePositions.size() << endl;
+
 ////////////////////////////////////////////////////////////
 
-	cout << "nb humains hospital acutel : " << this->humanHospitalPositions.size() << endl;  
+	
     for(Position * temp: this->humanHospitalPositions){
 
         this->moveHumanHospital(temp->getPosX(),temp->getPosY(), rand);
 
     }
-    cout << "nb humains hospital futur (on retire ceux qu'on envoi en rea + mort + safe) : " << this->newHumanHospitalPositions.size() << endl;
-	cout << "nb humains réa futur : " << this->newHumanReanimationPositions.size() << endl;
-	cout << "nb humains safe futur : " << this->newHumanSafePositions.size() << endl;
-	cout << "nb mort : " << this->nbMorts << endl;
+
 	
 ///////////////////////////////////////////////////////////////
 
-	cout << "nb humains reanimlation acutel : " << this->humanReanimationPositions.size() << endl;
+	
     for(Position * temp: this->humanReanimationPositions){
 
         this->moveHumanReanimation(temp->getPosX(),temp->getPosY(), rand);
@@ -685,19 +677,7 @@ void World::nextIteration(RandMT * rand){
 
     }
 
-	cout << "nb humains reanimation futur (on retire ceux qu'on envoi  mort + safe : " << this->newHumanReanimationPositions.size() << endl;
-	cout << "nb humains safe futur : " << this->newHumanSafePositions.size() << endl;
-	cout << "nb mort : " << this->nbMorts << endl;
-	
-    
-	cout << "nb d'humain safe : " << this->humanSafePositions.size() << endl;
-	cout << "nb d'humain asymptomatique : " << this->humanAsymptomatiquePositions.size() << endl;
-	cout << "nb d'humain confined : " << this->humanConfinedPositions.size() << endl;
-	cout << "nb d'humain hospital : " << this->humanHospitalPositions .size() << endl;
-	cout << "nb d'humain reanimation : " << this->humanReanimationPositions.size() << endl;
 
-	cout << "nb de mort total : " << this->nbMorts << endl;
-    cout << "############################\n################" << endl;
     this->humanSafePositions = this->newHumanSafePositions;
     //this->humanAsymptomatiquePositions = this->newHumanAsymptomatiquePositions;
     // Pour les asymptomatiques j'ai deux vecteurs, donc je dois les concatener pour les mettres dans le vecteur courant
@@ -743,7 +723,11 @@ void World::startSimulation(int maxIterations, RandMT * rand){
         */
     }
     
-    
+    fstream compteurLogFile;
+
+	compteurLogFile.open("compteur.txt",ios::out);
+	compteurLogFile << rand->getCompteur();
+	compteurLogFile << endl;
     //self.writeLog(f' [STOP] Maximum number of iterations reached ({maxIterations}) end of the simulation!\n')
     //cout << "\033[2J" << endl;
     this->displayStats();
