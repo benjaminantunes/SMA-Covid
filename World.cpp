@@ -251,7 +251,7 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
 
 void World::contamination(int row, int column, RandMT * rand, int currentRow, int currentColumn){
 
-	float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
+	//float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
     map<string, vector<Position*>> target_v1 = this->vision(2,row,column);
     for(Position * pos : target_v1["human"]){
     
@@ -378,7 +378,8 @@ void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
     if(this->carte[row][column]->getState() == 3){
         	// Proportion de asymptomatique varie de 15 à 30% selon les études. Param ?
         	// https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
-        	float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 16.0)/100;
+
+        	//float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 16.0)/100;
     		float randValue = rand->genrand_real1();
 	    	if(randValue < 1 - pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
@@ -449,6 +450,8 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 					this->nbPersonneHospital++;
 				}else{
 					// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
+
+					//### tauxDeChanceDeMourirHospitalFull
 					if(randValue < 0.2){
 						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 						//this->updateStats("dead",rand);
@@ -502,7 +505,7 @@ void World::moveHumanHospital(int row, int column, RandMT * rand){
 					
 					this->nbPersonneHospital--;
 					this->newHumanReanimationPositions.push_back(new Position(row,column));
-					this->carte[row][column]->goToReanimation();
+					this->carte[row][column]->goToReanimation(rand);
 					this->nbNouveauxReanimation++;
 					this->nbPersonneReanimation++;
 				}else{
@@ -545,7 +548,9 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 	
 	
 	// Ici ça ne va pas car appelé a chaque boucle => attribut durée réanimation propre a chaque humain fixé au départ?
-	double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
+
+
+	//double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
 	
 	if(this->carte[row][column]->getState() > dureeReanimation){
 		this->newHumanSafePositions.push_back(new Position(row,column));

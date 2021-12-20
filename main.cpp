@@ -14,6 +14,7 @@ int main(int argc, char ** argv){
 	//argv[3] = le nom du fichier de log à utiliser
     RandMT * rand = new RandMT(argv[1]);
 
+	/*
     float params[11]; 
 	string valueParam;
 	ifstream readFile(argv[2]);
@@ -52,7 +53,11 @@ int main(int argc, char ** argv){
 	//Param [10] = r0 : int = > permet de définir le nombre d'humain que les malades vont tenter de contaminer en moyenne
 	// Je ne peux pas mettre de R0/effectif car cela reviendrai à forcer les contaminations même lorsque les humains sont immunisés.
 	// Sinon il faudrait suivre une timeline de Reffectif au cours des deux dernieres années.
+	*/
 
+	//#############
+//#################
+	// Ici je vais instancier un objet SimulationParams, qui va aller récupérer tous les paramètres. Ensuite, je passe cet objet dans le constructeur de World au lieu de tous les params.
     World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8], (int)params[10], argv[3], true);
 
     world->initialize((int)params[2],rand,(int)params[9],(int)params[4],(int)params[3]);

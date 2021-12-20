@@ -21,11 +21,13 @@ class Human {
         bool isHospital = false;
         bool isReanimation = false;
         int resistanceVirus = 0;
-        //int vaccin = 0;
-        float resistanceInfectionValuesByAge[8] = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
-	float maxResistanceInjectionValuesByAge[8] = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
-	float minResistanceInjectionValuesByAge[8] = {0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3};
-
+        //float resistanceInfectionValuesByAge[8] = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
+		float resistanceInfectionValuesByAge[8];
+		//float maxResistanceInjectionValuesByAge[8] = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
+		float maxResistanceInjectionValuesByAge[8];
+		//float minResistanceInjectionValuesByAge[8] = {0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3};
+		float minResistanceInjectionValuesByAge[8];
+		int dureeReanimation = 0;
         int daysSinceLastInfectionOrInjection = 0;
 
 
@@ -43,7 +45,7 @@ class Human {
         char to_string();
         void getConfined();
         void goToHospital();
-        void goToReanimation();
+        void goToReanimation(RandMT*);
         int getPositionRow();
         int getPositionColumn();
         void setPosition(int,int);

@@ -126,10 +126,12 @@ void Human::goToHospital(){
 	this->isHospital = true;
 	this->isReanimation = false;
 }
-void Human::goToReanimation(){
+void Human::goToReanimation(RandMT * rand){
 	this->isConfined = false;
 	this->isHospital = false;
 	this->isReanimation = true;
+	this->dureeReanimation = (rand->genrand_int32()%26) + 10; // Entre 10 et 25 jours de rea, sachant qu'on a deja 5 jours de maladie (State)
+	// Ca fait donc entre 5 et 20 jours de rea.
 }
 
 bool Human::getIsConfined(){
