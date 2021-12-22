@@ -14,56 +14,16 @@ int main(int argc, char ** argv){
 	//argv[3] = le nom du fichier de log à utiliser
     RandMT * rand = new RandMT(argv[1]);
 
-	/*
-    float params[11]; 
-	string valueParam;
-	ifstream readFile(argv[2]);
-	int i = 0;
-	
-	
 
-	string delimiter = ";";
-	
-	
-	while (getline (readFile, valueParam)) {
-	
-		string token = valueParam.substr(0, valueParam.find(delimiter));
-		if(i == 1 || i == 8){
-			params[i] = stof(token);
-			i++;
-		}else{
-			params[i] = stoi(token);
-			i++;
-		}
-		
-	}
-
-	readFile.close();
-	
-	//Param [0] = size : int
-	//Param [1] = taux_contamination_voisin : float
-	//Param [2] = nombre d'humain : int
-	//Param [3] = nombre de malade : int
-	//Param [4] = nombre d'itération : int
-	//Param [5] = nbPlaceHospital : int
-	//Param [6] = nbPlaceReanimation : int
-	//Param [7] = multMortToHosp : int
-	//Param [8] = tauxMortRea : float
-	//Param [9] = isVaccin : int ( 0 ou 1 pour vacciner 60% de la population completement d'un coup)
-	//Param [10] = r0 : int = > permet de définir le nombre d'humain que les malades vont tenter de contaminer en moyenne
-	// Je ne peux pas mettre de R0/effectif car cela reviendrai à forcer les contaminations même lorsque les humains sont immunisés.
-	// Sinon il faudrait suivre une timeline de Reffectif au cours des deux dernieres années.
-	*/
-
-	//#############
-//#################
 	// Ici je vais instancier un objet SimulationParams, qui va aller récupérer tous les paramètres. Ensuite, je passe cet objet dans le constructeur de World au lieu de tous les params.
-    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8], (int)params[10], argv[3], true);
 
-    world->initialize((int)params[2],rand,(int)params[9],(int)params[4],(int)params[3]);
+	SimulationParams * simulationParams = new SimulationParams(argv[2]);
+    World * world = new World(simulationParams, argv[3], true);
+
+    world->initialize(simulationParams,rand);
 
 	
-	world->startSimulation((int)params[4],rand);
+	world->startSimulation(simulationParams,rand);
 	
     
 }

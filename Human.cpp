@@ -4,12 +4,13 @@
 #include <iostream>
 
 using namespace std;
-Human::Human(RandMT* rand){
+Human::Human(SimulationParams * simulationParams, RandMT* rand){
 	this->pos = new Position();
     this->symbol = Human::SYMBOL;
     float randAge = rand->genrand_real1();
-    
-    
+	this->resistanceInfectionValuesByAge = simulationParams->getResistanceInfectionValuesByAge();
+	this->maxResistanceInjectionValuesByAge = simulationParams->getMaxResistanceInjectionValuesByAge();
+	this->minResistanceInjectionValuesByAge = simulationParams->getMinResistanceInjectionValuesByAge();
     // https://www.insee.fr/fr/statistiques/2381474#figure1_radio2
     // 8 Tranches : 0 - 15, 15 - 25 , 25 - 35 , 35 - 45 , 45 - 55, 55 - 65, 65 - 75, 75 +
     if(randAge < 0.177){
@@ -149,6 +150,10 @@ int Human::getAge(){
 
 int Human::getResistanceVirus(){
 	return this->resistanceVirus;
+}
+
+int Human::getDureeReanimation(){
+	return this->dureeReanimation;
 }
 
 

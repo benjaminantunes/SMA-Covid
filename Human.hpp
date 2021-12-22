@@ -2,6 +2,7 @@
 #include <string>
 #include "Position.hpp"
 #include "RandMT.hpp"
+#include "SimulationParams.hpp"
 
 class Human {
 
@@ -22,17 +23,17 @@ class Human {
         bool isReanimation = false;
         int resistanceVirus = 0;
         //float resistanceInfectionValuesByAge[8] = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
-		float resistanceInfectionValuesByAge[8];
+		float * resistanceInfectionValuesByAge;
 		//float maxResistanceInjectionValuesByAge[8] = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
-		float maxResistanceInjectionValuesByAge[8];
+		float * maxResistanceInjectionValuesByAge;
 		//float minResistanceInjectionValuesByAge[8] = {0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3};
-		float minResistanceInjectionValuesByAge[8];
+		float * minResistanceInjectionValuesByAge;
 		int dureeReanimation = 0;
         int daysSinceLastInfectionOrInjection = 0;
 
 
     public:
-        Human(RandMT*);
+        Human(SimulationParams* , RandMT*);
         void contamine();
         void vaccine(RandMT*);
         bool isSick();
@@ -52,6 +53,7 @@ class Human {
         bool getIsConfined();
         bool getIsHospital();
         bool getIsReanimation();
+		int getDureeReanimation();
         Position * getPosition();
 
 };

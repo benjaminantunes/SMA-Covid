@@ -4,16 +4,17 @@
 #include "RandMT.hpp"
 #include <vector>
 #include "Human.hpp"
+#include "SimulationParams.hpp"
 using namespace std;
 
 class World{
     private:
-        int size;
+		int size;
 
-        // Le type map serait il necessaire ici ? Je ne pense pas.
-        // Python : _map: Dict[int, Dict[int,Agent]] = None
-        // Problème pour la taille dynamique de la map : Agent *** _map sera mieux, je ferai ça
-        Human *** carte;
+		// Le type map serait il necessaire ici ? Je ne pense pas.
+		// Python : _map: Dict[int, Dict[int,Agent]] = None
+		// Problème pour la taille dynamique de la map : Agent *** _map sera mieux, je ferai ça
+		Human *** carte;
         
 		float taux_contamination_voisin;
 	
@@ -23,27 +24,31 @@ class World{
 		// On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
 		// Ces chiffres sont purement arbitraires, à mettre en param
 		//float table_taux_mortalite_by_age_by_10[8] = {0, 0.2, 0.2, 0.4, 1.3, 3.6, 8, 14.8};
-		float table_taux_mortalite_by_age_by_10[8];
+		float * table_taux_mortalite_by_age_by_10;
 		float table_taux_hospitalisation_by_age_by_10[8];
+		float pourcentAsymptomatique;
+		float tauxVaccination;
+		float tauxDeChanceDeMourirHospitalFull;
 
-        //Position humansPosition[80] = NULL;
-        vector<Position *> humanSafePositions;
-        vector<Position *> humanAsymptomatiquePositions;
-        vector<Position *> humanConfinedPositions;
-        vector<Position *> humanHospitalPositions;
-        vector<Position *> humanReanimationPositions;
+		float * histogrammeContamination;
+		//Position humansPosition[80] = NULL;
+		vector<Position *> humanSafePositions;
+		vector<Position *> humanAsymptomatiquePositions;
+		vector<Position *> humanConfinedPositions;
+		vector<Position *> humanHospitalPositions;
+		vector<Position *> humanReanimationPositions;
         
-        vector<Position*> newHumanSafePositions;
+		vector<Position*> newHumanSafePositions;
 		vector<Position*> newCurrentHumanAsymptomatiquePositions;
 		vector<Position*> newNextHumanAsymptomatiquePositions;
 		vector<Position*> newHumanConfinedPositions;
 		vector<Position*> newHumanHospitalPositions;
 		vector<Position*> newHumanReanimationPositions;
 	
-        bool log = false;
-        fstream logfile;
+		bool log = false;
+		fstream logfile;
         int iteration = 0;
-        int r0;
+        float r0;
 
         map<string, int> stats;
 
@@ -68,7 +73,7 @@ class World{
 
 
     public:
-        World(int,float,int,int,int,float,int,char *, bool);
+        World(SimulationParams*,char *, bool);
         //Pour le __exit__
         ~World();
         void writeLog(string);
@@ -79,8 +84,8 @@ class World{
         bool isValid(int,int);
         bool isHuman(int,int);
         bool isEmpty(int,int);
-        void addAgent(string,int,float, RandMT* ,int,int sicks = 0);
-        void initialize(int, RandMT*,int,int, int sicks = 0);
+        void addAgent(string,SimulationParams*,int,float, RandMT* ,int,int sicks = 0);
+        void initialize(SimulationParams*, RandMT*);
         map<string,vector<Position*>> vision (int,int,int);
         void contamination(int,int,RandMT*, int, int);
         void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);
@@ -93,6 +98,6 @@ class World{
         void moveHumanReanimation(int,int, RandMT*);
         
         void nextIteration(RandMT*);
-        void startSimulation(int, RandMT*);
+        void startSimulation(SimulationParams*, RandMT*);
 
 };

@@ -5,8 +5,20 @@
 #include <iostream>
 
 using namespace std;
-World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int nbPlaceReanimation, int multMortToHosp, float tauxMortRea, int r0, char * nomFichierLog, bool log){
-
+World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log){
+	cout << "WORLD CREATION" << endl;
+	int size = simulationParams->getSize();
+	float taux_contamination_voisin = simulationParams->getTaux_contamination_voisin();
+	int multMortToHosp = simulationParams->getNbMultMortToHosp();
+	float * table_taux_mortalite_by_age_by_10 = simulationParams->getTable_taux_mortalite_by_age_by_10();
+	float tauxMortRea = simulationParams->getTauxMortRea();
+	float r0 = simulationParams->getR0();
+	int nbPlaceHospital = simulationParams->getNbPlaceHospital();
+	int nbPlaceReanimation = simulationParams->getNbPlaceReanimation();
+	float pourcentAsymptomatique = simulationParams->getPourcentAsymptomatique();
+	float tauxVaccination = simulationParams->getTauxVaccination();
+	float tauxDeChanceDeMourirHospitalFull = simulationParams->getTauxDeChanceDeMourirHospitalFull();
+	cout << "fin recup simuparams" << endl;
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
 	for(int i = 0; i < size; i++) this->carte[i] = (Human **)malloc(size * sizeof(Human*));
@@ -18,22 +30,31 @@ World::World(int size, float taux_contamination_voisin,int nbPlaceHospital, int 
     		this->carte[i][j] = nullptr;
     	}
     }
-    
+    cout << "1" << endl;
     this->taux_contamination_voisin = taux_contamination_voisin;
+	cout << "1,5" << endl;
     for(int i = 0; i<8;i++){
     	this->table_taux_hospitalisation_by_age_by_10[i] = this->table_taux_mortalite_by_age_by_10[i] * multMortToHosp;
     }
+	cout << "2" << endl;
     this->size = size;
+	cout << "3" << endl;
     this->tauxMortRea = tauxMortRea;
 	this->r0 = r0;
+	cout << "4" << endl;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
+	cout << "5" << endl;
+	this->pourcentAsymptomatique = pourcentAsymptomatique;
+	this->tauxVaccination = tauxVaccination;
+	cout << "6" << endl;
+	this->tauxDeChanceDeMourirHospitalFull = tauxDeChanceDeMourirHospitalFull;
     this->log = log;
     this->stats["dead"] = 0;
     this->stats["contamined"] = 0;
     this->stats["recovered"] = 0;
     this->stats["safe"] = 0;
-
+	cout << "7" << endl;
     if(this->log){
         this->logfile.open(nomFichierLog,ios::out);
     }
@@ -127,7 +148,7 @@ bool World::isEmpty(int row, int column){
 }
 
 
-void World::addAgent(string agent_name, int agents, float world_max, RandMT * rand,  int isVaccin ,int sicks){
+void World::addAgent(string agent_name,SimulationParams * simulationParams, int agents, float world_max, RandMT * rand,  int isVaccin ,int sicks){
 
 
     int max_agents = pow(this->size,2) * world_max;
@@ -157,10 +178,10 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
         }
 
         	
-		this->carte[row][column] = new Human(rand);
+		this->carte[row][column] = new Human(simulationParams,rand);
 		if(isVaccin == 1){
 			float randValue = rand->genrand_real1();
-			if(randValue < 0.6){
+			if(randValue < this->tauxVaccination){
 				this->carte[row][column]->vaccine(rand);
 			}
 			
@@ -184,7 +205,7 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
             varEmpty = this->isEmpty(row,column);
         }
         
-        this->carte[row][column] = new Human(rand);
+        this->carte[row][column] = new Human(simulationParams,rand);
         this->updateStats("safe",rand);
         this->carte[row][column]->contamine();
         this->updateStats("contamined",rand);
@@ -197,10 +218,10 @@ void World::addAgent(string agent_name, int agents, float world_max, RandMT * ra
 
 }
 
-void World::initialize(int humans, RandMT * rand,int isVaccin, int nbIteration, int sicks){
+void World::initialize(SimulationParams * simulationParams, RandMT * rand){
 
     //this->writeLog("******Initialization******");
-    this->addAgent("Human", humans, World::MAX_HUMANS, rand, isVaccin, sicks);
+    this->addAgent("Human",simulationParams, simulationParams->getNbHumain(), World::MAX_HUMANS, rand, simulationParams->getIsVaccin(), simulationParams->getNbMalade());
 
 }
 
@@ -271,7 +292,7 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 
 			if(distance == 1){
 			
-				if(randomValue < histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){ 
+				if(randomValue < this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){ 
 				       
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					this->nbNouveauxCas++;
@@ -290,7 +311,7 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 				}
 			
 			}else if(distance == 2){
-				if(randomValue < (histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.
+				if(randomValue < (this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.
 				      
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					this->nbNouveauxCas++;
@@ -381,7 +402,7 @@ void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
 
         	//float pourcentAsymptomatique = (( rand->genrand_int32() % 15) + 16.0)/100;
     		float randValue = rand->genrand_real1();
-	    	if(randValue < 1 - pourcentAsymptomatique){
+	    	if(randValue < 1 - this->pourcentAsymptomatique){
 	    		// entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
 	    		this->nbCasCovidConnuTotal++;
 	    		this->ageOfSymptomaticDailyHuman.push_back(this->carte[row][column]->getAge());
@@ -452,7 +473,7 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 					// Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
 
 					//### tauxDeChanceDeMourirHospitalFull
-					if(randValue < 0.2){
+					if(randValue < this->tauxDeChanceDeMourirHospitalFull){
 						this->ageOfDeadHumansDaily.push_back(this->carte[row][column]->getAge());
 						//this->updateStats("dead",rand);
 						this->humanGoFromTo(row,column, 0,0,rand,  true);
@@ -552,7 +573,7 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 
 	//double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
 	
-	if(this->carte[row][column]->getState() > dureeReanimation){
+	if(this->carte[row][column]->getState() > this->carte[row][column]->getDureeReanimation()){
 		this->newHumanSafePositions.push_back(new Position(row,column));
 		this->nbPersonneReanimation--;
 		this->carte[row][column]->resetState();
@@ -710,10 +731,10 @@ void World::nextIteration(RandMT * rand){
 
 
 
-void World::startSimulation(int maxIterations, RandMT * rand){
+void World::startSimulation(SimulationParams * simulationParams, RandMT * rand){
 
 
-    for(int iteration = 0;iteration<maxIterations;iteration++){
+    for(int iteration = 0;iteration < simulationParams->getNbIteration();iteration++){
     	//this->displayStats();
         //this->display();
         
