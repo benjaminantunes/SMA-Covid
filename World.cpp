@@ -6,7 +6,6 @@
 
 using namespace std;
 World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log){
-	cout << "WORLD CREATION" << endl;
 	int size = simulationParams->getSize();
 	float taux_contamination_voisin = simulationParams->getTaux_contamination_voisin();
 	int multMortToHosp = simulationParams->getNbMultMortToHosp();
@@ -18,7 +17,8 @@ World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log
 	float pourcentAsymptomatique = simulationParams->getPourcentAsymptomatique();
 	float tauxVaccination = simulationParams->getTauxVaccination();
 	float tauxDeChanceDeMourirHospitalFull = simulationParams->getTauxDeChanceDeMourirHospitalFull();
-	cout << "fin recup simuparams" << endl;
+	float * histogrammeContamination = simulationParams->getHistogrammeContamination();
+
     // Agent *** carte; === Agent * carte[size][size];
     this->carte = (Human ***)malloc(size * sizeof(Human**));
 	for(int i = 0; i < size; i++) this->carte[i] = (Human **)malloc(size * sizeof(Human*));
@@ -30,31 +30,31 @@ World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log
     		this->carte[i][j] = nullptr;
     	}
     }
-    cout << "1" << endl;
+
+	this->histogrammeContamination = (float*)malloc( 11 * sizeof(float));
+	this->histogrammeContamination = histogrammeContamination;
+	
     this->taux_contamination_voisin = taux_contamination_voisin;
-	cout << "1,5" << endl;
+
+	this->table_taux_mortalite_by_age_by_10 = (float*)malloc( 8 * sizeof(float));
+	this->table_taux_mortalite_by_age_by_10 = table_taux_mortalite_by_age_by_10;
     for(int i = 0; i<8;i++){
     	this->table_taux_hospitalisation_by_age_by_10[i] = this->table_taux_mortalite_by_age_by_10[i] * multMortToHosp;
     }
-	cout << "2" << endl;
+
     this->size = size;
-	cout << "3" << endl;
     this->tauxMortRea = tauxMortRea;
 	this->r0 = r0;
-	cout << "4" << endl;
     this->nbPlaceHospital = nbPlaceHospital;
     this->nbPlaceReanimation = nbPlaceReanimation;
-	cout << "5" << endl;
 	this->pourcentAsymptomatique = pourcentAsymptomatique;
 	this->tauxVaccination = tauxVaccination;
-	cout << "6" << endl;
 	this->tauxDeChanceDeMourirHospitalFull = tauxDeChanceDeMourirHospitalFull;
     this->log = log;
     this->stats["dead"] = 0;
     this->stats["contamined"] = 0;
     this->stats["recovered"] = 0;
     this->stats["safe"] = 0;
-	cout << "7" << endl;
     if(this->log){
         this->logfile.open(nomFichierLog,ios::out);
     }

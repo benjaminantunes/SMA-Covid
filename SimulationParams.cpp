@@ -41,15 +41,11 @@ SimulationParams::SimulationParams(char * filename){
 	
 	
 	while (getline(readFile, line)) {
-		cout << "Ligne : " << line << endl;
 		if(line.find("#") == string::npos){
 			string paramName = line.substr(0, line.find(delimiterName));
 			string paramValues = line.erase(0,line.find(delimiterName) + delimiterName.length());
-			cout << "paramName : " << paramName << endl;
-			cout << "paramValues : " << paramValues << endl;
 			string value;
 			int j = 0;
-			cout << "value en int : " << this->mapStringValues[paramName] << endl;
 			switch (this->mapStringValues[paramName]) {
 				
 				 case 0:
