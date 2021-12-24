@@ -1,25 +1,25 @@
 #include "Position.hpp"
 
 Position::Position(int posX, int posY){
-    this->posX = posX;
-    this->posY = posY;
+	this->posX = posX;
+	this->posY = posY;
 }
 
 
 int Position::getPosX(){
-    return posX;
+	return posX;
 }
 
 int Position::getPosY(){
-    return posY;
+	return posY;
 }
 
 void Position::setPosX(int posX){
-    this->posX = posX;
+	this->posX = posX;
 }
 
 void Position::setPosY(int posY){
-    this->posY = posY;
+	this->posY = posY;
 }
 
 

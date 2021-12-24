@@ -4,7 +4,7 @@
 using namespace std;
 class SimulationParams {
 
-    private:
+	private:
 		// HUMAN
 		float resistanceInfectionValuesByAge[8];// = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
 		float maxResistanceInjectionValuesByAge[8];// = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
@@ -31,7 +31,7 @@ class SimulationParams {
 
 		map<string, int> mapStringValues;
 
-    public:
+	public:
 		SimulationParams(char *);
 		float * getResistanceInfectionValuesByAge();
 		float * getMaxResistanceInjectionValuesByAge();
