@@ -29,6 +29,7 @@ class World{
 		float pourcentAsymptomatique;
 		float tauxVaccination;
 		float tauxDeChanceDeMourirHospitalFull;
+		float tauxContaDistanceDeux;
 
 		float * histogrammeContamination;
 		//Position humansPosition[80] = NULL;

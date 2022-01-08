@@ -21,7 +21,7 @@ class Human {
 		bool isConfined = false;
 		bool isHospital = false;
 		bool isReanimation = false;
-		int resistanceVirus = 0;
+		float resistanceVirus = 0;
 		//float resistanceInfectionValuesByAge[8] = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
 		float * resistanceInfectionValuesByAge;
 		//float maxResistanceInjectionValuesByAge[8] = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
@@ -39,7 +39,7 @@ class Human {
 		bool isSick();
 		int getState();
 		int getAge();
-		int getResistanceVirus();
+		float getResistanceVirus();
 		void decreaseResistance();
 		void resetState();
 		void incrementState();

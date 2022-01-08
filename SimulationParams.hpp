@@ -28,6 +28,7 @@ class SimulationParams {
 		float pourcentAsymptomatique;
 		float tauxDeChanceDeMourirHospitalFull;
 		float tauxVaccination;
+		float tauxContaDistanceDeux;
 
 		map<string, int> mapStringValues;
 
@@ -52,6 +53,7 @@ class SimulationParams {
 		float * getHistogrammeContamination();
 		float getPourcentAsymptomatique();
 		float getTauxDeChanceDeMourirHospitalFull();
+		float getTauxContaDistanceDeux();
 
 
 

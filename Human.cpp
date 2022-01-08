@@ -148,7 +148,7 @@ int Human::getAge(){
 	return this->age;
 }
 
-int Human::getResistanceVirus(){
+float Human::getResistanceVirus(){
 	return this->resistanceVirus;
 }
 

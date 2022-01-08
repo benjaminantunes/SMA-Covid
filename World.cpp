@@ -18,6 +18,7 @@ World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log
 	float tauxVaccination = simulationParams->getTauxVaccination();
 	float tauxDeChanceDeMourirHospitalFull = simulationParams->getTauxDeChanceDeMourirHospitalFull();
 	float * histogrammeContamination = simulationParams->getHistogrammeContamination();
+	float tauxContaDistanceDeux = simulationParams->getTauxContaDistanceDeux();
 
 	// Agent *** carte; === Agent * carte[size][size];
 	this->carte = (Human ***)malloc(size * sizeof(Human**));
@@ -50,6 +51,7 @@ World::World(SimulationParams * simulationParams, char * nomFichierLog, bool log
 	this->pourcentAsymptomatique = pourcentAsymptomatique;
 	this->tauxVaccination = tauxVaccination;
 	this->tauxDeChanceDeMourirHospitalFull = tauxDeChanceDeMourirHospitalFull;
+	this->tauxContaDistanceDeux = tauxContaDistanceDeux;
 	this->log = log;
 	this->stats["dead"] = 0;
 	this->stats["contamined"] = 0;
@@ -290,10 +292,10 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 				distance = distanceColumn;
 			}
 
-			if(distance == 1){
-			
-				if(randomValue < this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - (float)this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){ 
-					   
+			if(distance == 1){	
+				
+				if(randomValue < this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus())){ 
+					
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					this->nbNouveauxCas++;
 					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
@@ -311,8 +313,9 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 				}
 			
 			}else if(distance == 2){
-				if(randomValue < (this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()] * (this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))/2){  // On divise par deux la chance de contamination car 2 cases de distance.
-					  
+
+				if(randomValue < (this->histogrammeContamination[this->carte[currentRow][currentColumn]->getState()-1] * (1 - this->carte[pos->getPosX()][pos->getPosY()]->getResistanceVirus()))*this->tauxContaDistanceDeux){  // On divise par deux la chance de contamination car 2 cases de distance.
+					
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					this->nbNouveauxCas++;
 					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
@@ -628,6 +631,10 @@ void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->nbNouveauxReanimation));
 	this->writeLog(to_string(this->nbMorts));
 	this->writeLog(to_string(this->nbCasCovidConnuTotal));
+
+	float reffectifJour = (float)this->nbNouveauxCas / (float)(this->humanAsymptomatiquePositions.size() + this->humanConfinedPositions.size() + this->humanHospitalPositions.size() +this->humanReanimationPositions.size());
+
+	this->writeLog(to_string(reffectifJour*11)); // 10 est le nb de jour où la personne est contaminante : 2 + 9.
 
 	for (int age: this->ageOfSymptomaticDailyHuman) {
 		this->writeLog("AgeC:" + to_string(age));

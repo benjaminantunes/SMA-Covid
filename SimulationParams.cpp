@@ -29,6 +29,7 @@ SimulationParams::SimulationParams(char * filename){
 	this->mapStringValues["pourcentAsymptomatique"] = 16;
 	this->mapStringValues["tauxDeChanceDeMourirHospitalFull"] = 17;
 	this->mapStringValues["tauxVaccination"] = 18;
+	this->mapStringValues["tauxContaDistanceDeux"] = 19;
 
 
 	string line;
@@ -135,7 +136,9 @@ SimulationParams::SimulationParams(char * filename){
 				case 18:
 					this->tauxVaccination = stof(paramValues);
 					break;
-				
+				case 19:
+					this->tauxContaDistanceDeux = stof(paramValues);
+					break;
 
 			}
 		}
@@ -233,4 +236,8 @@ float SimulationParams::getPourcentAsymptomatique(){
 
 float SimulationParams::getTauxDeChanceDeMourirHospitalFull(){
 	return this->tauxDeChanceDeMourirHospitalFull;
+}
+
+float SimulationParams::getTauxContaDistanceDeux(){
+	return this->tauxContaDistanceDeux;
 }
