@@ -180,7 +180,7 @@ void World::addAgent(string agent_name,SimulationParams * simulationParams, int 
 		}
 
 			
-		this->carte[row][column] = new Human(simulationParams,rand);
+		this->carte[row][column] = new Human(simulationParams,rand,row,column);
 		if(isVaccin == 1){
 			float randValue = rand->genrand_real1();
 			if(randValue < this->tauxVaccination){
@@ -189,7 +189,7 @@ void World::addAgent(string agent_name,SimulationParams * simulationParams, int 
 			
 		}
 		this->updateStats("safe", rand);
-		this->humanSafePositions.push_back(new Position(row,column));
+		this->humanSafePositions.push_back(this->carte[row][column]->getPosition());
 		//this->writeLog("Human cree sur xxxxx");
 		
 	}
@@ -207,11 +207,11 @@ void World::addAgent(string agent_name,SimulationParams * simulationParams, int 
 			varEmpty = this->isEmpty(row,column);
 		}
 		
-		this->carte[row][column] = new Human(simulationParams,rand);
+		this->carte[row][column] = new Human(simulationParams,rand,row,column);
 		this->updateStats("safe",rand);
 		this->carte[row][column]->contamine();
 		this->updateStats("contamined",rand);
-		this->humanAsymptomatiquePositions.push_back(new Position(row,column));
+		this->humanAsymptomatiquePositions.push_back(this->carte[row][column]->getPosition());
 		//this->writeLog("Humain crée sur xxxx");
 		
 
@@ -233,34 +233,38 @@ map<string,vector<Position*>> World::vision(int length, int row, int column){
 	map<string, vector<Position*>> neighborhood;
 	neighborhood["empty"];
 	neighborhood["human"];
-	
+	Position maPositionTest();
 	for(int elt_1 = 0-length; elt_1<length+1;elt_1++){
 		for(int elt_2 = 0-length; elt_2<length+1;elt_2++){
 
-			Position * test = new Position(elt_1,elt_2);
+			maPositionTest.setPosX(elt_1);
+			maPositionTest.setPosY(elt_2);
+
 			bool isInNeighborhood = false;
 
 			for(Position * temp: neighborhood.at("empty") ){
-				if(*temp == *test){
+				if(*temp == maPositionTest){
 					isInNeighborhood = true;
 				}
 			}
 			for(Position * temp: neighborhood.at("human") ){
 
-				if(*temp == *test){
+				if(*temp == maPositionTest){
 					isInNeighborhood = true;
 				}
 			}
 
-			delete test;
+			
 			// Tous ça pour ça : and (elt_1, elt_2) not in neighborhood
 			if((elt_1 != 0 || elt_2 !=0) && !isInNeighborhood ){
-				Position * pos = new Position(row+elt_1,column+elt_2);
 				
-				if(this->isHuman(pos->getPosX(),pos->getPosY())){
-					neighborhood["human"].push_back(pos);
+				
+				if(this->isHuman(row+elt_1,column+elt_2)){
+					neighborhood["human"].push_back(this->carte[row+elt_1][column+elt_2]->getPosition());
 				}
-				if(this->isEmpty(pos->getPosX(),pos->getPosY())){
+				if(this->isEmpty(row+elt_1,column+elt_2)){
+					//Comment me débarasser de cette position qui va faire de la fuite mémoire
+					Position * pos = new Position(row+elt_1,column+elt_2);
 					neighborhood["empty"].push_back(pos);
 				}
 				//delete pos;
@@ -276,6 +280,8 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 
 	//float histogrammeContamination[11] = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
 	map<string, vector<Position*>> target_v1 = this->vision(2,row,column);
+	Position maPositionTest();
+
 	for(Position * pos : target_v1["human"]){
 	
 		if(!this->carte[pos->getPosX()][pos->getPosY()]->isSick()){
@@ -300,10 +306,11 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 					this->nbNouveauxCas++;
 					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
 					
-					Position * test = new Position(pos->getPosX(), pos->getPosY());
+					maPositionTest.setPosX(pos->getPosX());
+					maPositionTest.setPosY(pos->getPosY());
 					int index = 0;
 					for(Position * temp: this->newHumanSafePositions ){
-						if(*temp == *test){
+						if(*temp == maPositionTest){
 							this->newHumanSafePositions.erase(this->newHumanSafePositions.begin()+index);
 						}
 						index++;
@@ -319,10 +326,11 @@ void World::contamination(int row, int column, RandMT * rand, int currentRow, in
 					this->carte[pos->getPosX()][pos->getPosY()]->contamine();
 					this->nbNouveauxCas++;
 					this->newNextHumanAsymptomatiquePositions.push_back(new Position(pos->getPosX(), pos->getPosY()));
-					Position * test = new Position(pos->getPosX(), pos->getPosY());
+					maPositionTest.setPosX(pos->getPosX());
+					maPositionTest.setPosY(pos->getPosY());
 					int index = 0;
 					for(Position * temp: this->newHumanSafePositions ){
-						if(*temp == *test){
+						if(*temp == maPositionTest){
 							this->newHumanSafePositions.erase(this->newHumanSafePositions.begin()+index);
 						}
 						index++;
@@ -367,15 +375,16 @@ void World::moveHumanSafe(int row, int column, RandMT * rand){
 	int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
 	int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
 	map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
+
 	if(target_v1["empty"].size() != 0){
 		// Demander a Bruno bachelet si dans un cas comme ça, pour le return, on privilégie pointeur ou valeur.
 		int taille = target_v1.at("empty").size();
 		int randomValue = ((long)floor(rand->genrand_int32()))%taille;
-		Position * newPosition = target_v1.at("empty").at(randomValue);
-		this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
-		this->newHumanSafePositions.push_back(newPosition);
+		//Position * newPosition = target_v1.at("empty").at(randomValue);
+		this->humanGoFromTo(row,column, target_v1.at("empty").at(randomValue)->getPosX(),target_v1.at("empty").at(randomValue)->getPosY(),rand);
+		this->newHumanSafePositions.push_back(target_v1.at("empty").at(randomValue));
 	}else{
-		this->newHumanSafePositions.push_back(new Position(row, column));
+		this->newHumanSafePositions.push_back(this->carte[row][column]->getPosition());
 	}
 
 
@@ -429,23 +438,25 @@ void World::moveHumanAsymptomatique(int row, int column, RandMT * rand){
 		int rowDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
 		int columnDeplacement = rand->genrand_int32()%this->size; // Il peut se déplacer de 0 à size
 		map<string, vector<Position*>> target_v1 = this->vision(1,rowDeplacement,columnDeplacement);
+
+
 		if(target_v1["empty"].size() != 0){
 	  
 			int taille = target_v1.at("empty").size();
 			int randomValue = ((long)floor(rand->genrand_int32()))%taille;
 
-			Position * newPosition = target_v1.at("empty").at(randomValue);
-			this->contamination(newPosition->getPosX(),newPosition->getPosY(), rand, row, column);
+			//Position * newPosition = target_v1.at("empty").at(randomValue);
+			this->contamination(target_v1.at("empty").at(randomValue)->getPosX(),target_v1.at("empty").at(randomValue)->getPosY(), rand, row, column);
 
 			
-			this->humanGoFromTo(row,column, newPosition->getPosX(),newPosition->getPosY(),rand);
+			this->humanGoFromTo(row,column, target_v1.at("empty").at(randomValue)->getPosX(),target_v1.at("empty").at(randomValue)->getPosY(),rand);
 
 
-			this->newCurrentHumanAsymptomatiquePositions.push_back(newPosition);
+			this->newCurrentHumanAsymptomatiquePositions.push_back(target_v1.at("empty").at(randomValue));
 			
 		}else{
 			this->contamination(row,column, rand, row, column);
-			this->newCurrentHumanAsymptomatiquePositions.push_back(new Position(row,column));
+			this->newCurrentHumanAsymptomatiquePositions.push_back(this->carte[row][column]->getPosition());
 		}
 	
 	}
@@ -455,7 +466,7 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 
 	if(this->carte[row][column]->getState() > 10){   	
 		this->carte[row][column]->resetState();
-		this->newHumanSafePositions.push_back(new Position(row,column));
+		this->newHumanSafePositions.push_back(this->carte[row][column]->getPosition());
 		this->updateStats("recovered",rand);
 		return;
 	
@@ -469,7 +480,7 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 			if(randValue < this->table_taux_hospitalisation_by_age_by_10[this->carte[row][column]->getAge()]/100){
 				if(this->nbPersonneHospital < this->nbPlaceHospital){
 					this->carte[row][column]->goToHospital();
-					this->newHumanHospitalPositions.push_back(new Position(row,column));
+					this->newHumanHospitalPositions.push_back(this->carte[row][column]->getPosition());
 					this->nbNouveauxHospitalisation++;
 					this->nbPersonneHospital++;
 				}else{
@@ -488,11 +499,11 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 				}
 				
 			}else{
-				this->newHumanConfinedPositions.push_back(new Position(row,column));
+				this->newHumanConfinedPositions.push_back(this->carte[row][column]->getPosition());
 				
 			}	
 		}else{
-			this->newHumanConfinedPositions.push_back(new Position(row,column));
+			this->newHumanConfinedPositions.push_back(this->carte[row][column]->getPosition());
 		}
 	
 	this->carte[row][column]->incrementState();
@@ -502,7 +513,7 @@ void World::moveHumanConfined(int row, int column, RandMT * rand){
 void World::moveHumanHospital(int row, int column, RandMT * rand){
 
 	if(this->carte[row][column]->getState() > 10){ 
-	  	this->newHumanSafePositions.push_back(new Position(row,column));
+	  	this->newHumanSafePositions.push_back(this->carte[row][column]->getPosition());
 		this->nbPersonneHospital--;
 		this->carte[row][column]->resetState();
 		this->updateStats("recovered",rand);
@@ -528,7 +539,7 @@ void World::moveHumanHospital(int row, int column, RandMT * rand){
 				if(this->nbPersonneReanimation < this->nbPlaceReanimation){
 					
 					this->nbPersonneHospital--;
-					this->newHumanReanimationPositions.push_back(new Position(row,column));
+					this->newHumanReanimationPositions.push_back(this->carte[row][column]->getPosition());
 					this->carte[row][column]->goToReanimation(rand);
 					this->nbNouveauxReanimation++;
 					this->nbPersonneReanimation++;
@@ -544,12 +555,12 @@ void World::moveHumanHospital(int row, int column, RandMT * rand){
 				}
 				
 			}else{
-				this->newHumanHospitalPositions.push_back(new Position(row,column));
+				this->newHumanHospitalPositions.push_back(this->carte[row][column]->getPosition());
 			}
 			
 			
 		}else{
-			this->newHumanHospitalPositions.push_back(new Position(row,column));
+			this->newHumanHospitalPositions.push_back(this->carte[row][column]->getPosition());
 		}
 		
 	
@@ -577,7 +588,7 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 	//double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
 	
 	if(this->carte[row][column]->getState() > this->carte[row][column]->getDureeReanimation()){
-		this->newHumanSafePositions.push_back(new Position(row,column));
+		this->newHumanSafePositions.push_back(this->carte[row][column]->getPosition());
 		this->nbPersonneReanimation--;
 		this->carte[row][column]->resetState();
 		this->updateStats("recovered",rand);
@@ -610,12 +621,12 @@ void World::moveHumanReanimation(int row, int column, RandMT * rand){
 
 
 		}else{
-			this->newHumanReanimationPositions.push_back(new Position(row,column));
+			this->newHumanReanimationPositions.push_back(this->carte[row][column]->getPosition());
 		}
 		
 		
 	}else{
-		this->newHumanReanimationPositions.push_back(new Position(row,column));
+		this->newHumanReanimationPositions.push_back(this->carte[row][column]->getPosition());
 	}
 	this->carte[row][column]->incrementState();
 

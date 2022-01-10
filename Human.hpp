@@ -33,7 +33,7 @@ class Human {
 
 
 	public:
-		Human(SimulationParams* , RandMT*);
+		Human(SimulationParams* , RandMT*,int,int);
 		void contamine();
 		void vaccine(RandMT*);
 		bool isSick();

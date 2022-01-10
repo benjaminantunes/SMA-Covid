@@ -4,8 +4,8 @@
 #include <iostream>
 
 using namespace std;
-Human::Human(SimulationParams * simulationParams, RandMT* rand){
-	this->pos = new Position();
+Human::Human(SimulationParams * simulationParams, RandMT* rand, int row, int column){
+	this->pos = new Position(row,column);
 	this->symbol = Human::SYMBOL;
 	float randAge = rand->genrand_real1();
 	this->resistanceInfectionValuesByAge = simulationParams->getResistanceInfectionValuesByAge();
