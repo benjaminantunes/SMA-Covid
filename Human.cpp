@@ -5,7 +5,7 @@
 
 using namespace std;
 Human::Human(SimulationParams * simulationParams, RandMT* rand, int row, int column){
-	this->pos = new Position(row,column);
+	this->pos = Position(row,column);
 	this->symbol = Human::SYMBOL;
 	float randAge = rand->genrand_real1();
 	this->resistanceInfectionValuesByAge = simulationParams->getResistanceInfectionValuesByAge();
@@ -93,20 +93,20 @@ char Human::to_string(){
 }
 
 int Human::getPositionRow(){
-	return this->pos->getPosX();
+	return this->pos.getPosX();
 };
 
 int Human::getPositionColumn(){
-	return this->pos->getPosY();
+	return this->pos.getPosY();
 };
 
 void Human::setPosition(int posX,int posY){
-	this->pos->setPosX(posX);
-	this->pos->setPosY(posY);
+	this->pos.setPosX(posX);
+	this->pos.setPosY(posY);
 };
 
 
-Position * Human::getPosition(){
+Position  Human::getPosition(){
 	return this->pos;
 }
 

@@ -33,18 +33,18 @@ class World{
 
 		float * histogrammeContamination;
 		//Position humansPosition[80] = NULL;
-		vector<Position *> humanSafePositions;
-		vector<Position *> humanAsymptomatiquePositions;
-		vector<Position *> humanConfinedPositions;
-		vector<Position *> humanHospitalPositions;
-		vector<Position *> humanReanimationPositions;
+		vector<Position> humanSafePositions;
+		vector<Position> humanAsymptomatiquePositions;
+		vector<Position> humanConfinedPositions;
+		vector<Position> humanHospitalPositions;
+		vector<Position> humanReanimationPositions;
 		
-		vector<Position*> newHumanSafePositions;
-		vector<Position*> newCurrentHumanAsymptomatiquePositions;
-		vector<Position*> newNextHumanAsymptomatiquePositions;
-		vector<Position*> newHumanConfinedPositions;
-		vector<Position*> newHumanHospitalPositions;
-		vector<Position*> newHumanReanimationPositions;
+		vector<Position> newHumanSafePositions;
+		vector<Position> newCurrentHumanAsymptomatiquePositions;
+		vector<Position> newNextHumanAsymptomatiquePositions;
+		vector<Position> newHumanConfinedPositions;
+		vector<Position> newHumanHospitalPositions;
+		vector<Position> newHumanReanimationPositions;
 	
 		bool log = false;
 		fstream logfile;
@@ -87,7 +87,7 @@ class World{
 		bool isEmpty(int,int);
 		void addAgent(string,SimulationParams*,int,float, RandMT* ,int,int sicks = 0);
 		void initialize(SimulationParams*, RandMT*);
-		map<string,vector<Position*>> vision (int,int,int);
+		map<string,vector<Position>> vision (int,int,int);
 		void contamination(int,int,RandMT*, int, int);
 		void humanGoFromTo(int,int,int,int, RandMT*, bool die = false);
 		

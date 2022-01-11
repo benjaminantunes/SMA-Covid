@@ -17,7 +17,7 @@ class Human {
 		
 		int age;
 		int sexe; //0 homme et 1 femme
-		Position * pos;
+		Position  pos;
 		bool isConfined = false;
 		bool isHospital = false;
 		bool isReanimation = false;
@@ -54,6 +54,6 @@ class Human {
 		bool getIsHospital();
 		bool getIsReanimation();
 		int getDureeReanimation();
-		Position * getPosition();
+		Position  getPosition();
 
 };
