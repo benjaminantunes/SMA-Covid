@@ -230,33 +230,12 @@ void World::initialize(SimulationParams * simulationParams, RandMT * rand){
 
 map<string,vector<Position>> World::vision(int length, int row, int column){
 
-    //static int firstAccess = 0;
-    //static map
-	map<string, vector<Position>> neighborhood;
-    //printf("Je suis la : %d\n",firstAccess);
-    //Peut etre que ici au début je delete toutes les positions du vecteur Empty.
-    //if(firstAccess > 0)
-    //{
-        /*
-        for(Position * temp: neighborhood.at("empty") )
-        {
-            delete temp;
-        }
-        */
-        /*
-        for(Position * temp: neighborhood.at("human") )
-        {
 
-            delete temp;
-        } 
-        */
-        
-    //}
-    //if(firstAccess == 0){
-        neighborhood["empty"];
-        neighborhood["human"];
-    //}
-    //firstAccess++;
+	map<string, vector<Position>> neighborhood;
+
+    neighborhood["empty"];
+    neighborhood["human"];
+
 
     
     
@@ -675,8 +654,13 @@ void World::nextIteration(RandMT * rand){
 	this->writeLog(to_string(this->nbNouveauxReanimation));
 	this->writeLog(to_string(this->nbMorts));
 	this->writeLog(to_string(this->nbCasCovidConnuTotal));
+    
+    float totalMalade = (float)(this->humanAsymptomatiquePositions.size() + this->humanConfinedPositions.size() + this->humanHospitalPositions.size() +this->humanReanimationPositions.size());
+    float reffectifJour = 0;
+    if(totalMalade > 0){
+        reffectifJour = (float)this->nbNouveauxCas / totalMalade;
+    }
 
-	float reffectifJour = (float)this->nbNouveauxCas / (float)(this->humanAsymptomatiquePositions.size() + this->humanConfinedPositions.size() + this->humanHospitalPositions.size() +this->humanReanimationPositions.size());
 
 	this->writeLog(to_string(reffectifJour*11)); // 10 est le nb de jour où la personne est contaminante : 2 + 9.
 
