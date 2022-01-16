@@ -24,4 +24,4 @@ histogrammeContamination||0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2
 pourcentAsymptomatique||0.2
 tauxDeChanceDeMourirHospitalFull||0.2
 tauxVaccination||0.7
-tauxContaDistanceDeux||0.0
+tauxContaDistanceDeux||0.05

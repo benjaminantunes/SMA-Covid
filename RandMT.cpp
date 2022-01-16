@@ -167,7 +167,7 @@ uint32_t RandMT::genrand_int32(void)
 	return y;
 }
 
-int RandMT::getCompteur(){
+unsigned long RandMT::getCompteur(){
 	return compteur;
 }
 

@@ -783,12 +783,17 @@ void World::startSimulation(SimulationParams * simulationParams, RandMT * rand){
 		}
 		*/
 	}
+	/*
 	
 	fstream compteurLogFile;
 
 	compteurLogFile.open("compteur.txt",ios::out);
 	compteurLogFile << rand->getCompteur();
 	compteurLogFile << endl;
+    
+    */
+
+    this->writeLog("CompteurRand:" + to_string(rand->getCompteur()));
 	//self.writeLog(f' [STOP] Maximum number of iterations reached ({maxIterations}) end of the simulation!\n')
 	//cout << "\033[2J" << endl;
 	this->displayStats();
