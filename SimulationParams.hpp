@@ -2,59 +2,56 @@
 #include <map>
 
 using namespace std;
-class SimulationParams {
 
-	private:
-		// HUMAN
-		float resistanceInfectionValuesByAge[8];// = {0.999,0.999,0.999,0.999,0.99,0.90, 0.80 ,0.70};
-		float maxResistanceInjectionValuesByAge[8];// = {0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4};
-		float minResistanceInjectionValuesByAge[8];// = {0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3};
+class SimulationParams
+{
 
-		//WORLD
-		float table_taux_mortalite_by_age_by_10[8];// = {0, 0.2, 0.2, 0.4, 1.3, 3.6, 8, 14.8};
-		float taux_contamination_voisin;	
-		int nbPlaceHospital;
-		int nbPlaceReanimation;
-		float r0;
-		float tauxMortRea;
-		
-		int size;
-		int nbMalade;
-		int nbHumain;
-		int nbIteration;
-		int nbMultMortToHosp;
-		int isVaccin;
-		float histogrammeContamination[11];// = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.7, 0.6, 0.4, 0.2};
-		float pourcentAsymptomatique;
-		float tauxDeChanceDeMourirHospitalFull;
-		float tauxVaccination;
-		float tauxContaDistanceDeux;
+   private:
+      // HUMAN
+      float            _resistanceInfectionValuesByAge[8];
+      float            _maxResistanceInjectionValuesByAge[8];
+      float            _minResistanceInjectionValuesByAge[8];
 
-		map<string, int> mapStringValues;
+      //WORLD
+      float            _tableTauxMortaliteByAgeBy10[8];
+      int              _nbPlaceHospital;
+      int              _nbPlaceReanimation;
+      float            _r0;
+      float            _tauxMortRea;
+      int              _size;
+      int              _nbMalade;
+      int              _nbHumain;
+      int              _nbIteration;
+      int              _nbMultMortToHosp;
+      int              _isVaccin;
+      float            _histogrammeContamination[11];
+      float            _pourcentAsymptomatique;
+      float            _tauxDeChanceDeMourirHospitalFull;
+      float            _tauxVaccination;
+      float            _tauxContaDistanceDeux;
 
-	public:
-		SimulationParams(char *);
-		float * getResistanceInfectionValuesByAge();
-		float * getMaxResistanceInjectionValuesByAge();
-		float * getMinResistanceInjectionValuesByAge();
-		float * getTable_taux_mortalite_by_age_by_10();
-		float getTaux_contamination_voisin();
-		float getTauxVaccination();
-		int getNbPlaceHospital();
-		int getNbPlaceReanimation();
-		int getR0();
-		float getTauxMortRea();
-		int getSize();
-		int getNbMalade();
-		int getNbHumain();
-		int getNbIteration();
-		int getNbMultMortToHosp();
-		int getIsVaccin();
-		float * getHistogrammeContamination();
-		float getPourcentAsymptomatique();
-		float getTauxDeChanceDeMourirHospitalFull();
-		float getTauxContaDistanceDeux();
+      map<string, int> _mapStringValues;
 
-
+   public:
+      SimulationParams(char *);
+      float * getResistanceInfectionValuesByAge();
+      float * getMaxResistanceInjectionValuesByAge();
+      float * getMinResistanceInjectionValuesByAge();
+      float * getTableTauxMortaliteByAgeBy10();
+      float   getTauxVaccination();
+      int     getNbPlaceHospital();
+      int     getNbPlaceReanimation();
+      int     getR0();
+      float   getTauxMortRea();
+      int     getSize();
+      int     getNbMalade();
+      int     getNbHumain();
+      int     getNbIteration();
+      int     getNbMultMortToHosp();
+      int     getIsVaccin();
+      float * getHistogrammeContamination();
+      float   getPourcentAsymptomatique();
+      float   getTauxDeChanceDeMourirHospitalFull();
+      float   getTauxContaDistanceDeux();
 
 };

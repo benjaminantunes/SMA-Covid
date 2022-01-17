@@ -33,31 +33,31 @@ typdef uint32_t unsigned __int32;
 
 using namespace std;
 
-static uint32_t	mag01[2] = {0x0UL, MATRIX_A};
-static unsigned long compteur = 0;
+static uint32_t      _mag01[2] = {0x0UL, MATRIX_A};
+static unsigned long _compteur = 0;
 class RandMT {
 
-	uint32_t mt[N];
-	int mti = N +1;
-	
+   uint32_t _mt[N];
+   int      _mti = N +1;
+   
 
 
 public:
 
-	RandMT() ;
-	RandMT(string fileName) ;
-	RandMT(unsigned long init_key[], int key_length);
-	void init_genrand(uint32_t s);
-	void init_by_array(uint32_t init_key[], int key_length);
-	uint32_t genrand_int32(void);
-	uint32_t genrand_int31(void);
-	double genrand_real1(void);
-	double genrand_real2(void);
-	double genrand_real3(void);
-	double genrand_res53(void);
-	unsigned long getCompteur();
-	void saveStatus(string inFileName);
-	void restoreStatus(string inFileName);
+   RandMT() ;
+   RandMT(string fileName) ;
+   RandMT(unsigned long init_key[], int key_length);
+   void          init_genrand(uint32_t s);
+   void          init_by_array(uint32_t init_key[], int key_length);
+   uint32_t      genrand_int32(void);
+   uint32_t      genrand_int31(void);
+   double        genrand_real1(void);
+   double        genrand_real2(void);
+   double        genrand_real3(void);
+   double        genrand_res53(void);
+   unsigned long getCompteur();
+   void          saveStatus(string inFileName);
+   void          restoreStatus(string inFileName);
 
 };
 

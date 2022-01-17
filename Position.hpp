@@ -2,26 +2,30 @@
 #include <string>
 using namespace std;
 
-class Position{
+class Position
+{
 
-	private:
-		int posX;
-		int posY;
+   private:
+      int _posX;
+      int _posY;
 
-	public:
+   public:
 
-		// I don't know what i'm doing with friend, mais il faut definir operator == en dehors de la classe.
-		friend bool operator==(Position const& a, Position const& b)
-		{
-			//Redefinition du equals pour les positions
-			if (a.posX == b.posX && a.posY == b.posY)
-			return true;
-			else
-			return false;
-		}
-		int getPosX();
-		int getPosY();
-		void setPosX(int);
-		void setPosY(int);
-		Position(int posX = 0, int posY = 0);
+      // I don't know what i'm doing with friend, mais il faut definir operator == en dehors de la classe.
+      friend bool operator==(Position const& inA, Position const& inB)
+      {
+         //Redefinition du equals pour les positions
+         if (inA._posX == inB._posX && inA._posY == inB._posY)
+         return true;
+         else
+         return false;
+      }
+      
+      Position(int posX = 0, int posY = 0);
+      
+      int   getPosX();
+      int   getPosY();
+      void  setPosX(int);
+      void  setPosY(int);
+      
 };
