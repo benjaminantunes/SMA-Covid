@@ -5,49 +5,28 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-int main(void){
-    // Initialisation par défaut comme Matsumoto
-    RandMT * rand = new RandMT();
 
-    float params[10]; 
-	string valueParam;
-	ifstream readFile("config.txt");
-	int i = 0;
-	
-	
 
-	string delimiter = ";";
-	
-	
-	while (getline (readFile, valueParam)) {
-	
-		string token = valueParam.substr(0, valueParam.find(delimiter));
-		if(i == 1 || i == 8){
-			params[i] = stof(token);
-			i++;
-		}else{
-			params[i] = stoi(token);
-			i++;
-		}
-		
-	}
+int main(int argc, char ** argv)
+{
 
-	readFile.close();
-	
-	//Param [0] = size : int
-	//Param [1] = taux_contamination_voisin : float
-	//Param [2] = nombre d'humain : int
-	//Param [3] = nombre de malade : int
-	//Param [4] = nombre d'itération : int
-	//Param [5] = nbPlaceHospital : int
-	//Param [6] = nbPlaceReanimation : int
-	//Param [7] = multMortToHosp : int
-	//Param [8] = tauxMortRea : float
-	//Param [9] = isVaccin : int ( 0 ou 1 pour vacciner 60% de la population completement d'un coup)
+   
+   //argv[0] = le nom de la commande
+   //argv[1] = le nom du fichier contenant le statut de MT à utiliser
+   //argv[2] = le nom du fichier de config à utiliser
+   //argv[3] = le nom du fichier de log à utiliser
+   RandMT * rand = new RandMT(argv[1]);
 
-    World * world = new World((int)params[0],params[1], (int)params[5], (int)params[6], (int)params[7],params[8],true);
 
-    world->initialize((int)params[2],rand,(int)params[9],(int)params[3]);
+   // Ici je vais instancier un objet SimulationParams, qui va aller récupérer tous les paramètres. Ensuite, je passe cet objet dans le constructeur de World au lieu de tous les params.
 
-    world->startSimulation((int)params[4],rand);
+   SimulationParams * simulationParams = new SimulationParams(argv[2]);
+   World * world = new World(simulationParams, argv[3], true);
+
+   world->initialize(simulationParams,rand);
+
+   
+   world->startSimulation(simulationParams,rand);
+   
+   
 }
