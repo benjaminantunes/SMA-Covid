@@ -6,7 +6,7 @@
 #include "Human.hpp"
 #include "SimulationParams.hpp"
 using namespace std;
-
+extern RandMT * randmt;
 class World{
    private:
       int              _size;
@@ -101,20 +101,20 @@ class World{
       bool                         isValid(int,int);
       bool                         isHuman(int,int);
       bool                         isEmpty(int,int);
-      void                         addAgent(SimulationParams*,float, RandMT*);
-      void                         initialize(SimulationParams*, RandMT*);
+      void                         addAgent(SimulationParams*,float);
+      void                         initialize(SimulationParams*);
       map<string,vector<Position>> vision (int,int,int);
-      void                         contamination(int,int,RandMT*, int, int);
+      void                         contamination(int,int,int, int);
       void                         humanGoFromTo(int,int,int,int, bool die = false);
       
       // Si on avait eu plusieurs classes héritant de human pour asymp, hops, etc, on aurait pu utiliser le polymorphisme sur une seule fonction.
-      void                         moveHumanSafe(int,int, RandMT*);
-      void                         moveHumanAsymptomatique(int,int, RandMT*);
-      void                         moveHumanConfined(int,int, RandMT*);
-      void                         moveHumanHospital(int,int, RandMT*);
-      void                         moveHumanReanimation(int,int, RandMT*);
+      void                         moveHumanSafe(int,int);
+      void                         moveHumanAsymptomatique(int,int);
+      void                         moveHumanConfined(int,int);
+      void                         moveHumanHospital(int,int);
+      void                         moveHumanReanimation(int,int);
       
-      void                         nextIteration(RandMT*);
-      void                         startSimulation(SimulationParams*, RandMT*);
+      void                         nextIteration();
+      void                         startSimulation(SimulationParams*);
 
 };

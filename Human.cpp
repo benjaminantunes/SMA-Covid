@@ -15,8 +15,6 @@ using namespace std;
 //    inSimulationParams :                                              //
 //       Objet contenant les paramètres du fichier de configuration     //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //    inRow :                                                           //
 //       La ligne de l'humain (Position X sur la carte)                 //
@@ -30,7 +28,6 @@ using namespace std;
 //    Un objet humain                                                   //
 // -------------------------------------------------------------------- //
 Human::Human(SimulationParams * inSimulationParams,
-             RandMT           * inRand, 
              int                inRow, 
              int                inColumn
             )
@@ -38,7 +35,7 @@ Human::Human(SimulationParams * inSimulationParams,
 {
    _pos          = Position(inRow,inColumn);
    _symbol       = Human::SYMBOL;
-   float randAge = inRand->genrand_real1();
+   float randAge = randmt->genrand_real1();
    
    _resistanceInfectionValuesByAge = 
    inSimulationParams->getResistanceInfectionValuesByAge();
@@ -105,7 +102,7 @@ Human::Human(SimulationParams * inSimulationParams,
    
    
    
-   float randSexe = inRand->genrand_real1();
+   float randSexe = randmt->genrand_real1();
    // 50/50 homme et femme
    if(randSexe < 0.5)
    {
@@ -159,15 +156,13 @@ void Human::contamine()
 //                 à l'infection                                        //
 //                                                                      //
 // En entrée:                                                           // 
-//                                                                      //
-//    inRand :                                                          //
-//       Un objet Mersenne Twister                                      //
+//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void Human::vaccine(RandMT* inRand)
+void Human::vaccine()
 {
    double randomValue = _minResistanceInjectionValuesByAge[_age]
                    + (
@@ -175,7 +170,7 @@ void Human::vaccine(RandMT* inRand)
                      -
                      _minResistanceInjectionValuesByAge[_age]
                      )
-                   * inRand->genrand_real1();
+                   * randmt->genrand_real1();
    
    if(_tauxDeProtectionInfection < randomValue)
    {
@@ -202,14 +197,14 @@ void Human::vaccine(RandMT* inRand)
 //                                                                      //
 // En entrée:                                                           // 
 //                                                                      //
-//    inRand :                                                          //
-//       Un objet Mersenne Twister                                      //
+// En entrée:                                                           // 
+//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void Human::vaccineRappel(RandMT* inRand)
+void Human::vaccineRappel()
 {
    double randomValue = _minResistanceInjectionValuesByAge[_age]
                    + (
@@ -217,7 +212,7 @@ void Human::vaccineRappel(RandMT* inRand)
                      -
                      _minResistanceInjectionValuesByAge[_age]
                      )
-                   * inRand->genrand_real1();
+                   * randmt->genrand_real1();
    
    if(_tauxDeProtectionInfection < randomValue)
    {
@@ -444,19 +439,19 @@ void Human::goToHospital()
 //                                                                      //
 // En entrée:                                                           // 
 //                                                                      //
-//    inRand :                                                          //
-//       Objet Mersenne Twister                                         //
+// En entrée:                                                           // 
+//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void Human::goToReanimation(RandMT * inRand)
+void Human::goToReanimation()
 {
    _isConfined = false;
    _isHospital = false;
    _isReanimation = true;
-   _dureeReanimation = (inRand->genrand_int32()%26) + 10; // Entre 10 et 25 jours de rea, sachant qu'on a deja 5 jours de maladie (State)
+   _dureeReanimation = (randmt->genrand_int32()%26) + 10; // Entre 10 et 25 jours de rea, sachant qu'on a deja 5 jours de maladie (State)
    // Ca fait donc entre 5 et 20 jours de rea.
 }
 

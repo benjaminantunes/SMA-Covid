@@ -3,7 +3,7 @@
 #include "Position.hpp"
 #include "RandMT.hpp"
 #include "SimulationParams.hpp"
-
+extern RandMT * randmt;
 class Human 
 {
 
@@ -39,10 +39,10 @@ class Human
 
 
    public:
-      Human(SimulationParams*,RandMT*,int,int);
+      Human(SimulationParams*,int,int);
       void      contamine();
-      void      vaccine(RandMT*);
-      void      vaccineRappel(RandMT*);
+      void      vaccine();
+      void      vaccineRappel();
       bool      isSick();
       int       getState();
       int       getAge();
@@ -53,7 +53,7 @@ class Human
       char      to_string();
       void      getConfined();
       void      goToHospital();
-      void      goToReanimation(RandMT*);
+      void      goToReanimation();
       void      setPosition(int,int);
       bool      getIsConfined();
       bool      getIsHospital();

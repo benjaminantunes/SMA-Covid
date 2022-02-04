@@ -484,16 +484,13 @@ bool World::isEmpty(int inRow, int inColumn)
 //        Facteur déterminant le nombre maximal d'humain                //
 //        (Param à supprimer ?)                                         //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::addAgent(SimulationParams * inSimulationParams, 
-                     float              inWorldMax, 
-                     RandMT           * inRand 
+                     float              inWorldMax 
                     )
 {
 
@@ -524,24 +521,24 @@ void World::addAgent(SimulationParams * inSimulationParams,
       {
             
          // On cherche une position libre sur la carte 
-         row = inRand->genrand_int32()%_size ;
-         column = inRand->genrand_int32()%_size ;
+         row = randmt->genrand_int32()%_size ;
+         column = randmt->genrand_int32()%_size ;
          varEmpty = isEmpty(row,column);
       }
 
          
-      _carte[row][column] = new Human(inSimulationParams,inRand,row,column);
+      _carte[row][column] = new Human(inSimulationParams,row,column);
         
       if(_isVaccin == 1)
       {
-         float randValue = inRand->genrand_real1();
-         float randValueRappel = inRand->genrand_real1();
+         float randValue = randmt->genrand_real1();
+         float randValueRappel = randmt->genrand_real1();
          if(randValue < _tauxVaccination)
          {
-            _carte[row][column]->vaccine(inRand);
+            _carte[row][column]->vaccine();
             if(randValueRappel < _tauxVaccinationRappel)
             {
-                _carte[row][column]->vaccineRappel(inRand);
+                _carte[row][column]->vaccineRappel();
             }
             
          }
@@ -561,12 +558,12 @@ void World::addAgent(SimulationParams * inSimulationParams,
       int column;
       while(!varEmpty)
       {
-         row = inRand->genrand_int32()%_size ;
-         column = inRand->genrand_int32()%_size ;
+         row = randmt->genrand_int32()%_size ;
+         column = randmt->genrand_int32()%_size ;
          varEmpty = isEmpty(row,column);
       }
       
-      _carte[row][column] = new Human(inSimulationParams,inRand,row,column);
+      _carte[row][column] = new Human(inSimulationParams,row,column);
       updateStats("safe");
       _carte[row][column]->contamine();
       updateStats("contamined");
@@ -588,16 +585,14 @@ void World::addAgent(SimulationParams * inSimulationParams,
 //    inSimulationParams :                                              //
 //       Les paramètres du fichier de configuration                     //
 //                                                                      //
-//     inRand :                                                         //
-//        Objet générateur Mersenne Twister                             //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
-void World::initialize(SimulationParams * inSimulationParams, RandMT * inRand)
+void World::initialize(SimulationParams * inSimulationParams)
 {
-   addAgent(inSimulationParams,World::MAX_HUMANS,inRand);
+   addAgent(inSimulationParams,World::MAX_HUMANS);
 }
 
 
@@ -704,8 +699,6 @@ map<string,vector<Position>> World::vision(int inLength,
 //    inColumn :                                                        //
 //       La colonne de destination de l'humain malade                   //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //    inCurrentRow :                                                    //
 //       La ligne actuelle de l'humain malade                           //
@@ -717,7 +710,7 @@ map<string,vector<Position>> World::vision(int inLength,
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::contamination(int inRow, int inColumn, RandMT * inRand, int inCurrentRow, int inCurrentColumn)
+void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurrentColumn)
 {
 
 
@@ -730,7 +723,7 @@ void World::contamination(int inRow, int inColumn, RandMT * inRand, int inCurren
       if(!_carte[pos.getPosX()][pos.getPosY()]->isSick())
       {
       
-         float randomValue = inRand->genrand_real1();
+         float randomValue = randmt->genrand_real1();
 
          int distanceRow = abs(inRow - pos.getPosX());
          int distanceColumn = abs(inColumn - pos.getPosY());
@@ -1518,15 +1511,13 @@ void World::humanGoFromTo(int  inFromRow,
 //    inColumn :                                                        //
 //       La colonne de l'humain sur la carte (Position Y sur la carte)  //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
+void World::moveHumanSafe(int inRow, int inColumn)
 {
 
    if(_carte[inRow][inColumn]->getTauxDeProtectionReanimation() > 0)
@@ -1545,7 +1536,7 @@ void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
                        - 
                        (inRow - _nbDistanceMax))
                        * 
-                       inRand->genrand_real1();
+                       randmt->genrand_real1();
       columnDeplacement = 
                        (inColumn-_nbDistanceMax) 
                        +
@@ -1553,13 +1544,13 @@ void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
                        - 
                        (inColumn - _nbDistanceMax))
                        * 
-                       inRand->genrand_real1();
+                       randmt->genrand_real1();
    }
    else
    {
       // Il peut se déplacer de 0 à size
-      rowDeplacement = inRand->genrand_int32()%_size; 
-      columnDeplacement = inRand->genrand_int32()%_size; 
+      rowDeplacement = randmt->genrand_int32()%_size; 
+      columnDeplacement = randmt->genrand_int32()%_size; 
    }
    
  
@@ -1568,7 +1559,7 @@ void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
    if(target_v1["empty"].size() != 0)
    {
       int taille = target_v1.at("empty").size();
-      int randomValue = ((long)floor(inRand->genrand_int32()))%taille;
+      int randomValue = ((long)floor(randmt->genrand_int32()))%taille;
       humanGoFromTo(inRow,
                     inColumn, 
                     target_v1.at("empty").at(randomValue).getPosX(),
@@ -1599,15 +1590,13 @@ void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
 //    inColumn :                                                        //
 //       La colonne de l'humain sur la carte (Position Y sur la carte)  //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
+void World::moveHumanAsymptomatique(int inRow, int inColumn)
 {
 
    /*
@@ -1633,7 +1622,7 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
          // https://www.inspq.qc.ca/sites/default/files/covid/2989-asymptomatiques-potentiel-transmission-covid19.pdf
 
 
-         float randValue = inRand->genrand_real1();
+         float randValue = randmt->genrand_real1();
          if(randValue < 1 - _pourcentAsymptomatique)
          {
             // entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
@@ -1668,7 +1657,7 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
                           - 
                           (inRow - _nbDistanceMax))
                           * 
-                          inRand->genrand_real1();
+                          randmt->genrand_real1();
          columnDeplacement = 
                           (inColumn-_nbDistanceMax) 
                           +
@@ -1676,13 +1665,13 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
                           - 
                           (inColumn - _nbDistanceMax))
                           * 
-                          inRand->genrand_real1();
+                          randmt->genrand_real1();
       }
       else
       {
          // Il peut se déplacer de 0 à size
-         rowDeplacement = inRand->genrand_int32()%_size; 
-         columnDeplacement = inRand->genrand_int32()%_size; 
+         rowDeplacement = randmt->genrand_int32()%_size; 
+         columnDeplacement = randmt->genrand_int32()%_size; 
       }
       map<string, vector<Position>> target_v1 = vision(1,rowDeplacement,columnDeplacement);
 
@@ -1691,11 +1680,10 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
       {
      
          int taille = target_v1.at("empty").size();
-         int randomValue = ((long)floor(inRand->genrand_int32()))%taille;
+         int randomValue = ((long)floor(randmt->genrand_int32()))%taille;
 
          contamination(target_v1.at("empty").at(randomValue).getPosX(),
                        target_v1.at("empty").at(randomValue).getPosY(),
-                       inRand,
                        inRow,
                        inColumn
                       );
@@ -1714,7 +1702,7 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
       }
       else
       {
-         contamination(inRow,inColumn, inRand, inRow, inColumn);
+         contamination(inRow,inColumn, inRow, inColumn);
          _newCurrentHumanAsymptomatiquePositions.push_back(
                                          _carte[inRow][inColumn]->getPosition()
                                                           );
@@ -1740,15 +1728,13 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
 //    inColumn :                                                        //
 //       La colonne de l'humain sur la carte (Position Y sur la carte)  //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
+void World::moveHumanConfined(int inRow, int inColumn)
 {
 
    if(_carte[inRow][inColumn]->getState() > 10)
@@ -1763,7 +1749,7 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
    if(_carte[inRow][inColumn]->getState() == 4)
    {         
          //Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
-         float randValue = inRand->genrand_real1();
+         float randValue = randmt->genrand_real1();
 
          if(randValue 
             < 
@@ -1834,15 +1820,13 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
 //    inColumn :                                                        //
 //       La colonne de l'humain sur la carte (Position Y sur la carte)  //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
+void World::moveHumanHospital(int inRow, int inColumn)
 {
 
    if(_carte[inRow][inColumn]->getState() > 10)
@@ -1857,7 +1841,7 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
    if(_carte[inRow][inColumn]->getState() == 5)
    {
    
-         float randValue = inRand->genrand_real1();
+         float randValue = randmt->genrand_real1();
          float tauxReaIfHosp;
          
          // On utilise la timeline, qui possède 633 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
@@ -1887,7 +1871,7 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
                                             _carte[inRow][inColumn]->getPosition()
                                                          );
                
-                  _carte[inRow][inColumn]->goToReanimation(inRand);
+                  _carte[inRow][inColumn]->goToReanimation();
                   _nbNouveauxReanimation++;
                   _nbPersonneReanimation++;
                }
@@ -1928,7 +1912,7 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
                                             _carte[inRow][inColumn]->getPosition()
                                                          );
                
-                  _carte[inRow][inColumn]->goToReanimation(inRand);
+                  _carte[inRow][inColumn]->goToReanimation();
                   _nbNouveauxReanimation++;
                   _nbPersonneReanimation++;
                }
@@ -1980,15 +1964,13 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
 //    inColumn :                                                        //
 //       La colonne de l'humain sur la carte (Position Y sur la carte)  //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 //                                                                      //
 // En sortie:                                                           // 
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
+void World::moveHumanReanimation(int inRow, int inColumn)
 {
    
 
@@ -2031,7 +2013,7 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
    if(_carte[inRow][inColumn]->getState() == 6)
    {
       
-      float randValue = inRand->genrand_real1();
+      float randValue = randmt->genrand_real1();
       // 50% de chances de mourir si on était en réa.
       // L'objectif serait de retrouver 14%, 8%, etc. Mais au niveau des probas c'est sur que ça ne va pas le faire :
       // Pour retrouver 14 % : sur 100% de contaminé -> 60% d'aller a l'hopital -> 15% d'aller en réa -> 50% de mourir.
@@ -2076,15 +2058,13 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
 //    pour passer à l'itération suivante                                //
 //                                                                      //
 // En entrée:                                                           // 
-//                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
+//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::nextIteration(RandMT * inRand)
+void World::nextIteration()
 {
    writeLog(to_string(_iteration));
    writeLog(to_string(_nbNouveauxCas));
@@ -2132,7 +2112,7 @@ void World::nextIteration(RandMT * inRand)
    
    for(Position  temp: _humanSafePositions)
    {
-      moveHumanSafe(temp.getPosX(),temp.getPosY(), inRand);
+      moveHumanSafe(temp.getPosX(),temp.getPosY());
    }
 
 //////////////////////////////////////////////////////////////////// 
@@ -2149,7 +2129,7 @@ void World::nextIteration(RandMT * inRand)
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
-               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2165,7 +2145,7 @@ void World::nextIteration(RandMT * inRand)
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
-               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2182,7 +2162,7 @@ void World::nextIteration(RandMT * inRand)
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
-            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2198,7 +2178,7 @@ void World::nextIteration(RandMT * inRand)
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
-            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2217,7 +2197,7 @@ void World::nextIteration(RandMT * inRand)
     
    for(Position  temp: _humanConfinedPositions)
    {
-      moveHumanConfined(temp.getPosX(),temp.getPosY(), inRand);
+      moveHumanConfined(temp.getPosX(),temp.getPosY());
 
    }
 
@@ -2226,7 +2206,7 @@ void World::nextIteration(RandMT * inRand)
    
    for(Position  temp: _humanHospitalPositions)
    {
-      moveHumanHospital(temp.getPosX(),temp.getPosY(), inRand);
+      moveHumanHospital(temp.getPosX(),temp.getPosY());
 
    }
 
@@ -2236,7 +2216,7 @@ void World::nextIteration(RandMT * inRand)
    
    for(Position  temp: _humanReanimationPositions)
    {
-      moveHumanReanimation(temp.getPosX(),temp.getPosY(), inRand);
+      moveHumanReanimation(temp.getPosX(),temp.getPosY());
    }
 
 
@@ -2277,16 +2257,12 @@ void World::nextIteration(RandMT * inRand)
 //    inSimulationParams :                                              //
 //       Objet contenant les paramètres du fichier de configuration     //
 //                                                                      //
-//    inRand :                                                          //
-//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::startSimulation(SimulationParams * inSimulationParams,
-                            RandMT           * inRand
-                           )
+void World::startSimulation(SimulationParams * inSimulationParams)
 {
 
 
@@ -2298,7 +2274,7 @@ void World::startSimulation(SimulationParams * inSimulationParams,
       //display();
       
       //World::pause();
-      nextIteration(inRand);
+      nextIteration();
       /*
       if(_humansPosition.size() == 0){
          cout << "no more humans in the simulation" << endl;
@@ -2309,7 +2285,7 @@ void World::startSimulation(SimulationParams * inSimulationParams,
    }
 
 
-   writeLog("CompteurRand:" + to_string(inRand->getCompteur()));
+   writeLog("CompteurRand:" + to_string(randmt->getCompteur()));
    //cout << "\033[2J" << endl;
    displayStats();
    
