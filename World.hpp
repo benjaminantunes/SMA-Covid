@@ -13,6 +13,29 @@ class World{
       Human ***        _carte;
       int              _nbPlaceHospital;
       int              _nbPlaceReanimation;
+      int              _nbHumain;
+      int              _nbMalade;
+      int              _isVaccin;
+      int              _isMedicament;
+      float            _tauxProtectionReaMedicament;
+      int              _isMasqueTissu;
+      float            _tauxProtectionMasqueTissu;
+      int              _isMasqueChir;
+      float            _tauxProtectionMasqueChir;
+      int              _isMasqueFFP2;
+      float            _tauxProtectionMasqueFFP2;
+      int              _isConfinement;
+      int              _nbDeplacementReductionConfinement;
+      int              _isDeplacementLimites;
+      int              _nbDistanceMax;
+      int              _isGelHydroalcolique;
+      float            _tauxProtectionTransmissionGelHydro;
+      int              _isTestCovid;
+      float            _tauxDeDivisionAsymptomatique;
+      int              _isCouvreFeu;
+      int              _nbDeplacementReductionCouvreFeu;
+      int              _isSuperContaminateur;
+      int              _nbDeplacementSuperContaminateur;
    
       // On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
       // Ces chiffres sont purement arbitraires, à mettre en param
@@ -22,6 +45,7 @@ class World{
       float            _tableTauxHospitalisationByAgeBy10[8];
       float            _pourcentAsymptomatique;
       float            _tauxVaccination;
+      float            _tauxVaccinationRappel;
       float            _tauxDeChanceDeMourirHospitalFull;
       float            _tauxContaDistanceDeux;
       float          * _histogrammeContamination;
@@ -59,6 +83,7 @@ class World{
       int              _nbMorts = 0;
       int              _nbCasCovidConnuTotal = 0;
 
+
       
       
       //Utilisation des valeurs CSV de Our World In Data.
@@ -76,7 +101,7 @@ class World{
       bool                         isValid(int,int);
       bool                         isHuman(int,int);
       bool                         isEmpty(int,int);
-      void                         addAgent(SimulationParams*,int,float, RandMT* ,int,int sicks = 0);
+      void                         addAgent(SimulationParams*,float, RandMT*);
       void                         initialize(SimulationParams*, RandMT*);
       map<string,vector<Position>> vision (int,int,int);
       void                         contamination(int,int,RandMT*, int, int);

@@ -7,38 +7,148 @@
 using namespace std;
 
 // -------------------------------------------------------------------- //
-// World::World:  Constructeur de l'objet World//
-// //
-// En entrée: 
-// //
-// inSimulationParams => Permet de récupérer les données du fichier de config//
-// inNomFichierLog => Détermine le nom du fichier de log dans lequel on va stocker les résultats//
-// inLog => Booléen pour déterminer si oui ou non on stocke les résultats//
-// //
-// En sortie: 
-// //
-//Pas de sortie //
+// World::World:  Constructeur de l'objet World                         //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inSimulationParams :                                              //
+//       Permet de récupérer les données du fichier de config           //
+//                                                                      //                          
+//    inNomFichierLog :                                                 //
+//       Détermine le nom du fichier de log dans lequel                 //
+//       on va stocker les résultats                                    //
+//                                                                      //
+//    inLog :                                                           //
+//       Booléen pour déterminer si oui ou non on stocke les résultats  //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-World::World(SimulationParams * inSimulationParams, char * inNomFichierLog, bool inLog)
+World::World(SimulationParams * inSimulationParams,
+             char             * inNomFichierLog, 
+             bool               inLog)
 {
     
-   int     size = inSimulationParams->getSize();
-   int     multMortToHosp = inSimulationParams->getNbMultMortToHosp();
-   float * tableTauxMortaliteByAgeBy10 = inSimulationParams->getTableTauxMortaliteByAgeBy10();
-   float   tauxMortRea = inSimulationParams->getTauxMortRea();
-   float   r0 = inSimulationParams->getR0();
-   int     nbPlaceHospital = inSimulationParams->getNbPlaceHospital();
-   int     nbPlaceReanimation = inSimulationParams->getNbPlaceReanimation();
-   float   pourcentAsymptomatique = inSimulationParams->getPourcentAsymptomatique();
-   float   tauxVaccination = inSimulationParams->getTauxVaccination();
-   float   tauxDeChanceDeMourirHospitalFull = inSimulationParams->getTauxDeChanceDeMourirHospitalFull();
-   float * histogrammeContamination = inSimulationParams->getHistogrammeContamination();
-   float   tauxContaDistanceDeux = inSimulationParams->getTauxContaDistanceDeux();
+   int     size = 
+                     inSimulationParams->getSize();
+                     
+   int     multMortToHosp = 
+                     inSimulationParams->getNbMultMortToHosp();
+                     
+   float * tableTauxMortaliteByAgeBy10 = 
+                     inSimulationParams->getTableTauxMortaliteByAgeBy10();
+                     
+   float   tauxMortRea = 
+                     inSimulationParams->getTauxMortRea();
+                     
+   float   r0 = 
+                     inSimulationParams->getR0();
+   int     nbPlaceHospital = 
+                     inSimulationParams->getNbPlaceHospital();
+                     
+   int     nbPlaceReanimation = 
+                     inSimulationParams->getNbPlaceReanimation();
+                     
+   float   pourcentAsymptomatique = 
+                     inSimulationParams->getPourcentAsymptomatique();
+                     
+   float   tauxVaccination = 
+                     inSimulationParams->getTauxVaccination();
+                     
+   float   tauxDeChanceDeMourirHospitalFull = 
+                     inSimulationParams->getTauxDeChanceDeMourirHospitalFull();
+                     
+   float * histogrammeContamination = 
+                     inSimulationParams->getHistogrammeContamination();
+                     
+   float   tauxContaDistanceDeux = 
+                     inSimulationParams->getTauxContaDistanceDeux();
+                     
+   float   tauxVaccinationRappel =
+                     inSimulationParams->getTauxVaccinationRappel();
+                     
+   int     isVaccin =
+                     inSimulationParams->getIsVaccin();
+
+   int     nbHumain =
+                     inSimulationParams->getNbHumain();
+
+   int     nbMalade =
+                     inSimulationParams->getNbMalade();
+                     
+   int     isMedicament =
+                     inSimulationParams->getIsMedicament();
+
+   float   tauxProtectionReaMedicament =
+                     inSimulationParams->getTauxProtectionReaMedicament();
+
+   int     isMasqueTissu =
+                     inSimulationParams->getIsMasqueTissu();
+
+   float   tauxProtectionMasqueTissu =
+                     inSimulationParams->getTauxProtectionMasqueTissu();
+                     
+   int     isMasqueChir =
+                     inSimulationParams->getIsMasqueChir();
+
+   float   tauxProtectionMasqueChir =
+                     inSimulationParams->getTauxProtectionMasqueChir();
+                     
+   int     isMasqueFFP2 =
+                     inSimulationParams->getIsMasqueFFP2();
+
+   float   tauxProtectionMasqueFFP2 =
+                     inSimulationParams->getTauxProtectionMasqueFFP2();
+
+   int     isConfinement =
+                     inSimulationParams->getIsConfinement();
+
+   int     nbDeplacementReductionConfinement =
+                     inSimulationParams->getNbDeplacementReductionConfinement();
+
+   int     isDeplacementLimites =
+                     inSimulationParams->getIsDeplacementLimites();
+
+   int     nbDistanceMax =
+                     inSimulationParams->getNbDistanceMax();
+
+   int     isGelHydroalcolique =
+                     inSimulationParams->getIsGelHydroalcolique();
+
+   float   tauxProtectionTransmissionGelHydro =
+                     inSimulationParams->getTauxProtectionTransmissionGelHydro();
+
+   int     isTestCovid =
+                     inSimulationParams->getIsTestCovid();
+
+   float   tauxDeDivisionAsymptomatique =
+                     inSimulationParams->getTauxDeDivisionAsymptomatique();
+
+   int     isCouvreFeu =
+                     inSimulationParams->getIsCouvreFeu();
+
+   int     nbDeplacementReductionCouvreFeu =
+                     inSimulationParams->getNbDeplacementReductionCouvreFeu();
+
+   int     isSuperContaminateur =
+                     inSimulationParams->getIsSuperContaminateur();
+
+   int     nbDeplacementSuperContaminateur =
+                     inSimulationParams->getNbDeplacementSuperContaminateur();
+
+               
+
+
+
+
 
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
-   for(int i = 0; i < size; i++) _carte[i] = (Human **)malloc(size * sizeof(Human*));
-   
+   for(int i = 0; i < size; i++)
+   {
+      _carte[i] = (Human **)malloc(size * sizeof(Human*));
+   }
    
    for(int i = 0; i<size ;i++)
    {
@@ -54,9 +164,11 @@ World::World(SimulationParams * inSimulationParams, char * inNomFichierLog, bool
    
    _tableTauxMortaliteByAgeBy10 = (float*)malloc( 8 * sizeof(float));
    _tableTauxMortaliteByAgeBy10 = tableTauxMortaliteByAgeBy10;
+   
    for(int i = 0; i<8;i++)
    {
-      _tableTauxHospitalisationByAgeBy10[i] = _tableTauxMortaliteByAgeBy10[i] * multMortToHosp;
+      _tableTauxHospitalisationByAgeBy10[i] = _tableTauxMortaliteByAgeBy10[i]
+                                              * multMortToHosp;
    }
 
    _size = size;
@@ -68,6 +180,31 @@ World::World(SimulationParams * inSimulationParams, char * inNomFichierLog, bool
    _tauxVaccination = tauxVaccination;
    _tauxDeChanceDeMourirHospitalFull = tauxDeChanceDeMourirHospitalFull;
    _tauxContaDistanceDeux = tauxContaDistanceDeux;
+   _nbHumain = nbHumain;
+   _nbMalade = nbMalade;
+   _isVaccin = isVaccin;
+   _tauxVaccinationRappel = tauxVaccinationRappel;
+   _isMedicament = isMedicament;
+   _tauxProtectionReaMedicament = tauxProtectionReaMedicament;
+   _isMasqueTissu = isMasqueTissu;
+   _tauxProtectionMasqueTissu = tauxProtectionMasqueTissu;
+   _isMasqueChir = isMasqueChir;
+   _tauxProtectionMasqueChir = tauxProtectionMasqueChir;
+   _isMasqueFFP2 = isMasqueFFP2;
+   _tauxProtectionMasqueFFP2 = tauxProtectionMasqueFFP2;
+   _isConfinement = isConfinement;
+   _nbDeplacementReductionConfinement = nbDeplacementReductionConfinement;
+   _isDeplacementLimites = isDeplacementLimites;
+   _nbDistanceMax = nbDistanceMax;
+   _isGelHydroalcolique = isGelHydroalcolique;
+   _tauxProtectionTransmissionGelHydro = tauxProtectionTransmissionGelHydro;
+   _isTestCovid = isTestCovid;
+   _tauxDeDivisionAsymptomatique = tauxDeDivisionAsymptomatique;
+   _isCouvreFeu = isCouvreFeu;
+   _nbDeplacementReductionCouvreFeu = nbDeplacementReductionCouvreFeu;
+   _isSuperContaminateur = isSuperContaminateur;
+   _nbDeplacementSuperContaminateur = nbDeplacementSuperContaminateur;
+   
    _log = inLog;
    _stats["dead"] = 0;
    _stats["contamined"] = 0;
@@ -84,15 +221,15 @@ World::World(SimulationParams * inSimulationParams, char * inNomFichierLog, bool
 }
 
 // -------------------------------------------------------------------- //
-// World::~World:  Destructeur de l'objet World//
-// //
-// En entrée: 
-// //
-// Pas d'entrée
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::~World:  Destructeur de l'objet World                         //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    Pas d'entrée                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 World::~World()
 {
@@ -106,17 +243,23 @@ World::~World()
 
 
 // -------------------------------------------------------------------- //
-// World::writeLog:  Permet d'écrire un message dans le fichier de log//
-// //
-// En entrée: 
-// //
-// inSimulationParams => Permet de récupérer les données du fichier de config//
-// inNomFichierLog => Détermine le nom du fichier de log dans lequel on va stocker les résultats//
-// inLog => Booléen pour déterminer si oui ou non on stocke les résultats//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::writeLog:  Permet d'écrire un message dans le fichier de log  //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inSimulationParams :                                              //
+//       Permet de récupérer les données du fichier de config           //
+//                                                                      //
+//    inNomFichierLog :                                                 //
+//       Détermine le nom du fichier de log dans lequel                 //
+//       on va stocker les résultats                                    //
+//                                                                      //
+//    inLog :                                                           //
+//       Booléen pour déterminer si oui ou non on stocke les résultats  //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::writeLog(string inMsg)
 {
@@ -126,15 +269,15 @@ void World::writeLog(string inMsg)
 
 
 // -------------------------------------------------------------------- //
-// World::pause:  Permet d'afficher un message de pause//
-// //
-// En entrée: 
-// //
-// Pas d'entrée
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::pause:  Permet d'afficher un message de pause                 //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    Pas d'entrée                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::pause()
 {
@@ -144,15 +287,16 @@ void World::pause()
 
 
 // -------------------------------------------------------------------- //
-// World::Display:  Permet d'afficher l'état actuel de la carte et des Humains//
-// //
-// En entrée: 
-// //
-// Pas d'entrée
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::Display:                                                      //
+//    Permet d'afficher l'état actuel de la carte et des Humains        //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    Pas d'entrée                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::display()
 {
@@ -161,14 +305,16 @@ void World::display()
    cout << endl;
    cout << endl;
    cout << endl;
-   cout << "**********************************************************************";
+   cout << "*****************************************************************";
    for(int row = 0; row<_size; row++)
    {
       cout << "   " << endl;
       for(int column = 0; column<_size; column++ )
       {
          if(_carte[row][column] == nullptr)
-         {// Null n'existe pas en C++. J'ai initialisé à NULL, donc j'imagine un tableau rempli de 0.
+         {
+            // Null n'existe pas en C++. J'ai initialisé à NULL, 
+            //donc j'imagine un tableau rempli de 0.
             cout << World::SYMBOL_EMPTY;
          }
          else
@@ -184,15 +330,21 @@ void World::display()
 
 
 // -------------------------------------------------------------------- //
-// World::updateStats:  Permet de mettre à jour les statistiques des Humains//
-// //
-// En entrée: 
-// //
-// inState => String représentant le changement d'état de l'Humain//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::updateStats:                                                  //
+//    Permet de mettre à jour les statistiques des Humains.             //
+//    Les statistiques sont : Le nombre d'humain qui n'ont pas eu la    //
+//    maladie, le nombre d'humain qui ont eu la maladie puis ce sont    //
+//    retabli, le nombre d'humain actuellement contaminé, et enfin      //
+//    le nombre d'humain qui sont morts.                                //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inState :                                                         //
+//       String représentant le changement d'état de l'Humain           //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::updateStats(string inState)
 {
@@ -219,15 +371,15 @@ void World::updateStats(string inState)
 
 
 // -------------------------------------------------------------------- //
-// World::displayStats:  Affiche les statistiques//
-// //
-// En entrée: 
-// //
-// Pas d'entrée
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::displayStats:  Affiche les statistiques                       //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    Pas d'entrée                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::displayStats()
 {
@@ -240,16 +392,19 @@ void World::displayStats()
 
 
 // -------------------------------------------------------------------- //
-// World::isValid:  Teste si la position est valide (dans la carte)//
-// //
-// En entrée: 
-// //
-// inRow => Ligne de la position à tester//
-// inColumn => Colonne de la position à tester//
-// //
-// En sortie: 
-// //
-// Booléen => Oui ou non la position est valide //
+// World::isValid:  Teste si la position est valide (dans la carte)     //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inRow :                                                           //
+//       Ligne de la position à tester                                  //
+//    inColumn :                                                        //
+//       Colonne de la position à tester                                //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Booléen :                                                         //
+//       Oui ou non la position est valide                              //
 // -------------------------------------------------------------------- //
 bool World::isValid(int inRow, int inColumn)
 {
@@ -259,16 +414,19 @@ bool World::isValid(int inRow, int inColumn)
 
 
 // -------------------------------------------------------------------- //
-// World::isHuman:  Teste si la position est un humain//
-// //
-// En entrée: 
-// //
-// inRow => Ligne de la position à tester//
-// inColumn => Colonne de la position à tester//
-// //
-// En sortie: 
-// //
-// Booléen => Oui ou non la position est un Humain //
+// World::isHuman:  Teste si la position est un humain                  //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inRow :                                                           //
+//       Ligne de la position à tester                                  //
+//    inColumn :                                                        //
+//       Colonne de la position à tester                                //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Booléen :                                                         //
+//       Oui ou non la position est un humain                           //
 // -------------------------------------------------------------------- //
 bool World::isHuman(int inRow, int inColumn)
 {
@@ -292,16 +450,19 @@ bool World::isHuman(int inRow, int inColumn)
 
 
 // -------------------------------------------------------------------- //
-// World::isEmpty:  Teste si la position est vide//
-// //
-// En entrée: 
-// //
-// inRow => Ligne de la position à tester//
-// inColumn => Colonne de la position à tester//
-// //
-// En sortie: 
-// //
-// Booléen => Oui ou non la position est vide //
+// World::isEmpty:  Teste si la position est vide                       //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inRow :                                                           //
+//       Ligne de la position à tester                                  //
+//    inColumn :                                                        //
+//       Colonne de la position à tester                                //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Booléen :                                                         //
+//       Oui ou non la position est vide                                //
 // -------------------------------------------------------------------- //
 bool World::isEmpty(int inRow, int inColumn)
 {
@@ -312,24 +473,28 @@ bool World::isEmpty(int inRow, int inColumn)
 
 
 // -------------------------------------------------------------------- //
-// World::addAgent:  Initialise la carte en ajoutant les Agents//
-// //
-// En entrée: 
-// //
-// inSimulationParams => Les paramètres du fichier de configuration//
-// inAgents => Le nombre d'Humain total dans le simulation au départ//
-// inWorldMax => Facteur déterminant le nombre maximal d'humain (Param à supprimer ?)//
-// inRand => Objet générateur Mersenne Twister//
-// inIsVaccin => Booléen pour définir si la population est vacciné ou non//
-// inSicks => Le nombre d'Humain malade au départ de la simulation//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::addAgent:  Initialise la carte en ajoutant les Agents         //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inSimulationParams :                                              //
+//       Les paramètres du fichier de configuration                     //
+//                                                                      //
+//    inWorldMax :                                                      //
+//        Facteur déterminant le nombre maximal d'humain                //
+//        (Param à supprimer ?)                                         //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::addAgent(SimulationParams * inSimulationParams, 
-                     int inAgents, float inWorldMax, RandMT * inRand,  
-                     int inIsVaccin ,int inSicks)
+                     float              inWorldMax, 
+                     RandMT           * inRand 
+                    )
 {
 
 
@@ -337,19 +502,19 @@ void World::addAgent(SimulationParams * inSimulationParams,
    
 
 
-   if(inAgents > maxAgents)
+   if(_nbHumain > maxAgents)
    {
       cout << "trop d'agent" << endl;
       exit(1);
    }
 
-   if(inSicks > inAgents)
+   if(_nbMalade > _nbHumain)
    {
       cout << "trop de malade" << endl;
       exit(1);
    }
 
-   for(int qtyAgent = 0; qtyAgent < inAgents-inSicks; qtyAgent++)
+   for(int qtyAgent = 0; qtyAgent < _nbHumain-_nbMalade; qtyAgent++)
    {        
       bool  varEmpty = false;
       int   row;
@@ -367,13 +532,18 @@ void World::addAgent(SimulationParams * inSimulationParams,
          
       _carte[row][column] = new Human(inSimulationParams,inRand,row,column);
         
-      if(inIsVaccin == 1)
+      if(_isVaccin == 1)
       {
          float randValue = inRand->genrand_real1();
-            
+         float randValueRappel = inRand->genrand_real1();
          if(randValue < _tauxVaccination)
          {
             _carte[row][column]->vaccine(inRand);
+            if(randValueRappel < _tauxVaccinationRappel)
+            {
+                _carte[row][column]->vaccineRappel(inRand);
+            }
+            
          }
          
       }
@@ -383,7 +553,7 @@ void World::addAgent(SimulationParams * inSimulationParams,
    }
    
 
-   for(int qtyAgents = 0; qtyAgents<inSicks;qtyAgents++)
+   for(int qtyAgents = 0; qtyAgents<_nbMalade;qtyAgents++)
    {
       
       bool varEmpty = false;
@@ -410,52 +580,58 @@ void World::addAgent(SimulationParams * inSimulationParams,
 
 
 // -------------------------------------------------------------------- //
-// World::initialize:  Initialise en appelant addAgent (Fonction inutile ?)//
-// //
-// En entrée: 
-// //
-// inSimulationParams => Les paramètres du fichier de configuration//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::initialize:  Initialise en appelant addAgent                  // 
+//                     (Fonction inutile ?)                             //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inSimulationParams :                                              //
+//       Les paramètres du fichier de configuration                     //
+//                                                                      //
+//     inRand :                                                         //
+//        Objet générateur Mersenne Twister                             //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
 // -------------------------------------------------------------------- //
 void World::initialize(SimulationParams * inSimulationParams, RandMT * inRand)
 {
-
-   addAgent(inSimulationParams, inSimulationParams->getNbHumain(),
-              World::MAX_HUMANS, inRand, inSimulationParams->getIsVaccin(), 
-              inSimulationParams->getNbMalade()
-           );
-
+   addAgent(inSimulationParams,World::MAX_HUMANS,inRand);
 }
 
 
 
 // -------------------------------------------------------------------- //
-// World::vision:  Détermine le contenu des cases voisines d'une cases//
-// //
-// En entrée: 
-// //
-// inLength => La distance à observer (voisinage de Moore)//
-// inRow => La ligne de départ//
-// inColumn => La colonne de départ//
-// //
-// En sortie: 
-// //
-// Un dictionnaire/map associant les cases vides à une liste de positions
-// et les cases occupées à une liste de positions. 
+// World::vision:  Détermine le contenu des cases voisines d'une cases  //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inLength :                                                        //
+//       La distance à observer (voisinage de Moore)                    //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de départ (Position X)                                //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de départ (Position Y)                              //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Un dictionnaire/map associant les cases vides à une liste de      //
+//    positions et les cases occupées à une liste de positions.         // 
 // -------------------------------------------------------------------- //
-map<string,vector<Position>> World::vision(int inLength, int inRow, int inColumn)
+map<string,vector<Position>> World::vision(int inLength,
+                                           int inRow, 
+                                           int inColumn)
 {
 
 
    Position                      maPositionTest;
    map<string, vector<Position>> neighborhood;
 
-    neighborhood["empty"];
-    neighborhood["human"]; 
+   neighborhood["empty"];
+   neighborhood["human"]; 
     
 
    for(int elt_1 = 0-inLength; elt_1<inLength+1;elt_1++)
@@ -516,19 +692,30 @@ map<string,vector<Position>> World::vision(int inLength, int inRow, int inColumn
 
 
 // -------------------------------------------------------------------- //
-// World::Contamination:  Un malade essaye de contaminer ses voisins sains lors d'un déplacement//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de destination de l'humain malade//
-// inColumn => La colonne de destination de l'humain malade//
-// inRand => Objet générateur Mersenne Twister//
-// inCurrentRow => La ligne actuelle de l'humain malade//
-// inCurrentColumn => La colonne actuelle de l'humain malade //
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::Contamination:                                                // 
+//    Un malade essaye de contaminer ses voisins sains                  //
+//    lors d'un déplacement                                             //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de destination de l'humain malade                     //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de destination de l'humain malade                   //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//    inCurrentRow :                                                    //
+//       La ligne actuelle de l'humain malade                           //
+//                                                                      //
+//    inCurrentColumn :                                                 //
+//       La colonne actuelle de l'humain malade                         //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::contamination(int inRow, int inColumn, RandMT * inRand, int inCurrentRow, int inCurrentColumn)
 {
@@ -560,76 +747,745 @@ void World::contamination(int inRow, int inColumn, RandMT * inRand, int inCurren
 
          if(distance == 1)
          {   
-            
-            if(randomValue < _histogrammeContamination[_carte[inCurrentRow][inCurrentColumn]->getState()-1] * (1 - _carte[pos.getPosX()][pos.getPosY()]->getResistanceVirus()))
-            {               
-               _carte[pos.getPosX()][pos.getPosY()]->contamine();
-               _nbNouveauxCas++;
-               _newNextHumanAsymptomatiquePositions.push_back(Position(pos.getPosX(), pos.getPosY()));
-               
-               maPositionTest.setPosX(pos.getPosX());
-               maPositionTest.setPosY(pos.getPosY());
-               int index = 0;
-               for(Position  temp: _newHumanSafePositions )
+            if(_isMasqueTissu)
+            {
+               if(_isGelHydroalcolique)
                {
-                  if(temp == maPositionTest)
-                  {
-                     _newHumanSafePositions.erase(_newHumanSafePositions.begin()+index);
-                  }
-                  index++;
-               }
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueTissu))
+                      * (1 - _tauxProtectionTransmissionGelHydro)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
 
-               updateStats("contamined");
+                      updateStats("contamined");
+                   }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     (_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueTissu)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                   }
+               
+               }
+ 
             }
-         
+            else if(_isMasqueChir)
+            {
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueChir))
+                      * (1 - _tauxProtectionTransmissionGelHydro)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                   }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     (_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueChir)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                   }
+               
+               }
+            }
+            else if(_isMasqueFFP2)
+            {
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueFFP2))
+                      * (1 - _tauxProtectionTransmissionGelHydro)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                   }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     (_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueFFP2)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               
+               }
+            }
+            else
+            {
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     (_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionTransmissionGelHydro)
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     _histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        )
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+            }
          }
          else if(distance == 2)
          {
-            if(randomValue < (_histogrammeContamination[_carte[inCurrentRow][inCurrentColumn]->getState()-1] * (1 - _carte[pos.getPosX()][pos.getPosY()]->getResistanceVirus()))*_tauxContaDistanceDeux)
-            {               
-               _carte[pos.getPosX()][pos.getPosY()]->contamine();
-               _nbNouveauxCas++;
-               _newNextHumanAsymptomatiquePositions.push_back(Position(pos.getPosX(), pos.getPosY()));
-               maPositionTest.setPosX(pos.getPosX());
-               maPositionTest.setPosY(pos.getPosY());
-               int index = 0;
-               for(Position  temp: _newHumanSafePositions)
+            if(_isMasqueTissu)
+            {
+               if(_isGelHydroalcolique)
                {
-                  if(temp == maPositionTest)
-                  {
-                     _newHumanSafePositions.erase(_newHumanSafePositions.begin()+index);
+                  if(randomValue 
+                     < 
+                     (((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueTissu))
+                      * (1 - _tauxProtectionTransmissionGelHydro))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
                   }
-                  index++;
                }
-               updateStats("contamined");
+               else
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueTissu))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               
+               }
+ 
             }
-         
+            else if(_isMasqueChir)
+            {
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     (((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueChir))
+                      * (1 - _tauxProtectionTransmissionGelHydro))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueChir))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               
+               }
+            }
+            else if(_isMasqueFFP2)
+            {
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     (((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * (1 - _tauxProtectionMasqueFFP2))
+                      * (1 - _tauxProtectionTransmissionGelHydro))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * ( 1 - _tauxProtectionMasqueFFP2))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+            }
+            else{
+               if(_isGelHydroalcolique)
+               {
+                  if(randomValue 
+                     < 
+                     ((_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * ( 1 - _tauxProtectionTransmissionGelHydro))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+               else
+               {
+                  if(randomValue 
+                     < 
+                     (_histogrammeContamination[
+                            _carte[inCurrentRow][inCurrentColumn]
+                               ->getState()-1
+                                        ] 
+                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                         ->getTauxDeProtectionInfection()
+                        ))
+                      * _tauxContaDistanceDeux
+                  
+                    )
+                
+                
+                  {               
+                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      _nbNouveauxCas++;
+                      _newNextHumanAsymptomatiquePositions.push_back(
+                                                      Position(pos.getPosX(),
+                                                               pos.getPosY()));
+               
+               
+                      maPositionTest.setPosX(pos.getPosX());
+                      maPositionTest.setPosY(pos.getPosY());
+                      int index = 0;
+                      for(Position  temp: _newHumanSafePositions )
+                      {
+                         if(temp == maPositionTest)
+                         {
+                            _newHumanSafePositions.erase(
+                                           _newHumanSafePositions.begin()+index
+                                                       );
+                         }
+                         index++;
+                      }
+
+                      updateStats("contamined");
+                  }
+               }
+            }
          }
-   
       }
    }
-   
-   
 }
 
 
 
 // -------------------------------------------------------------------- //
-// World::humanGoFromTo:  Déplace un humain sur la carte, et le tue s'il doit mourir//
-// //
-// En entrée: 
-// //
-// inFromRow => La ligne actuelle de l'humain//
-// inFromColumn => La colonne actuelle de l'humain//
-// inToRow => La ligne de destination de l'humain//
-// inToColumn => La colonne de destination de l'humain//
-// inDie => Booléen pour définir si l'humain doit mourir//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::humanGoFromTo:                                                //
+//    Déplace un humain sur la carte, et le tue s'il doit mourir        //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inFromRow :                                                       //
+//       La ligne actuelle de l'humain                                  //
+//                                                                      //
+//    inFromColumn :                                                    //
+//       La colonne actuelle de l'humain                                //
+//                                                                      //
+//    inToRow :                                                         //
+//       La ligne de destination de l'humain                            //
+//                                                                      //
+//    inToColumn :                                                      //
+//        La colonne de destination de l'humain                         //
+//                                                                      //
+//    inDie :                                                           //
+//       Booléen pour définir si l'humain doit mourir                   //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::humanGoFromTo(int inFromRow, int inFromColumn, int inToRow, int inToColumn, bool inDie)
+void World::humanGoFromTo(int  inFromRow,
+                          int  inFromColumn, 
+                          int  inToRow, 
+                          int  inToColumn, 
+                          bool inDie)
 {
     
    if(!inDie)
@@ -652,35 +1508,72 @@ void World::humanGoFromTo(int inFromRow, int inFromColumn, int inToRow, int inTo
 
 
 // -------------------------------------------------------------------- //
-// World::moveHumanSafe:  Réalise la comportement des humains sains//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de l'humain sur la carte//
-// inColumn => La colonne de l'humain sur la carte//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::moveHumanSafe:  Réalise le comportement des humains sains     //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de l'humain sur la carte (Position X sur la carte)    //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de l'humain sur la carte (Position Y sur la carte)  //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
 {
 
-   if(_carte[inRow][inColumn]->getResistanceVirus() > 0)
+   if(_carte[inRow][inColumn]->getTauxDeProtectionReanimation() > 0)
    {
       _carte[inRow][inColumn]->decreaseResistance();
    }
    
-   int rowDeplacement = inRand->genrand_int32()%_size; // Il peut se déplacer de 0 à size
-   int columnDeplacement = inRand->genrand_int32()%_size; // Il peut se déplacer de 0 à size
+   int rowDeplacement;
+   int columnDeplacement;
+   if(_isDeplacementLimites)
+   {
+      //a + (b - a) * randNum0-1
+      rowDeplacement = (inRow-_nbDistanceMax) 
+                       +
+                       ((inRow + _nbDistanceMax)
+                       - 
+                       (inRow - _nbDistanceMax))
+                       * 
+                       inRand->genrand_real1();
+      columnDeplacement = 
+                       (inColumn-_nbDistanceMax) 
+                       +
+                       ((inColumn + _nbDistanceMax)
+                       - 
+                       (inColumn - _nbDistanceMax))
+                       * 
+                       inRand->genrand_real1();
+   }
+   else
+   {
+      // Il peut se déplacer de 0 à size
+      rowDeplacement = inRand->genrand_int32()%_size; 
+      columnDeplacement = inRand->genrand_int32()%_size; 
+   }
+   
+ 
    map<string, vector<Position>> target_v1 = vision(1,rowDeplacement,columnDeplacement);
 
    if(target_v1["empty"].size() != 0)
    {
       int taille = target_v1.at("empty").size();
       int randomValue = ((long)floor(inRand->genrand_int32()))%taille;
-      humanGoFromTo(inRow,inColumn, target_v1.at("empty").at(randomValue).getPosX(),target_v1.at("empty").at(randomValue).getPosY());
+      humanGoFromTo(inRow,
+                    inColumn, 
+                    target_v1.at("empty").at(randomValue).getPosX(),
+                    target_v1.at("empty").at(randomValue).getPosY()
+                   );
       _newHumanSafePositions.push_back(target_v1.at("empty").at(randomValue));
    }
    else
@@ -695,17 +1588,24 @@ void World::moveHumanSafe(int inRow, int inColumn, RandMT * inRand)
 
 
 // -------------------------------------------------------------------- //
-// World::moveHumanAsymptomatique:  Réalise la comportement des humains asymptomatique//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de l'humain sur la carte//
-// inColumn => La colonne de l'humain sur la carte//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::moveHumanAsymptomatique:                                      //
+//    Réalise la comportement des humains asymptomatique                //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de l'humain sur la carte (Position X sur la carte)    //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de l'humain sur la carte (Position Y sur la carte)  //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
 {
@@ -713,7 +1613,8 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
    /*
    
    ATTENTION :
-   INCREMENTSTATE() dans le code apellant, pas ici. On peut faire plusieurs déplacement dans 1 seule journée (sans augmenter le state)
+   INCREMENTSTATE() dans le code apellant, pas ici. 
+   On peut faire plusieurs déplacement dans 1 seule journée (sans augmenter le state)
    
    */
 
@@ -756,8 +1657,33 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
    {
    
 
-      int rowDeplacement = inRand->genrand_int32()%_size; // Il peut se déplacer de 0 à size
-      int columnDeplacement = inRand->genrand_int32()%_size; // Il peut se déplacer de 0 à size
+      int rowDeplacement;
+      int columnDeplacement;
+      if(_isDeplacementLimites)
+      {
+         //a + (b - a) * randNum0-1
+         rowDeplacement = (inRow-_nbDistanceMax) 
+                          +
+                          ((inRow + _nbDistanceMax)
+                          - 
+                          (inRow - _nbDistanceMax))
+                          * 
+                          inRand->genrand_real1();
+         columnDeplacement = 
+                          (inColumn-_nbDistanceMax) 
+                          +
+                          ((inColumn + _nbDistanceMax)
+                          - 
+                          (inColumn - _nbDistanceMax))
+                          * 
+                          inRand->genrand_real1();
+      }
+      else
+      {
+         // Il peut se déplacer de 0 à size
+         rowDeplacement = inRand->genrand_int32()%_size; 
+         columnDeplacement = inRand->genrand_int32()%_size; 
+      }
       map<string, vector<Position>> target_v1 = vision(1,rowDeplacement,columnDeplacement);
 
 
@@ -767,18 +1693,31 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
          int taille = target_v1.at("empty").size();
          int randomValue = ((long)floor(inRand->genrand_int32()))%taille;
 
-         contamination(target_v1.at("empty").at(randomValue).getPosX(),target_v1.at("empty").at(randomValue).getPosY(), inRand, inRow, inColumn);
+         contamination(target_v1.at("empty").at(randomValue).getPosX(),
+                       target_v1.at("empty").at(randomValue).getPosY(),
+                       inRand,
+                       inRow,
+                       inColumn
+                      );
 
-         humanGoFromTo(inRow,inColumn, target_v1.at("empty").at(randomValue).getPosX(),target_v1.at("empty").at(randomValue).getPosY());
+         humanGoFromTo(inRow,
+                       inColumn, 
+                       target_v1.at("empty").at(randomValue).getPosX(),
+                       target_v1.at("empty").at(randomValue).getPosY()
+                      );
 
 
-         _newCurrentHumanAsymptomatiquePositions.push_back(target_v1.at("empty").at(randomValue));
+         _newCurrentHumanAsymptomatiquePositions.push_back(
+                                          target_v1.at("empty").at(randomValue)
+                                                          );
          
       }
       else
       {
          contamination(inRow,inColumn, inRand, inRow, inColumn);
-         _newCurrentHumanAsymptomatiquePositions.push_back(_carte[inRow][inColumn]->getPosition());
+         _newCurrentHumanAsymptomatiquePositions.push_back(
+                                         _carte[inRow][inColumn]->getPosition()
+                                                          );
       }
    
    }
@@ -789,17 +1728,25 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, RandMT * inRand)
 
 
 // -------------------------------------------------------------------- //
-// World::moveHumanConfined:  Réalise la comportement des humains confiné//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de l'humain sur la carte//
-// inColumn => La colonne de l'humain sur la carte//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::moveHumanConfined:                                            //
+//    Réalise la comportement des humains confiné                       //
+//    Les humains contaminés qui ne sont pas asymptomatique             //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de l'humain sur la carte (Position X sur la carte)    //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de l'humain sur la carte (Position Y sur la carte)  //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
 {
@@ -818,12 +1765,22 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
          //Si la personne est symtomatique, alors elle a des chances d'aller a l'hopital
          float randValue = inRand->genrand_real1();
 
-         if(randValue < _tableTauxHospitalisationByAgeBy10[_carte[inRow][inColumn]->getAge()]/100)
+         if(randValue 
+            < 
+            (_tableTauxHospitalisationByAgeBy10[
+                      _carte[inRow][inColumn]->getAge()
+                                              ]
+                                              /100)
+             * ( 1 -_carte[inRow][inColumn]->getTauxDeProtectionHospitalisation())
+           )
+             
          {
             if(_nbPersonneHospital < _nbPlaceHospital)
             {
                _carte[inRow][inColumn]->goToHospital();
-               _newHumanHospitalPositions.push_back(_carte[inRow][inColumn]->getPosition());
+               _newHumanHospitalPositions.push_back(
+                                         _carte[inRow][inColumn]->getPosition()
+                                                   );
                _nbNouveauxHospitalisation++;
                _nbPersonneHospital++;
             }
@@ -831,10 +1788,12 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
             {
                // Si il n'y a plus de place a l'hopital et qu'on a besoin d'etre hospitalisé, 20% de chance de mourir
 
-               //### tauxDeChanceDeMourirHospitalFull
+               
                if(randValue < _tauxDeChanceDeMourirHospitalFull)
                {
-                  _ageOfDeadHumansDaily.push_back(_carte[inRow][inColumn]->getAge());
+                  _ageOfDeadHumansDaily.push_back(
+                                       _carte[inRow][inColumn]->getAge()
+                                                 );
                   humanGoFromTo(inRow,inColumn, 0,0, true);
                   _nbMorts++;
                   return;
@@ -844,12 +1803,16 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
          }
          else
          {
-            _newHumanConfinedPositions.push_back(_carte[inRow][inColumn]->getPosition());
+            _newHumanConfinedPositions.push_back(
+                                      _carte[inRow][inColumn]->getPosition()
+                                                );
          }   
       }
       else
       {
-         _newHumanConfinedPositions.push_back(_carte[inRow][inColumn]->getPosition());
+         _newHumanConfinedPositions.push_back(
+                                   _carte[inRow][inColumn]->getPosition()
+                                             );
       }
    
    _carte[inRow][inColumn]->incrementState();
@@ -860,17 +1823,24 @@ void World::moveHumanConfined(int inRow, int inColumn, RandMT * inRand)
 
 
 // -------------------------------------------------------------------- //
-// World::moveHumanHospital:  Réalise la comportement des humains à l'hopital//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de l'humain sur la carte//
-// inColumn => La colonne de l'humain sur la carte//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::moveHumanHospital:                                            //
+//    Réalise le comportement des humains à l'hopital                   //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de l'humain sur la carte (Position X sur la carte)    //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de l'humain sur la carte (Position Y sur la carte)  //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
 {
@@ -899,40 +1869,94 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
          {
             tauxReaIfHosp = 0.15; // La moyenne est 0.1474089554531037
          }
-         if(randValue < tauxReaIfHosp)
+         if(_isMedicament)
          {
-            
-            if(_nbPersonneReanimation < _nbPlaceReanimation)
-            {
+            if(randValue 
+               < 
+               (tauxReaIfHosp * _tauxProtectionReaMedicament)
+               * (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation())
                
-               _nbPersonneHospital--;
-               _newHumanReanimationPositions.push_back(_carte[inRow][inColumn]->getPosition());
-               _carte[inRow][inColumn]->goToReanimation(inRand);
-               _nbNouveauxReanimation++;
-               _nbPersonneReanimation++;
+              )
+            {
+            
+               if(_nbPersonneReanimation < _nbPlaceReanimation)
+               {
+               
+                  _nbPersonneHospital--;
+                  _newHumanReanimationPositions.push_back(
+                                            _carte[inRow][inColumn]->getPosition()
+                                                         );
+               
+                  _carte[inRow][inColumn]->goToReanimation(inRand);
+                  _nbNouveauxReanimation++;
+                  _nbPersonneReanimation++;
+               }
+               else
+               {
+                  // Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
+                  _nbPersonneHospital--;
+               
+                  _ageOfDeadHumansDaily.push_back(_carte[inRow][inColumn]->getAge());
+                  humanGoFromTo(inRow,inColumn, 0,0,true);
+                  _nbMorts++;
+                  return;
+               }
+            
             }
             else
             {
-               // Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
-               _nbPersonneHospital--;
-               
-               _ageOfDeadHumansDaily.push_back(_carte[inRow][inColumn]->getAge());
-               humanGoFromTo(inRow,inColumn, 0,0,true);
-               _nbMorts++;
-               return;
-            }
-            
+               _newHumanHospitalPositions.push_back(
+                                      _carte[inRow][inColumn]->getPosition()
+                                                   );
+            } 
+         
          }
          else
          {
-            _newHumanHospitalPositions.push_back(_carte[inRow][inColumn]->getPosition());
+            if(randValue 
+               < 
+               tauxReaIfHosp 
+               * 
+               (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation()))
+            {
+            
+               if(_nbPersonneReanimation < _nbPlaceReanimation)
+               {
+               
+                  _nbPersonneHospital--;
+                  _newHumanReanimationPositions.push_back(
+                                            _carte[inRow][inColumn]->getPosition()
+                                                         );
+               
+                  _carte[inRow][inColumn]->goToReanimation(inRand);
+                  _nbNouveauxReanimation++;
+                  _nbPersonneReanimation++;
+               }
+               else
+               {
+                  // Si la personne doit aller en réanimation mais qu'il n'y a plus de place, elle meurt.
+                  _nbPersonneHospital--;
+               
+                  _ageOfDeadHumansDaily.push_back(_carte[inRow][inColumn]->getAge());
+                  humanGoFromTo(inRow,inColumn, 0,0,true);
+                  _nbMorts++;
+                  return;
+               }
+            
+            }
+            else
+            {
+               _newHumanHospitalPositions.push_back(
+                                      _carte[inRow][inColumn]->getPosition()
+                                                   );
+            } 
          }
-         
-         
       }
       else
       {
-         _newHumanHospitalPositions.push_back(_carte[inRow][inColumn]->getPosition());
+         _newHumanHospitalPositions.push_back(
+                                   _carte[inRow][inColumn]->getPosition()
+                                             );
       }
       
    
@@ -945,17 +1969,24 @@ void World::moveHumanHospital(int inRow, int inColumn, RandMT * inRand)
 
 
 // -------------------------------------------------------------------- //
-// World::moveHumanReanimation:  Réalise la comportement des humains en réanimation//
-// //
-// En entrée: 
-// //
-// inRow => La ligne de l'humain sur la carte//
-// inColumn => La colonne de l'humain sur la carte//
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::moveHumanReanimation:                                         //
+//    Réalise le comportement des humains en réanimation                //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    inRow :                                                           //
+//       La ligne de l'humain sur la carte (Position X sur la carte)    //
+//                                                                      //
+//    inColumn :                                                        //
+//       La colonne de l'humain sur la carte (Position Y sur la carte)  //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
 {
@@ -963,9 +1994,13 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
 
    
    /*
-   Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet, a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. Entre les 2 périodes, l'âge médian est passé de 61 ans à 64 ans.
+   Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet,
+   a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. 
+   Entre les 2 périodes, l'âge médian est passé de 61 ans à 64 ans.
    
-   Dans le service de réanimation du Pr Demoule, "la durée de séjour en réanimation est de 5 jours pour les patients non intubés. S'ils sont intubés ils restent quand même 3 semaines (même si on manque encore de recul par rapport à la 2e vague)".
+   Dans le service de réanimation du Pr Demoule, 
+   "la durée de séjour en réanimation est de 5 jours pour les patients non intubés.
+   S'ils sont intubés ils restent quand même 3 semaines (même si on manque encore de recul par rapport à la 2e vague)".
    
    https://www.apmnews.com/depeche/1/355843/covid-19-en-reanimation-une-prise-en-charge-amelioree%2C-des-patients-un-peu-moins-severes
    */
@@ -976,7 +2011,10 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
 
    //double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
    
-   if(_carte[inRow][inColumn]->getState() > _carte[inRow][inColumn]->getDureeReanimation())
+   if(_carte[inRow][inColumn]->getState() 
+       >
+       _carte[inRow][inColumn]->getDureeReanimation()
+     )
    {
       _newHumanSafePositions.push_back(_carte[inRow][inColumn]->getPosition());
       _nbPersonneReanimation--;
@@ -1014,7 +2052,9 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
       }
       else
       {
-         _newHumanReanimationPositions.push_back(_carte[inRow][inColumn]->getPosition());
+         _newHumanReanimationPositions.push_back(
+                                      _carte[inRow][inColumn]->getPosition()
+                                                );
       }
       
       
@@ -1031,16 +2071,18 @@ void World::moveHumanReanimation(int inRow, int inColumn, RandMT * inRand)
 
 
 // -------------------------------------------------------------------- //
-// World::nextIteration:  Effectue les changements necessaires et écrit les log
-// pour passer à l'itération suivante//
-// //
-// En entrée: 
-// //
-// inRand => Objet générateur Mersenne Twister//
-// //
-// En sortie: 
-// //
-// Pas de sortie
+// World::nextIteration:                                                //
+//    Effectue les changements necessaires et écrit les log             //
+//    pour passer à l'itération suivante                                //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
 void World::nextIteration(RandMT * inRand)
 {
@@ -1053,7 +2095,11 @@ void World::nextIteration(RandMT * inRand)
    writeLog(to_string(_nbMorts));
    writeLog(to_string(_nbCasCovidConnuTotal));
     
-    float totalMalade = (float)(_humanAsymptomatiquePositions.size() + _humanConfinedPositions.size() + _humanHospitalPositions.size() +_humanReanimationPositions.size());
+    float totalMalade = (float)(_humanAsymptomatiquePositions.size() 
+                                + _humanConfinedPositions.size() 
+                                + _humanHospitalPositions.size() 
+                                +_humanReanimationPositions.size()
+                               );
     float reffectifJour = 0;
     
     if(totalMalade > 0)
@@ -1062,7 +2108,7 @@ void World::nextIteration(RandMT * inRand)
     }
 
 
-   writeLog(to_string(reffectifJour*11)); // 10 est le nb de jour où la personne est contaminante : 2 + 9.
+   writeLog(to_string(reffectifJour*11)); // 11 est le nb de jour où une personne est contaminante : 2 + 9.
 
    for (int age: _ageOfSymptomaticDailyHuman)
    {
@@ -1095,20 +2141,74 @@ void World::nextIteration(RandMT * inRand)
      //while(_nbNouveauxCas < _humanAsymptomatiquePositions.size() * _r0 ){
         //nbBoucle++;
 
-   
-   for(int x = 0; x < 12; x++)
+   if(_isConfinement)
    {
+      if(_isCouvreFeu)
+      {
+         for(int x = 0; x < 12 - (_nbDeplacementReductionConfinement + _nbDeplacementReductionCouvreFeu); x++)
+         {
+            for(Position  temp: _humanAsymptomatiquePositions)
+            {
+               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+            }
+            _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
+            _newCurrentHumanAsymptomatiquePositions.clear();
+         }
+         for(Position  temp: _humanAsymptomatiquePositions)
+         {
+            _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+         }
+      }
+      else
+      {
+         for(int x = 0; x < 12 - _nbDeplacementReductionConfinement; x++)
+         {
+            for(Position  temp: _humanAsymptomatiquePositions)
+            {
+               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+            }
+            _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
+            _newCurrentHumanAsymptomatiquePositions.clear();
+         }
+         for(Position  temp: _humanAsymptomatiquePositions)
+         {
+            _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+         }
+      }
+   }
+   else if(_isCouvreFeu)
+   {
+      for(int x = 0; x < 12 - _nbDeplacementReductionCouvreFeu; x++)
+      {
+         for(Position  temp: _humanAsymptomatiquePositions)
+         {
+            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+         }
+         _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
+         _newCurrentHumanAsymptomatiquePositions.clear();
+      }
       for(Position  temp: _humanAsymptomatiquePositions)
       {
-         moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+         _carte[temp.getPosX()][temp.getPosY()]->incrementState();
       }
-      _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
-      _newCurrentHumanAsymptomatiquePositions.clear();
    }
-   for(Position  temp: _humanAsymptomatiquePositions)
+   else
    {
-      _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+      for(int x = 0; x < 12; x++)
+      {
+         for(Position  temp: _humanAsymptomatiquePositions)
+         {
+            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY(), inRand);
+         }
+         _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
+         _newCurrentHumanAsymptomatiquePositions.clear();
+      }
+      for(Position  temp: _humanAsymptomatiquePositions)
+      {
+         _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+      }
    }
+
 
    
    
@@ -1143,7 +2243,9 @@ void World::nextIteration(RandMT * inRand)
    _humanSafePositions = _newHumanSafePositions;
    
     
-   // Pour les asymptomatiques j'ai deux vecteurs, donc je dois les concatener pour les mettres dans le vecteur courant
+   // Pour les asymptomatiques j'ai deux vecteurs, 
+   //donc je dois les concatener pour les mettres dans le vecteur courant
+   
    _humanAsymptomatiquePositions.insert(_humanAsymptomatiquePositions.end(), 
                                         _newNextHumanAsymptomatiquePositions.begin(), 
                                         _newNextHumanAsymptomatiquePositions.end());
@@ -1152,7 +2254,8 @@ void World::nextIteration(RandMT * inRand)
    _humanConfinedPositions = _newHumanConfinedPositions;
    _humanHospitalPositions = _newHumanHospitalPositions;
    _humanReanimationPositions = _newHumanReanimationPositions;
-   // Cette section ne va fonctionner que si le "=" fait une copie, car si le "=" passe le pointeur au début du vecteur, alors le clear() va également écraser le nouveau.
+   // Cette section ne va fonctionner que si le "=" fait une copie, 
+   //car si le "=" passe le pointeur au début du vecteur, alors le clear() va également écraser le nouveau.
    
    _newHumanSafePositions.clear();
    _newCurrentHumanAsymptomatiquePositions.clear();
@@ -1171,18 +2274,25 @@ void World::nextIteration(RandMT * inRand)
 //                                                                      //
 // En entrée:                                                           // 
 //                                                                      //
-// inSimulationParams => Objet contenant les paramètres du fichier de configuration//
-// inRand => Objet générateur Mersenne Twister                          //
+//    inSimulationParams :                                              //
+//       Objet contenant les paramètres du fichier de configuration     //
+//                                                                      //
+//    inRand :                                                          //
+//       Objet générateur Mersenne Twister                              //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
-// Pas de sortie                                                        //
+//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::startSimulation(SimulationParams * inSimulationParams, RandMT * inRand)
+void World::startSimulation(SimulationParams * inSimulationParams,
+                            RandMT           * inRand
+                           )
 {
 
 
-   for(int iteration = 0;iteration < inSimulationParams->getNbIteration();iteration++)
+   for(int iteration = 0;
+       iteration < inSimulationParams->getNbIteration();
+       iteration++)
    {
       //displayStats();
       //display();

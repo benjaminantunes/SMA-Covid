@@ -22,22 +22,31 @@ class Human
       bool              _isConfined = false;
       bool              _isHospital = false;
       bool              _isReanimation = false;
-      float             _resistanceVirus = 0;
+      float             _tauxDeProtectionInfection = 0;
+      float             _tauxDeProtectionHospitalisation = 0;
+      float             _tauxDeProtectionReanimation = 0;
       float           * _resistanceInfectionValuesByAge;
       float           * _maxResistanceInjectionValuesByAge;
       float           * _minResistanceInjectionValuesByAge;
       int               _dureeReanimation = 0;
       int               _daysSinceLastInfectionOrInjection = 0;
+      float           * _tauxDeProtectionHospVaccinByAge;
+      float           * _tauxDeProtectionReaVaccinByAge;
+      float           * _tauxDeProtectionHospVaccinRappelByAge;
+      float           * _tauxDeProtectionReaVaccinRappelByAge;
+      float           * _tauxDeProtectionHospInfectionByAge;
+      float           * _tauxDeProtectionReaInfectionByAge;
 
 
    public:
       Human(SimulationParams*,RandMT*,int,int);
       void      contamine();
       void      vaccine(RandMT*);
+      void      vaccineRappel(RandMT*);
       bool      isSick();
       int       getState();
       int       getAge();
-      float     getResistanceVirus();
+      float     getTauxDeProtectionInfection();
       void      decreaseResistance();
       void      resetState();
       void      incrementState();
@@ -51,5 +60,7 @@ class Human
       bool      getIsReanimation();
       int       getDureeReanimation();
       Position  getPosition();
+      float     getTauxDeProtectionHospitalisation();
+      float     getTauxDeProtectionReanimation();
 
 };
