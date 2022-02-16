@@ -13,7 +13,7 @@ SimulationParams::SimulationParams(char * inFilename){
    _mapStringValues["resistanceInfectionValuesByAge"] = 0;
    _mapStringValues["maxResistanceInjectionValuesByAge"] = 1;
    _mapStringValues["minResistanceInjectionValuesByAge"] = 2;
-   _mapStringValues["tableTauxMortaliteByAgeBy10"] = 3;
+   _mapStringValues["tableTauxHospitalisationByAge"] = 3;
    _mapStringValues["nbPlaceHospital"] = 5;
    _mapStringValues["nbPlaceReanimation"] = 6;
    _mapStringValues["r0"] = 7;
@@ -22,7 +22,7 @@ SimulationParams::SimulationParams(char * inFilename){
    _mapStringValues["nbMalade"] = 10;
    _mapStringValues["nbHumain"] = 11;
    _mapStringValues["nbIteration"] = 12;
-   _mapStringValues["nbMultMortToHosp"] = 13;
+   //_mapStringValues["nbMultMortToHosp"] = 13;
    _mapStringValues["isVaccin"] = 14;
    _mapStringValues["histogrammeContamination"] = 15;
    _mapStringValues["pourcentAsymptomatique"] = 16;
@@ -56,6 +56,8 @@ SimulationParams::SimulationParams(char * inFilename){
    _mapStringValues["nbDeplacementReductionCouvreFeu"] = 44;
    _mapStringValues["isSuperContaminateur"] = 45;
    _mapStringValues["nbDeplacementSuperContaminateur"] = 46;
+   _mapStringValues["probasCumulativesTrancheAge"] = 47;
+   _mapStringValues["nbLimiteDistanceMaxConfinement"] = 48;
 
 
 
@@ -80,6 +82,7 @@ SimulationParams::SimulationParams(char * inFilename){
                                         );
          string value;
          int j = 0;
+         
          switch (_mapStringValues[paramName])
          {
             
@@ -91,6 +94,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _resistanceInfectionValuesByAge[j] = stof(value);
                break;
                
@@ -102,6 +106,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _maxResistanceInjectionValuesByAge[j] = stof(value);
                break;
                
@@ -113,6 +118,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _minResistanceInjectionValuesByAge[j] = stof(value);
                break;
                
@@ -120,11 +126,12 @@ SimulationParams::SimulationParams(char * inFilename){
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
-                  _tableTauxMortaliteByAgeBy10[j] = stof(value);
+                  _tableTauxHospitalisationByAge[j] = stof(value);
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               _tableTauxMortaliteByAgeBy10[j] = stof(value);
+               value = paramValues.substr(0, pos);
+               _tableTauxHospitalisationByAge[j] = stof(value);
                break;
                
             case 5:
@@ -158,11 +165,13 @@ SimulationParams::SimulationParams(char * inFilename){
             case 12:
                _nbIteration = stoi(paramValues);
                break;
-               
+         
+            /*
             case 13:
                _nbMultMortToHosp = stoi(paramValues);
                break;
-               
+            
+            */
             case 14:
                _isVaccin = stoi(paramValues);
                break;
@@ -175,6 +184,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _histogrammeContamination[j] = stof(value);
                break;
                
@@ -206,6 +216,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionHospVaccinByAge[j] = stof(value);
                break;
                
@@ -217,6 +228,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionReaVaccinByAge[j] = stof(value);
                break;
                
@@ -228,6 +240,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionHospVaccinRappelByAge[j] = stof(value);
                break;
                
@@ -239,6 +252,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionReaVaccinRappelByAge[j] = stof(value);
                break;
                
@@ -250,6 +264,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionHospInfectionByAge[j] = stof(value);
                break;
                
@@ -261,6 +276,7 @@ SimulationParams::SimulationParams(char * inFilename){
                   j++;
                   paramValues.erase(0, pos + delimiterValues.length());
                }
+               value = paramValues.substr(0, pos);
                _tauxDeProtectionReaInfectionByAge[j] = stof(value);
                break;
             
@@ -346,6 +362,24 @@ SimulationParams::SimulationParams(char * inFilename){
                break;
                
                
+            case 47:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _probasCumulativesTrancheAge[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _probasCumulativesTrancheAge[j] = stof(value);
+               break;
+               
+               
+            case 48:
+               _nbLimiteDistanceMaxConfinement = stoi(paramValues);
+               break;
+               
+               
 
          }
       }
@@ -375,9 +409,9 @@ float * SimulationParams::getMinResistanceInjectionValuesByAge()
 }
 
 
-float * SimulationParams::getTableTauxMortaliteByAgeBy10()
+float * SimulationParams::getTableTauxHospitalisationByAge()
 {
-   return _tableTauxMortaliteByAgeBy10;
+   return _tableTauxHospitalisationByAge;
 }
 
 
@@ -426,10 +460,6 @@ int SimulationParams::getNbIteration()
    return _nbIteration;
 }
 
-int SimulationParams::getNbMultMortToHosp()
-{
-   return _nbMultMortToHosp;
-}
 
 int SimulationParams::getIsVaccin()
 {
@@ -546,7 +576,12 @@ int SimulationParams::getIsConfinement()
 
 int SimulationParams::getNbDeplacementReductionConfinement()
 {
- return _nbDeplacementReductionConfinement;
+   return _nbDeplacementReductionConfinement;
+}
+
+int SimulationParams::getNbLimiteDistanceMaxConfinement()
+{
+   return _nbLimiteDistanceMaxConfinement;
 }
 
 int SimulationParams::getIsDeplacementLimites()
@@ -597,4 +632,9 @@ int SimulationParams::getIsSuperContaminateur()
 int SimulationParams::getNbDeplacementSuperContaminateur()
 {
    return _nbDeplacementSuperContaminateur;
+}
+
+float * SimulationParams::getProbasCumulativesTrancheAge()
+{
+    return _probasCumulativesTrancheAge;
 }

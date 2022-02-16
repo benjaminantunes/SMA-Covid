@@ -1,24 +1,27 @@
 #pragma once
+
 #include <string>
+
 #include "Position.hpp"
 #include "RandMT.hpp"
 #include "SimulationParams.hpp"
+
 extern RandMT * randmt;
+
 class Human 
 {
-
    private:
-      int               _state = 0;
-      char              _symbol;
+      
       static const char SYMBOL = 'X';
       static const char SYMBOL_SICK = 'O';
       static const char SYMBOL_SICK_CONFINED = 'C';
       static const char SYMBOL_SICK_HOSPITAL = 'H';
       static const char SYMBOL_SICK_REANIMATION = 'R';
       
+      int               _state = 0;
+      char              _symbol;
       int               _age;
       int               _sexe; //0 homme et 1 femme
-      Position          _pos;
       bool              _isConfined = false;
       bool              _isHospital = false;
       bool              _isReanimation = false;
@@ -36,10 +39,14 @@ class Human
       float           * _tauxDeProtectionReaVaccinRappelByAge;
       float           * _tauxDeProtectionHospInfectionByAge;
       float           * _tauxDeProtectionReaInfectionByAge;
+      float           * _probasCumulativesTrancheAge;
 
+      Position          _pos;
 
    public:
+ 
       Human(SimulationParams*,int,int);
+      
       void      contamine();
       void      vaccine();
       void      vaccineRappel();

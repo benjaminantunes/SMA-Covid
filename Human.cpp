@@ -38,35 +38,41 @@ Human::Human(SimulationParams * inSimulationParams,
    float randAge = randmt->genrand_real1();
    
    _resistanceInfectionValuesByAge = 
-   inSimulationParams->getResistanceInfectionValuesByAge();
+      inSimulationParams->getResistanceInfectionValuesByAge();
    
    _maxResistanceInjectionValuesByAge =
-   inSimulationParams->getMaxResistanceInjectionValuesByAge();
+      inSimulationParams->getMaxResistanceInjectionValuesByAge();
    
    _minResistanceInjectionValuesByAge = 
-   inSimulationParams->getMinResistanceInjectionValuesByAge();
+      inSimulationParams->getMinResistanceInjectionValuesByAge();
    
    _tauxDeProtectionHospVaccinByAge = 
-   inSimulationParams->getTauxDeProtectionHospVaccinByAge();
+      inSimulationParams->getTauxDeProtectionHospVaccinByAge();
    
    _tauxDeProtectionReaVaccinByAge = 
-   inSimulationParams->getTauxDeProtectionReaVaccinByAge();
+      inSimulationParams->getTauxDeProtectionReaVaccinByAge();
    
    _tauxDeProtectionHospVaccinRappelByAge = 
-   inSimulationParams->getTauxDeProtectionHospVaccinRappelByAge();
+      inSimulationParams->getTauxDeProtectionHospVaccinRappelByAge();
    
    _tauxDeProtectionReaVaccinRappelByAge = 
-   inSimulationParams->getTauxDeProtectionReaVaccinRappelByAge();
+      inSimulationParams->getTauxDeProtectionReaVaccinRappelByAge();
    
    _tauxDeProtectionHospInfectionByAge = 
-   inSimulationParams->getTauxDeProtectionHospInfectionByAge();
+      inSimulationParams->getTauxDeProtectionHospInfectionByAge();
    
    _tauxDeProtectionReaInfectionByAge = 
-   inSimulationParams->getTauxDeProtectionReaInfectionByAge();
+      inSimulationParams->getTauxDeProtectionReaInfectionByAge();
+   
+   _probasCumulativesTrancheAge = 
+      inSimulationParams->getProbasCumulativesTrancheAge();
    
    
    // https://www.insee.fr/fr/statistiques/2381474#figure1_radio2
    // 8 Tranches : 0 - 15, 15 - 25 , 25 - 35 , 35 - 45 , 45 - 55, 55 - 65, 65 - 75, 75 +
+   
+   // Pour passer en paramètre, il me faut les probas cumulatives.
+   /*
    if(randAge < 0.177)
    {
       _age = 0; // 0%
@@ -99,9 +105,19 @@ Human::Human(SimulationParams * inSimulationParams,
    {
       _age = 7; // 14.8%
    }
+   */
+
+   for(int i = 0;i<8;i++)
+   {
+      if(randAge <= _probasCumulativesTrancheAge[i])
+      {
+         _age = i;
+         break;
+      }
+   }
    
-   
-   
+
+
    float randSexe = randmt->genrand_real1();
    // 50/50 homme et femme
    if(randSexe < 0.5)
@@ -110,23 +126,11 @@ Human::Human(SimulationParams * inSimulationParams,
    }
 }
 
-
-
-
-
-
-
 // -------------------------------------------------------------------- //
 // Human::Contamine  Contamine un humain et augmente sa resistance      //
 //                   à la réinfection                                   //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::contamine()
 {
    _state = 1;
@@ -154,14 +158,8 @@ void Human::contamine()
 // -------------------------------------------------------------------- //
 // Human::Vaccine  Vaccine un humain et augmente sa resistance          //
 //                 à l'infection                                        //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::vaccine()
 {
    double randomValue = _minResistanceInjectionValuesByAge[_age]
@@ -190,20 +188,10 @@ void Human::vaccine()
    
 }
 
-
 // -------------------------------------------------------------------- //
 // Human::Vaccine  Vaccine un humain avec un rappel(booster)            //
-//                                                                      //
-//                                                                      //
-// En entrée:                                                           // 
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::vaccineRappel()
 {
    double randomValue = _minResistanceInjectionValuesByAge[_age]
@@ -228,77 +216,53 @@ void Human::vaccineRappel()
    if(_tauxDeProtectionReanimation < _tauxDeProtectionReaVaccinRappelByAge[_age])
    {
        _tauxDeProtectionReanimation = _tauxDeProtectionReaVaccinRappelByAge[_age];
-   }
-   
+   }  
 }
-
-
-
-
 
 // -------------------------------------------------------------------- //
 // Human::isSick  Renvoi si un humain est malade                        //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Booléen : Malade ou non                                           //
 // -------------------------------------------------------------------- //
+
 bool Human::isSick()
 {
    return _state != 0;
 }
 
-
-
 // -------------------------------------------------------------------- //
 // Human::getState  Retourne l'état de l'humain (les jours de maladie)  //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Integer : L'état                                                  //
 // -------------------------------------------------------------------- //
+
 int Human::getState()
 {
    return _state;
 }
 
-
-
-
 // -------------------------------------------------------------------- //
 // Human::incrementState                                                //
 //    Augmente l'état de l'humain, un jour de plus de maladie           //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::incrementState()
 {
    _state += 1;
 }
 
-
-
 // -------------------------------------------------------------------- //
 // Human::to_string  Renvoi une représentation graphique de l'humain    //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Char : Signe pour représenter l'état de l'humain                  //
 // -------------------------------------------------------------------- //
+
 char Human::to_string()
 {
    
@@ -324,11 +288,6 @@ char Human::to_string()
    }
 }
 
-
-
-
-
-
 // -------------------------------------------------------------------- //
 // Human::setPosition  Modifie la position de l'humain                  //
 //                                                                      //
@@ -339,50 +298,31 @@ char Human::to_string()
 //                                                                      //
 //     inPosY :                                                         //
 //        Position de la colonne                                        // 
-//                                                                      //
-//                                                                      // 
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::setPosition(int inPosX,int inPosY)
 {
    _pos.setPosX(inPosX);
    _pos.setPosY(inPosY);
 };
 
-
-
-
-
 // -------------------------------------------------------------------- //
 // Human::getPosition  Retourne la position de l'humain                 //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
 //                                                                      //
 // En sortie:                                                           //
 //                                                                      //
 //    Position : La position de l'humain                                //
 // -------------------------------------------------------------------- //
+
 Position  Human::getPosition()
 {
    return _pos;
 }
 
-
-
-
 // -------------------------------------------------------------------- //
 // Human::resetState  Remet l'état à 0, l'humain n'est plus malade      //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::resetState()
 {
    _state = 0;
@@ -391,28 +331,16 @@ void Human::resetState()
    _isReanimation = false;
 }
 
-
-
-
-
 // -------------------------------------------------------------------- //
 // Human::getConfined  Confine l'humain                                 //
-//                                                                      //
-// En entrée:                                                           // 
-//    Pas d'entrée                                                      //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
+
 void Human::getConfined()
 {
    _isConfined = true;
    _isHospital = false;
    _isReanimation = false;
 }
-
-
 
 // -------------------------------------------------------------------- //
 // Human::goToHospital  Met l'humain à l'hopital                        //

@@ -33,11 +33,8 @@ World::World(SimulationParams * inSimulationParams,
    int     size = 
                      inSimulationParams->getSize();
                      
-   int     multMortToHosp = 
-                     inSimulationParams->getNbMultMortToHosp();
-                     
-   float * tableTauxMortaliteByAgeBy10 = 
-                     inSimulationParams->getTableTauxMortaliteByAgeBy10();
+   float * tableTauxHospitalisationByAge = 
+                     inSimulationParams->getTableTauxHospitalisationByAge();
                      
    float   tauxMortRea = 
                      inSimulationParams->getTauxMortRea();
@@ -106,6 +103,9 @@ World::World(SimulationParams * inSimulationParams,
 
    int     nbDeplacementReductionConfinement =
                      inSimulationParams->getNbDeplacementReductionConfinement();
+                     
+   int     nbLimiteDistanceMaxConfinement = 
+                     inSimulationParams->getNbLimiteDistanceMaxConfinement();
 
    int     isDeplacementLimites =
                      inSimulationParams->getIsDeplacementLimites();
@@ -162,15 +162,9 @@ World::World(SimulationParams * inSimulationParams,
    _histogrammeContamination = (float*)malloc( 11 * sizeof(float));
    _histogrammeContamination = histogrammeContamination;
    
-   _tableTauxMortaliteByAgeBy10 = (float*)malloc( 8 * sizeof(float));
-   _tableTauxMortaliteByAgeBy10 = tableTauxMortaliteByAgeBy10;
+   _tableTauxHospitalisationByAge = (float*)malloc( 8 * sizeof(float));
+   _tableTauxHospitalisationByAge = tableTauxHospitalisationByAge;
    
-   for(int i = 0; i<8;i++)
-   {
-      _tableTauxHospitalisationByAgeBy10[i] = _tableTauxMortaliteByAgeBy10[i]
-                                              * multMortToHosp;
-   }
-
    _size = size;
    _tauxMortRea = tauxMortRea;
    _r0 = r0;
@@ -194,6 +188,7 @@ World::World(SimulationParams * inSimulationParams,
    _tauxProtectionMasqueFFP2 = tauxProtectionMasqueFFP2;
    _isConfinement = isConfinement;
    _nbDeplacementReductionConfinement = nbDeplacementReductionConfinement;
+   _nbLimiteDistanceMaxConfinement = nbLimiteDistanceMaxConfinement;
    _isDeplacementLimites = isDeplacementLimites;
    _nbDistanceMax = nbDistanceMax;
    _isGelHydroalcolique = isGelHydroalcolique;
@@ -1246,7 +1241,8 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
-                                                               pos.getPosY()));
+                                                               pos.getPosY()
+                                                              ));
                
                
                       maPositionTest.setPosX(pos.getPosX());
@@ -1546,6 +1542,25 @@ void World::moveHumanSafe(int inRow, int inColumn)
                        * 
                        randmt->genrand_real1();
    }
+   if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+   {
+      //a + (b - a) * randNum0-1
+      rowDeplacement = (inRow-_nbLimiteDistanceMaxConfinement) 
+                       +
+                       ((inRow + _nbLimiteDistanceMaxConfinement)
+                       - 
+                       (inRow - _nbLimiteDistanceMaxConfinement))
+                       * 
+                       randmt->genrand_real1();
+      columnDeplacement = 
+                       (inColumn-_nbLimiteDistanceMaxConfinement) 
+                       +
+                       ((inColumn + _nbLimiteDistanceMaxConfinement)
+                       - 
+                       (inColumn - _nbLimiteDistanceMaxConfinement))
+                       * 
+                       randmt->genrand_real1();
+   }
    else
    {
       // Il peut se déplacer de 0 à size
@@ -1667,6 +1682,25 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn)
                           * 
                           randmt->genrand_real1();
       }
+      if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+      {
+         //a + (b - a) * randNum0-1
+         rowDeplacement = (inRow-_nbLimiteDistanceMaxConfinement) 
+                          +
+                          ((inRow + _nbLimiteDistanceMaxConfinement)
+                          - 
+                          (inRow - _nbLimiteDistanceMaxConfinement))
+                          * 
+                          randmt->genrand_real1();
+         columnDeplacement = 
+                          (inColumn-_nbLimiteDistanceMaxConfinement) 
+                          +
+                          ((inColumn + _nbLimiteDistanceMaxConfinement)
+                          - 
+                          (inColumn - _nbLimiteDistanceMaxConfinement))
+                          *  
+                          randmt->genrand_real1();
+      }
       else
       {
          // Il peut se déplacer de 0 à size
@@ -1753,7 +1787,7 @@ void World::moveHumanConfined(int inRow, int inColumn)
 
          if(randValue 
             < 
-            (_tableTauxHospitalisationByAgeBy10[
+            (_tableTauxHospitalisationByAge[
                       _carte[inRow][inColumn]->getAge()
                                               ]
                                               /100)
@@ -1972,9 +2006,6 @@ void World::moveHumanHospital(int inRow, int inColumn)
 // -------------------------------------------------------------------- //
 void World::moveHumanReanimation(int inRow, int inColumn)
 {
-   
-
-   
    /*
    Selon les données de l'AP-HP, la durée moyenne de séjour des patients Covid-19 en réanimation est passée de 19 jours avant le 1er juillet à 9,5 jours après le 1er juillet,
    a indiqué à APMnews Frédéric Adnet, chef de service du Samu de Seine-Saint-Denis et chef des urgences de l'hôpital Avicenne à Bobigny. 

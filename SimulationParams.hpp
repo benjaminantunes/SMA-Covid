@@ -17,9 +17,10 @@ class SimulationParams
       float            _tauxDeProtectionReaVaccinRappelByAge[8];
       float            _tauxDeProtectionHospInfectionByAge[8];
       float            _tauxDeProtectionReaInfectionByAge[8];
+      float            _probasCumulativesTrancheAge[8];
 
       //WORLD
-      float            _tableTauxMortaliteByAgeBy10[8];
+      float            _tableTauxHospitalisationByAge[8];
       int              _nbPlaceHospital;
       int              _nbPlaceReanimation;
       float            _r0;
@@ -28,7 +29,6 @@ class SimulationParams
       int              _nbMalade;
       int              _nbHumain;
       int              _nbIteration;
-      int              _nbMultMortToHosp;
       int              _isVaccin;
       float            _tauxVaccination;
       float            _tauxVaccinationRappel;
@@ -51,6 +51,7 @@ class SimulationParams
       
       int              _isConfinement;
       int              _nbDeplacementReductionConfinement;
+      int              _nbLimiteDistanceMaxConfinement;
       
       int              _isDeplacementLimites;
       int              _nbDistanceMax;
@@ -75,7 +76,7 @@ class SimulationParams
       float * getResistanceInfectionValuesByAge();
       float * getMaxResistanceInjectionValuesByAge();
       float * getMinResistanceInjectionValuesByAge();
-      float * getTableTauxMortaliteByAgeBy10();
+      float * getTableTauxHospitalisationByAge();
       float   getTauxVaccination();
       int     getNbPlaceHospital();
       int     getNbPlaceReanimation();
@@ -85,7 +86,6 @@ class SimulationParams
       int     getNbMalade();
       int     getNbHumain();
       int     getNbIteration();
-      int     getNbMultMortToHosp();
       int     getIsVaccin();
       float * getHistogrammeContamination();
       float   getPourcentAsymptomatique();
@@ -108,6 +108,7 @@ class SimulationParams
       float   getTauxProtectionMasqueFFP2();
       int     getIsConfinement();
       int     getNbDeplacementReductionConfinement();
+      int     getNbLimiteDistanceMaxConfinement();
       int     getIsDeplacementLimites();
       int     getNbDistanceMax();
       int     getIsGelHydroalcolique();
@@ -118,5 +119,6 @@ class SimulationParams
       int     getNbDeplacementReductionCouvreFeu();
       int     getIsSuperContaminateur();
       int     getNbDeplacementSuperContaminateur();
+      float * getProbasCumulativesTrancheAge();
 
 };
