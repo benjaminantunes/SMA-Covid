@@ -9,7 +9,6 @@ nbMalade||1
 nbIteration||365
 nbPlaceHospital||1000000
 nbPlaceReanimation||1000000
-nbMultMortToHosp||5
 tauxMortRea||0.5
 ####
 #IsVaccin vaccine XX% de la population au debut de la simulation (XX etant defini par le taux de vaccination)

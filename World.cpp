@@ -1876,6 +1876,7 @@ void World::moveHumanHospital(int inRow, int inColumn)
    {
    
          float randValue = randmt->genrand_real1();
+         float tauxReaIfHospByAge[8] = {0};
          float tauxReaIfHosp;
          
          // On utilise la timeline, qui possède 633 jours. Si la simu dure plus longtemps (prédictions), alors on part sur une base de 15%
@@ -1887,11 +1888,16 @@ void World::moveHumanHospital(int inRow, int inColumn)
          {
             tauxReaIfHosp = 0.15; // La moyenne est 0.1474089554531037
          }
+         
+         for(int i = 0; i<8; i++)
+         {
+             tauxReaIfHospByAge[i] = tauxReaIfHosp * ((i +1)/2);
+         }
          if(_isMedicament)
          {
             if(randValue 
                < 
-               (tauxReaIfHosp * _tauxProtectionReaMedicament)
+               (tauxReaIfHospByAge[_carte[inRow][inColumn]->getAge()] * _tauxProtectionReaMedicament)
                * (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation())
                
               )
@@ -1933,7 +1939,7 @@ void World::moveHumanHospital(int inRow, int inColumn)
          {
             if(randValue 
                < 
-               tauxReaIfHosp 
+               tauxReaIfHospByAge[_carte[inRow][inColumn]->getAge()] 
                * 
                (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation()))
             {
