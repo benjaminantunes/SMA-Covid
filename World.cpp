@@ -29,7 +29,6 @@ World::World(SimulationParams * inSimulationParams,
              char             * inNomFichierLog, 
              bool               inLog)
 {
-    
    int     size = 
                      inSimulationParams->getSize();
                      
@@ -140,10 +139,6 @@ World::World(SimulationParams * inSimulationParams,
                
 
 
-
-
-
-
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
    {
@@ -199,7 +194,6 @@ World::World(SimulationParams * inSimulationParams,
    _nbDeplacementReductionCouvreFeu = nbDeplacementReductionCouvreFeu;
    _isSuperContaminateur = isSuperContaminateur;
    _nbDeplacementSuperContaminateur = nbDeplacementSuperContaminateur;
-   
    _log = inLog;
    _stats["dead"] = 0;
    _stats["contamined"] = 0;
@@ -756,6 +750,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -797,6 +794,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -844,6 +844,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -885,6 +888,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -931,6 +937,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -972,6 +981,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1017,6 +1029,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1057,6 +1072,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1106,6 +1124,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1148,6 +1169,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1196,6 +1220,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1238,6 +1265,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1286,6 +1316,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1328,6 +1361,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1372,6 +1408,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1413,6 +1452,9 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                         _nbHumainContaminePlusieursFois++;
+                      }
                       _nbNouveauxCas++;
                       _newNextHumanAsymptomatiquePositions.push_back(
                                                       Position(pos.getPosX(),
@@ -1516,6 +1558,7 @@ void World::humanGoFromTo(int  inFromRow,
 void World::moveHumanSafe(int inRow, int inColumn)
 {
 
+   _carte[inRow][inColumn]->updateHumanProtection();
    if(_carte[inRow][inColumn]->getTauxDeProtectionReanimation() > 0)
    {
       _carte[inRow][inColumn]->decreaseResistance();
@@ -1771,6 +1814,7 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn)
 void World::moveHumanConfined(int inRow, int inColumn)
 {
 
+   _carte[inRow][inColumn]->updateHumanProtection();
    if(_carte[inRow][inColumn]->getState() > 10)
    {   
       _carte[inRow][inColumn]->resetState();
@@ -1863,6 +1907,7 @@ void World::moveHumanConfined(int inRow, int inColumn)
 void World::moveHumanHospital(int inRow, int inColumn)
 {
 
+   _carte[inRow][inColumn]->updateHumanProtection();
    if(_carte[inRow][inColumn]->getState() > 10)
    { 
       _newHumanSafePositions.push_back(_carte[inRow][inColumn]->getPosition());
@@ -2029,7 +2074,8 @@ void World::moveHumanReanimation(int inRow, int inColumn)
 
 
    //double dureeReanimation = (rand->genrand_int32()%21) + 10; // Entre 5 jours et 21 jours de réanimation. (on a deja fait 5 jours de maladie)
-   
+ 
+   _carte[inRow][inColumn]->updateHumanProtection();
    if(_carte[inRow][inColumn]->getState() 
        >
        _carte[inRow][inColumn]->getDureeReanimation()
@@ -2174,6 +2220,7 @@ void World::nextIteration()
          for(Position  temp: _humanAsymptomatiquePositions)
          {
             _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+            _carte[temp.getPosX()][temp.getPosY()]->updateHumanProtection();
          }
       }
       else
@@ -2190,6 +2237,7 @@ void World::nextIteration()
          for(Position  temp: _humanAsymptomatiquePositions)
          {
             _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+            _carte[temp.getPosX()][temp.getPosY()]->updateHumanProtection();
          }
       }
    }
@@ -2207,6 +2255,7 @@ void World::nextIteration()
       for(Position  temp: _humanAsymptomatiquePositions)
       {
          _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+         _carte[temp.getPosX()][temp.getPosY()]->updateHumanProtection();
       }
    }
    else
@@ -2223,6 +2272,7 @@ void World::nextIteration()
       for(Position  temp: _humanAsymptomatiquePositions)
       {
          _carte[temp.getPosX()][temp.getPosY()]->incrementState();
+         _carte[temp.getPosX()][temp.getPosY()]->updateHumanProtection();
       }
    }
 

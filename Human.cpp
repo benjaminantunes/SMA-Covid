@@ -134,20 +134,20 @@ Human::Human(SimulationParams * inSimulationParams,
 void Human::contamine()
 {
    _state = 1;
-   
+   _numberOfInfections++;
    if(_tauxDeProtectionInfection < _resistanceInfectionValuesByAge[_age])
    {
-       _tauxDeProtectionInfection = _resistanceInfectionValuesByAge[_age];
+       _newTauxDeProtectionInfection = _resistanceInfectionValuesByAge[_age];
    }
    
    if(_tauxDeProtectionHospitalisation < _tauxDeProtectionHospInfectionByAge[_age])
    {
-       _tauxDeProtectionHospitalisation = _tauxDeProtectionHospInfectionByAge[_age];
+       _newTauxDeProtectionHospitalisation = _tauxDeProtectionHospInfectionByAge[_age];
    }
    
    if(_tauxDeProtectionReanimation < _tauxDeProtectionReaInfectionByAge[_age])
    {
-       _tauxDeProtectionReanimation = _tauxDeProtectionReaInfectionByAge[_age];
+       _newTauxDeProtectionReanimation = _tauxDeProtectionReaInfectionByAge[_age];
    }
    
    _daysSinceLastInfectionOrInjection = 0;
@@ -173,18 +173,19 @@ void Human::vaccine()
    if(_tauxDeProtectionInfection < randomValue)
    {
       _tauxDeProtectionInfection = randomValue;
-      _daysSinceLastInfectionOrInjection = 0;
    }
    
    if(_tauxDeProtectionHospitalisation < _tauxDeProtectionHospVaccinByAge[_age])
    {
        _tauxDeProtectionHospitalisation = _tauxDeProtectionHospVaccinByAge[_age];
+       
    }
    
    if(_tauxDeProtectionReanimation < _tauxDeProtectionReaVaccinByAge[_age])
    {
        _tauxDeProtectionReanimation = _tauxDeProtectionReaVaccinByAge[_age];
    }
+   _daysSinceLastInfectionOrInjection = 0;
    
 }
 
@@ -204,19 +205,19 @@ void Human::vaccineRappel()
    
    if(_tauxDeProtectionInfection < randomValue)
    {
-      _tauxDeProtectionInfection = randomValue;
-      _daysSinceLastInfectionOrInjection = 0;
+      _newTauxDeProtectionInfection = randomValue;
    }
    
    if(_tauxDeProtectionHospitalisation < _tauxDeProtectionHospVaccinRappelByAge[_age])
    {
-       _tauxDeProtectionHospitalisation = _tauxDeProtectionHospVaccinRappelByAge[_age];
+       _newTauxDeProtectionHospitalisation = _tauxDeProtectionHospVaccinRappelByAge[_age];
    }
    
    if(_tauxDeProtectionReanimation < _tauxDeProtectionReaVaccinRappelByAge[_age])
    {
-       _tauxDeProtectionReanimation = _tauxDeProtectionReaVaccinRappelByAge[_age];
-   }  
+       _newTauxDeProtectionReanimation = _tauxDeProtectionReaVaccinRappelByAge[_age];
+   } 
+   _daysSinceLastInfectionOrInjection = 0;
 }
 
 // -------------------------------------------------------------------- //
@@ -582,4 +583,32 @@ void Human::decreaseResistance()
 }
 
 
+int Human::getNumberOfInfections()
+{
+   return _numberOfInfections;
+}
 
+void Human::updateHumanProtection()
+{
+   _daysSinceLastInfectionOrInjection++;
+   
+   if(_daysSinceLastInfectionOrInjection > 10)
+   {
+      if(_newTauxDeProtectionInfection > 0)
+      {
+         _tauxDeProtectionInfection = _newTauxDeProtectionInfection;
+         _newTauxDeProtectionInfection = 0;
+      }
+      if(_newTauxDeProtectionHospitalisation > 0)
+      {
+         _tauxDeProtectionHospitalisation = _newTauxDeProtectionHospitalisation;
+         _newTauxDeProtectionHospitalisation = 0;
+      }
+      if(_newTauxDeProtectionReanimation > 0)
+      {
+         _tauxDeProtectionReanimation = _newTauxDeProtectionReanimation;
+         _newTauxDeProtectionReanimation = 0;
+      }
+      
+   } 
+}

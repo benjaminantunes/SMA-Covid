@@ -72,7 +72,7 @@ class SimulationParams
       map<string, int> _mapStringValues;
 
    public:
-      SimulationParams(char *);
+      SimulationParams(char *, char *);
       float * getResistanceInfectionValuesByAge();
       float * getMaxResistanceInjectionValuesByAge();
       float * getMinResistanceInjectionValuesByAge();

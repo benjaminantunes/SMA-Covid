@@ -7,7 +7,7 @@
 using namespace std;
 
 
-SimulationParams::SimulationParams(char * inFilename){
+SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfigParams){
 
 
    _mapStringValues["resistanceInfectionValuesByAge"] = 0;
@@ -62,7 +62,7 @@ SimulationParams::SimulationParams(char * inFilename){
 
 
    string   line;
-   ifstream readFile(inFilename);
+   ifstream readFile(inFilenameConfigParams);
    size_t   pos = 0;
    
 
@@ -134,14 +134,7 @@ SimulationParams::SimulationParams(char * inFilename){
                _tableTauxHospitalisationByAge[j] = stof(value);
                break;
                
-            case 5:
-               _nbPlaceHospital = stoi(paramValues);
-               break;
-               
-            case 6:
-               _nbPlaceReanimation = stoi(paramValues);
-               break;
-               
+
             case 7:
                _r0 = stof(paramValues);
                break;
@@ -150,28 +143,7 @@ SimulationParams::SimulationParams(char * inFilename){
                _tauxMortRea = stof(paramValues);
                break;
                
-            case 9:
-               _size = stoi(paramValues);
-               break;
-               
-            case 10:
-               _nbMalade = stoi(paramValues);
-               break;
-               
-            case 11:
-               _nbHumain = stoi(paramValues);
-               break;
-               
-            case 12:
-               _nbIteration = stoi(paramValues);
-               break;
-         
-            /*
-            case 13:
-               _nbMultMortToHosp = stoi(paramValues);
-               break;
-            
-            */
+
             case 14:
                _isVaccin = stoi(paramValues);
                break;
@@ -362,18 +334,6 @@ SimulationParams::SimulationParams(char * inFilename){
                break;
                
                
-            case 47:
-               while ((pos = paramValues.find(delimiterValues)) != string::npos)
-               {
-                  value = paramValues.substr(0, pos);
-                  _probasCumulativesTrancheAge[j] = stof(value);
-                  j++;
-                  paramValues.erase(0, pos + delimiterValues.length());
-               }
-               value = paramValues.substr(0, pos);
-               _probasCumulativesTrancheAge[j] = stof(value);
-               break;
-               
                
             case 48:
                _nbLimiteDistanceMaxConfinement = stoi(paramValues);
@@ -389,6 +349,75 @@ SimulationParams::SimulationParams(char * inFilename){
    }
 
    readFile.close();
+   
+   
+   ifstream readFileCity(inFilenameCity);
+   string   lineCity;
+   
+   pos = 0;
+   
+   while (getline(readFileCity, lineCity))
+   {
+      if(lineCity.find("#") == string::npos)
+      {
+         string paramName = lineCity.substr(0, lineCity.find(delimiterName));
+         string paramValues = lineCity.erase(0,
+                                         lineCity.find(delimiterName) 
+                                         + 
+                                         delimiterName.length()
+                                        );
+         string value;
+         int j = 0;
+         
+         switch (_mapStringValues[paramName])
+         {
+            
+             
+               
+            case 5:
+               _nbPlaceHospital = stoi(paramValues);
+               break;
+               
+            case 6:
+               _nbPlaceReanimation = stoi(paramValues);
+               break;
+               
+            case 9:
+               _size = stoi(paramValues);
+               break;
+               
+            case 10:
+               _nbMalade = stoi(paramValues);
+               break;
+               
+            case 11:
+               _nbHumain = stoi(paramValues);
+               break;
+               
+            case 12:
+               _nbIteration = stoi(paramValues);
+               break;
+         
+
+            case 47:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _probasCumulativesTrancheAge[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _probasCumulativesTrancheAge[j] = stof(value);
+               break;
+         }
+      }
+      
+      
+      
+   }
+
+   readFileCity.close();
 
 }
 

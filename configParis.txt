@@ -1,0 +1,7 @@
+size||10000
+nbHumain||2000000
+nbMalade||4000
+nbIteration||365
+nbPlaceHospital||1000000
+nbPlaceReanimation||1000000
+probasCumulativesTrancheAge||0.177,0.296,0.411,0.535,0.667,0.793,0.905,1.0

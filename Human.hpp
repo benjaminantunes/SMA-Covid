@@ -28,6 +28,9 @@ class Human
       float             _tauxDeProtectionInfection = 0;
       float             _tauxDeProtectionHospitalisation = 0;
       float             _tauxDeProtectionReanimation = 0;
+      float             _newTauxDeProtectionInfection = 0;
+      float             _newTauxDeProtectionHospitalisation = 0;
+      float             _newTauxDeProtectionReanimation = 0;
       float           * _resistanceInfectionValuesByAge;
       float           * _maxResistanceInjectionValuesByAge;
       float           * _minResistanceInjectionValuesByAge;
@@ -40,6 +43,7 @@ class Human
       float           * _tauxDeProtectionHospInfectionByAge;
       float           * _tauxDeProtectionReaInfectionByAge;
       float           * _probasCumulativesTrancheAge;
+      int               _numberOfInfections = 0;
 
       Position          _pos;
 
@@ -69,5 +73,7 @@ class Human
       Position  getPosition();
       float     getTauxDeProtectionHospitalisation();
       float     getTauxDeProtectionReanimation();
+      int       getNumberOfInfections();
+      void      updateHumanProtection();
 
 };
