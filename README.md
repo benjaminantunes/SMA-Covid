@@ -1,5 +1,5 @@
 # SMA-Covid
-###Propriétaire de ce repo : Benjamin Antunes, doctorant au Limos.
+### Propriétaire de ce repo : Benjamin Antunes, doctorant au Limos.
 
 Vous êtes sur le repository du projet de modèle reproductible de simulation Covid 19.
 
@@ -8,11 +8,11 @@ Articles références : A venir
 Ce modèle est développé en C++ pour les performances. Il est parallélisé en SPMD (plusieurs simulations tournent simultanéments). Vous serez donc limité par votre nombre de coeurs de calcul (et votre RAM). 
 Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
-##Prérequis : 
+## Prérequis : 
 - Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
 - Avoir installé Jupyter Notebook
 
-##Description des fichiers : 
+## Description des fichiers : 
 
 Les fichiers .cpp et . hpp correspondent au code du modèle. Vous n'avez pas besoin d'y toucher (mais vous pouvez).
 
@@ -27,7 +27,7 @@ Le notebook Jupyter "SMA Covid.ipynb" permet de lancer très facilement vos exp�
 Les fichiers de configuration "configVille" et "configMesure" permettent de définir des configurations pour des villes/pays/territoires, et de paramétrer les différents éléments de la maladie, ainsi que les mesures sanitaires en place.
 
 
-##Prise en main :
+## Prise en main :
 
 Pour prendre en main le modèle, vous devez simplement lancer le notebook jupyter via la commande "jupyter notebook" dans un terminal, ou autre moyen de votre choix.
 
@@ -51,8 +51,9 @@ A noter : Vous devez calibrer le modèle en fonction des villes que vous utilise
 Il est tout à fait possible de passer sur une échelle département / pays, mais cela demandera plus de puissance de calcul, et surtout de mémoire.
 
 
-##Les paramètres : 
-###Ville : 
+## Les paramètres : 
+
+### Ville : 
 -	size : Taille de la carte.
 -	nbHumain : Nombre d’humains dans la simu-lation.
 -	nbMalade : Nombre de malades initial dans la simulation.
@@ -61,7 +62,7 @@ Il est tout à fait possible de passer sur une échelle département / pays, mai
 -	nbPlaceReanimation : Places disponibles en réanimation.
 -	nbDeplacementJour : Le nombre de déplacement par itération des humains contaminés.
 
-###Config : 
+### Config : 
 -	tauxMortRea : Taux de mortalité une fois en réanimation.
 -	isVaccin : Booléen indiquant si oui ou non la population est vaccinée.
 -	resistanceInfectionValuesByAge : Huit va-leurs flottantes correspondant aux huit classes d’âge représentées dans la simulation pour définir la résistance à la contamination après avoir été infecté une première fois.
@@ -103,5 +104,5 @@ Il est tout à fait possible de passer sur une échelle département / pays, mai
 -	nbDeplacementSuperContaminateur : Nombre de déplacements journaliers des su-per-contaminateurs.
 -	probasCumulativesTrancheAge : Proportions cumulatives des individus de la population à étudier par tranches d’âge (0 à 10 ans, 10 – 20, 20 – 30 , 30 - 40 , 40 – 50 , 50 – 60, 60 – 70, 70 ans et +). 
 
-##Expected Ouput : 
+## Expected Ouput : 
 Le dossier expectedOutput contient les résultats supposés de l'exécution du Notebook Jupyter de base sur la métropole de Lyon avec 4 réplications. Vous pouvez comparer les résultats sur cela pour vous assurer d'avoir la répétabilité, avant de pouvoir faire vos propres expériences.
