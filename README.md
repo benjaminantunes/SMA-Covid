@@ -1,20 +1,24 @@
 # SMA-Covid
-Benjamin Antunes, doctorant au Limos.
+###Propriétaire de ce repo : Benjamin Antunes, doctorant au Limos.
 
 Vous êtes sur le repository du projet de modèle reproductible de simulation Covid 19.
 
-Articles références : XXXX
+Articles références : A venir
 
-Ce modèle est développé en C++ pour les performances. Il est parallélisé en SPMD (plusieurs simulations tourne simultanéments).
-Vous serz donc limité par votre nombre de coeurs de calcul.
+Ce modèle est développé en C++ pour les performances. Il est parallélisé en SPMD (plusieurs simulations tournent simultanéments). Vous serez donc limité par votre nombre de coeurs de calcul (et votre RAM). 
+Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
-Description des fichiers : 
+##Prérequis : 
+- Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
+- Avoir installé Jupyter Notebook
+
+##Description des fichiers : 
 
 Les fichiers .cpp et . hpp correspondent au code du modèle. Vous n'avez pas besoin d'y toucher (mais vous pouvez).
 
 Le fichier makefile permet de compiler correctement le projet.
 
-Les fichiers "mts10p9N0000X" sont des statuts du générateur de nombre pseudo-aléatoire Mersenne Twister. Ils sont espacés de 2 Milliard de tirages. Ces 30 fichiers permettent donc de lancer 30 réplications indépendantes de simulations, qui doivent utiliser au maximum 2 milliard de nombre aléatoire. Si vos contraintes vous demande de faire plus de réplication ou plus de tirage par simulation, alors vous devrez utiliser/créer vos propres statuts de MT. Attention à respecter la norme de nommage en place. Pour en savoir plus sur la parallélisation de code utlisant des générateurs de nombres pseudo-aléatoire, veuillez vous référer à cette article : Hill 2018 ... 
+Les fichiers "mts10p9N0000X" sont des statuts du générateur de nombre pseudo-aléatoire Mersenne Twister. Ils sont espacés de 2 Milliard de tirages. Ces 30 fichiers permettent donc de lancer 30 réplications indépendantes de simulations, qui doivent utiliser au maximum 2 milliard de nombre aléatoire. Si vos contraintes vous demande de faire plus de réplication ou plus de tirage par simulation, alors vous devrez utiliser/créer vos propres statuts de MT. Attention à respecter la norme de nommage en place. Pour en savoir plus sur la parallélisation de code utlisant des générateurs de nombres pseudo-aléatoire, veuillez vous référer à cet article : Hill 2018 ... 
 
 Le fichier bash "ReplicationSimulation.sh" permet de lancer des simulations.
 
@@ -23,37 +27,41 @@ Le notebook Jupyter "SMA Covid.ipynb" permet de lancer très facilement vos exp�
 Les fichiers de configuration "configVille" et "configMesure" permettent de définir des configurations pour des villes/pays/territoires, et de paramétrer les différents éléments de la maladie, ainsi que les mesures sanitaires en place.
 
 
-Prise en main :
+##Prise en main :
 
 Pour prendre en main le modèle, vous devez simplement lancer le notebook jupyter via la commande "jupyter notebook" dans un terminal, ou autre moyen de votre choix.
 
 Vous pouvez executer toutes les cellules.
-La commande !make va permettre de compiler le programme.
-La commande !./replicationSimulation configParis.txt configLyon.txt configNoVaccin.txt configClermont.txt 10 est à faire évoluer !
-Vous pouvez mettre vos propres fichiers de configurations de ville et de mesures que vous avez créé en suivant le format déjà présent. Vous pouvez au départ essayer le modèle avec les configurations existantes et comparer vos résultats avec ceux déjà obtenu, afin de tester la répétabilité. Si vos résultats sont différents, contactez nous à l'adresse benjamin.antunes@uca.fr (Nous pourrons étudier les causes de non répétabilité, et voir la reproductibilité).
+
+La commande *!make* va permettre de compiler le programme.
+La commande *!./replicationSimulation configLyon.txt configNoMesure.txt 30* est à faire évoluer !
+
+Vous pouvez mettre vos propres fichiers de configurations de ville et de mesures que vous avez créé en suivant le format déjà présent. Vous pouvez au départ essayer le modèle avec les configurations existantes et comparer vos résultats avec ceux déjà obtenu, afin de tester la répétabilité. Si vos résultats sont différents, contactez nous à l'adresse benjamin.antunes@uca.fr (Nous pourrons étudier les causes de non répétabilité).
 Cette commande peut prendre un certain temps. Elle va lancer le code C++ avec N simulation pour chaque ville que vous avez choisi avec votre fichier de configuration.
 Par exemple, la ligne : 
-!./replicationSimulation configParis.txt configLyon.txt configNoVaccin.txt 10
-Va lancer 10 réplications de la simuation sur Paris avec la configNoVaccin, 10 réplications sur Lyon et 10 réplications sur Clermont.
-Il y aura donc 30 réplications en tout (30 processus de lancés en parallèle).
+*!./replicationSimulation configParis.txt configLyon.txt configNoVaccin.txt 10*
+Va lancer 10 réplications de la simuation sur Paris avec la configNoVaccin et 10 réplications sur Lyon.
+Il y aura donc 20 réplications en tout (20 processus de lancés en parallèle).
 
-La cellule d'en dessous est également à modifier selon ce que vous avez entré au dessus : Vous devez modifier NB_REPLICATION et listVille selon ce que vous avez utilisé dans la commande d'avant.
+La cellule d'en dessous est également à modifier selon ce que vous avez entré au dessus : **Vous devez modifier NB_REPLICATION et listVille selon ce que vous avez utilisé dans la commande d'avant.**
 
-Le fonctionnement est le suivant : Le code va générer des fichiers de  log pour chaque simulation que vous avez lancé. La dernière cellule va utiliser ces logs afin de générer des statistiques et des figures pour chaque simulation, et les sotcker dans le dossier dans lequel le notebook a été lancé. Vous pourrez ensuite établir vos propres conclusion sur l'impact des mesures sanitaires sur l'épidémie par exemple.
+Le fonctionnement est le suivant : Le code va générer des fichiers de log pour chaque simulation que vous avez lancé. La dernière cellule va utiliser ces logs afin de générer des statistiques et des figures pour chaque simulation, et les stocker dans le dossier dans lequel le notebook a été lancé. Vous pourrez ensuite établir vos propres conclusion sur l'impact des mesures sanitaires sur l'épidémie par exemple.
 
-A noter : Dans des villes de faible densité, il est normal que l'épidémie ne démarre pas! Les cluster de l'épidémie de covid 19 n'ont jamais été les campagnes profondes du Cantal. Dans des villes comme Paris, 1 seul patient zéro peut permettre de lancer une épidémie globale. Si le patient zéro se trouve dans un endroit peu densément peuplé, alors l'épidémie n'existe pas.
+A noter : Vous devez calibrer le modèle en fonction des villes que vous utilisez : Le modèle n'est pas générique.
+Il est tout à fait possible de passer sur une échelle département / pays, mais cela demandera plus de puissance de calcul, et surtout de mémoire.
 
 
-Les paramètres : 
-Ville : 
+##Les paramètres : 
+###Ville : 
 -	size : Taille de la carte.
 -	nbHumain : Nombre d’humains dans la simu-lation.
 -	nbMalade : Nombre de malades initial dans la simulation.
 -	nbIteration : Nombre d’itérations de la simu-lation correspondant au nombre de jours.
 -	nbPlaceHospital : Places disponibles dans les hôpitaux.
 -	nbPlaceReanimation : Places disponibles en réanimation.
+-	nbDeplacementJour : Le nombre de déplacement par itération des humains contaminés.
 
-Config : 
+###Config : 
 -	tauxMortRea : Taux de mortalité une fois en réanimation.
 -	isVaccin : Booléen indiquant si oui ou non la population est vaccinée.
 -	resistanceInfectionValuesByAge : Huit va-leurs flottantes correspondant aux huit classes d’âge représentées dans la simulation pour définir la résistance à la contamination après avoir été infecté une première fois.
@@ -95,4 +103,5 @@ Config :
 -	nbDeplacementSuperContaminateur : Nombre de déplacements journaliers des su-per-contaminateurs.
 -	probasCumulativesTrancheAge : Proportions cumulatives des individus de la population à étudier par tranches d’âge (0 à 10 ans, 10 – 20, 20 – 30 , 30 - 40 , 40 – 50 , 50 – 60, 60 – 70, 70 ans et +). 
 
-
+##Expected Ouput : 
+Le dossier expectedOutput contient les résultats supposés de l'exécution du Notebook Jupyter de base sur la métropole de Lyon avec 4 réplications. Vous pouvez comparer les résultats sur cela pour vous assurer d'avoir la répétabilité, avant de pouvoir faire vos propres expériences.
