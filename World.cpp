@@ -136,7 +136,8 @@ World::World(SimulationParams * inSimulationParams,
    int     nbDeplacementSuperContaminateur =
                      inSimulationParams->getNbDeplacementSuperContaminateur();
 
-               
+   int     nbDeplacementJour =
+                     inSimulationParams->getNbDeplacementJour();
 
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
@@ -194,6 +195,7 @@ World::World(SimulationParams * inSimulationParams,
    _nbDeplacementReductionCouvreFeu = nbDeplacementReductionCouvreFeu;
    _isSuperContaminateur = isSuperContaminateur;
    _nbDeplacementSuperContaminateur = nbDeplacementSuperContaminateur;
+   _nbDeplacementJour = nbDeplacementJour;
    _log = inLog;
    _stats["dead"] = 0;
    _stats["contamined"] = 0;
@@ -2158,20 +2160,37 @@ void World::nextIteration()
    writeLog(to_string(_nbMorts));
    writeLog(to_string(_nbCasCovidConnuTotal));
     
-    float totalMalade = (float)(_humanAsymptomatiquePositions.size() 
+   float totalMalade = (float)(_humanAsymptomatiquePositions.size() 
                                 + _humanConfinedPositions.size() 
                                 + _humanHospitalPositions.size() 
                                 +_humanReanimationPositions.size()
                                );
-    float reffectifJour = 0;
+   float reffectifJour = 0;
+   
     
-    if(totalMalade > 0)
-    {
-        reffectifJour = (float)_nbNouveauxCas / totalMalade;
-    }
+   if(totalMalade > 0)
+   {
+      reffectifJour = (float)_nbNouveauxCas / totalMalade;
+   }
 
 
    writeLog(to_string(reffectifJour*11)); // 11 est le nb de jour où une personne est contaminante : 2 + 9.
+   
+   if(_nbNouveauxCasSemaine.size() > 6){
+      _nbNouveauxCasSemaine.pop_front();
+   }
+   _nbNouveauxCasSemaine.push_back(_nbNouveauxCas);
+   
+   int jour = 0;
+   int nbNouveauxCasSemaineSomme = 0;
+   for(jour = 0; jour < _nbNouveauxCasSemaine.size(); jour++){
+      nbNouveauxCasSemaineSomme = nbNouveauxCasSemaineSomme + _nbNouveauxCasSemaine[jour];
+   }
+   
+   //Taux d'incidence sur 100 000 hab
+   // Mettre dans write log et le traiter dans notebook
+   double tauxIncidence = 100000.0 * (double)nbNouveauxCasSemaineSomme / (double)_nbHumain;
+   writeLog(to_string(tauxIncidence));
 
    for (int age: _ageOfSymptomaticDailyHuman)
    {
@@ -2208,7 +2227,7 @@ void World::nextIteration()
    {
       if(_isCouvreFeu)
       {
-         for(int x = 0; x < 12 - (_nbDeplacementReductionConfinement + _nbDeplacementReductionCouvreFeu); x++)
+         for(int x = 0; x < _nbDeplacementJour - (_nbDeplacementReductionConfinement + _nbDeplacementReductionCouvreFeu); x++)
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
@@ -2225,7 +2244,7 @@ void World::nextIteration()
       }
       else
       {
-         for(int x = 0; x < 12 - _nbDeplacementReductionConfinement; x++)
+         for(int x = 0; x < _nbDeplacementJour - _nbDeplacementReductionConfinement; x++)
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
@@ -2243,7 +2262,7 @@ void World::nextIteration()
    }
    else if(_isCouvreFeu)
    {
-      for(int x = 0; x < 12 - _nbDeplacementReductionCouvreFeu; x++)
+      for(int x = 0; x < _nbDeplacementJour - _nbDeplacementReductionCouvreFeu; x++)
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
@@ -2260,7 +2279,7 @@ void World::nextIteration()
    }
    else
    {
-      for(int x = 0; x < 12; x++)
+      for(int x = 0; x < _nbDeplacementJour; x++)
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
@@ -2373,6 +2392,7 @@ void World::startSimulation(SimulationParams * inSimulationParams)
 
 
    writeLog("CompteurRand:" + to_string(randmt->getCompteur()));
+   writeLog("NbHumainSimuDepart:" + to_string(_nbHumain));
    //cout << "\033[2J" << endl;
    displayStats();
    

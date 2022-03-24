@@ -58,6 +58,7 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["nbDeplacementSuperContaminateur"] = 46;
    _mapStringValues["probasCumulativesTrancheAge"] = 47;
    _mapStringValues["nbLimiteDistanceMaxConfinement"] = 48;
+   _mapStringValues["nbDeplacementJour"] = 49;
 
 
 
@@ -398,7 +399,10 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                _nbIteration = stoi(paramValues);
                break;
          
-
+            case 49:
+               _nbDeplacementJour = stoi(paramValues);
+               break;
+               
             case 47:
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
@@ -665,5 +669,10 @@ int SimulationParams::getNbDeplacementSuperContaminateur()
 
 float * SimulationParams::getProbasCumulativesTrancheAge()
 {
-    return _probasCumulativesTrancheAge;
+   return _probasCumulativesTrancheAge;
+}
+
+int SimulationParams::getNbDeplacementJour()
+{
+   return _nbDeplacementJour;
 }

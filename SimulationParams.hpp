@@ -36,6 +36,7 @@ class SimulationParams
       float            _pourcentAsymptomatique;
       float            _tauxDeChanceDeMourirHospitalFull;
       float            _tauxContaDistanceDeux;
+      int              _nbDeplacementJour;
       
       int              _isMedicament;
       float            _tauxProtectionReaMedicament;
@@ -120,5 +121,6 @@ class SimulationParams
       int     getIsSuperContaminateur();
       int     getNbDeplacementSuperContaminateur();
       float * getProbasCumulativesTrancheAge();
+      int     getNbDeplacementJour();
 
 };
