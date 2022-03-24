@@ -16,8 +16,8 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
 ## Procédure :
 - Ouvrir un terminal
-- Executer la commande : sudo apt-get install python3
-- Executer la commande : sudo apt-get install jupyter
+- Executer la commande : sudo apt-get install python3 (Si pas déja fait)
+- Executer la commande : sudo apt-get install jupyter (Si pas déja fait)
 - Télécharger la branche master du projet, en fichier un git clone, ou bien en téléchargeant le Zip
 - Se placer dans le dossier du projet
 - Lancer la commande : jupyter notebook
