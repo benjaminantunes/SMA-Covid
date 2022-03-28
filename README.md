@@ -15,6 +15,12 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 - Etre sur une machine Ubuntu (non testé sur d'autres distributions)
 
 ## Procédure :
+- Télécharger la branche master du projet, en fichier un git clone, ou bien en téléchargeant le Zip
+- Se placer dans le dossier du projet
+- Executer la commande : ./replicationSimulation.sh configLyon.txt configNoMesure.txt 4
+(Cette commande va lancer 4 réplications en parallèle de la simulation sur la ville de Lyon avec la configuration sans mesure sanitaire)
+
+## Pour aller plus loin :
 - Ouvrir un terminal
 - Executer la commande : sudo apt-get install python3 (Si pas déja fait)
 - Executer la commande : sudo apt-get install jupyter (Si pas déja fait)
