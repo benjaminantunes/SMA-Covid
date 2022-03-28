@@ -19,6 +19,7 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 - Se placer dans le dossier du projet
 - Executer la commande : ./replicationSimulation.sh configLyon.txt configNoMesure.txt 4
 (Cette commande va lancer 4 réplications en parallèle de la simulation sur la ville de Lyon avec la configuration sans mesure sanitaire)
+- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité
 
 ## Pour aller plus loin :
 - Ouvrir un terminal
@@ -29,6 +30,7 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 - Lancer la commande : jupyter notebook
 - Un navigateur Web avec Jupyter devrait s'ouvrir : Vous devez ensuite lancer le fichier de notebook SMA Covid.ipynb
 - Vous retrouverez dans ce fichier les cellules qui sont expliquées ci-dessous (seulement deux cellules).
+- Comparer les résultats avec le dossier "expectedOutputNotebook" pour assurer la répétabilité
 
 ## Description des fichiers : 
 
