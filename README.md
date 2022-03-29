@@ -10,7 +10,7 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
 ## Prérequis : 
 - Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
-- Etre sur une machine Ubuntu (non testé sur d'autres distributions)
+- Si possible etre sur une machine Ubuntu (non testé sur d'autres distributions)
 
 ## Procédure de test de répétabilité sur un exemple court :
 - Télécharger la branche master du projet, en fichier un git clone, ou bien en téléchargeant le Zip
