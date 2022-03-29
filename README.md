@@ -10,15 +10,15 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
 ## Prérequis : 
 - Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
-- Avoir installé Jupyter Notebook
-- Avoir Python3
 - Etre sur une machine Ubuntu (non testé sur d'autres distributions)
 
-## Procédure :
+## Procédure de test de répétabilité sur un exemple court :
 - Télécharger la branche master du projet, en fichier un git clone, ou bien en téléchargeant le Zip
 - Se placer dans le dossier du projet
-- Executer la commande : ./replicationSimulation.sh configLyon.txt configNoMesure.txt 4
-(Cette commande va lancer 4 réplications en parallèle de la simulation sur la ville de Lyon avec la configuration sans mesure sanitaire)
+- Executer la commande : make clean
+- Executer la commande : make
+- Executer la commande : ./replicationSimulation.sh configParisLight.txt configNoMesure.txt 2
+(Cette commande va lancer 2 réplications en parallèle de la simulation sur la ville de Paris en version allégé avec la configuration sans mesure sanitaire)
 - Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité
 
 ## Pour aller plus loin :
