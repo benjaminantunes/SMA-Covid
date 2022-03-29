@@ -14,3 +14,6 @@ exe: $(OBJ)
 	g++ -o $@ -c $< $(CXXFLAGS)
 
 
+clean:
+	rm -rf *.o
+	rm -rf *.d
