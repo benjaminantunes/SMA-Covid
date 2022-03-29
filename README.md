@@ -18,8 +18,9 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 - Executer la commande : make clean
 - Executer la commande : make
 - Executer la commande : ./replicationSimulation.sh configParisLight.txt configNoMesure.txt 2
-(Cette commande va lancer 2 réplications en parallèle de la simulation sur la ville de Paris en version allégé avec la configuration sans mesure sanitaire)
-- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité
+(Cette commande va lancer 2 réplications en parallèle de la simulation sur la ville de Paris en version allégé avec la configuration sans mesure sanitaire et va générer deux fichiers : logconfigParisLight0.txt et logconfigParisLight1.txt)
+- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité avec les commandes : diff logconfigParisLight0.txt ./expectedOutputCommandLine/logconfigParisLight0.txt et diff logconfigParisLight1.txt ./expectedOutputCommandLine/logconfigParisLight1.txt
+
 
 ## Pour aller plus loin :
 - Ouvrir un terminal
