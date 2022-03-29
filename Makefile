@@ -4,7 +4,7 @@ OBJ=$(SRC:%.cpp=%.o)
 
 DEP=$(OBJ:%.o=%.d)
 
-CXXFLAGS=-MMD -O2 -Wall -Wextra
+CXXFLAGS=-MMD -O2
 LDFLAGS=
 
 exe: $(OBJ)
