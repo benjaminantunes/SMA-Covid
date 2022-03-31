@@ -40,7 +40,8 @@ Les fichiers .cpp et . hpp correspondent au code du modèle. Vous n'avez pas bes
 
 Le fichier makefile permet de compiler correctement le projet.
 
-Les fichiers "mts10p9N0000X" sont des statuts du générateur de nombre pseudo-aléatoire Mersenne Twister. Ils sont espacés de 2 Milliard de tirages. Ces 30 fichiers permettent donc de lancer 30 réplications indépendantes de simulations, qui doivent utiliser au maximum 2 milliard de nombre aléatoire. Si vos contraintes vous demande de faire plus de réplication ou plus de tirage par simulation, alors vous devrez utiliser/créer vos propres statuts de MT. Attention à respecter la norme de nommage en place. Pour en savoir plus sur la parallélisation de code utlisant des générateurs de nombres pseudo-aléatoire, veuillez vous référer à cet article : Hill 2018 ... 
+Les fichiers "mts10p9N0000X" sont des statuts du générateur de nombre pseudo-aléatoire Mersenne Twister. Ils sont espacés de 2 Milliard de tirages. Ces 30 fichiers permettent donc de lancer 30 réplications indépendantes de simulations, qui doivent utiliser au maximum 2 milliard de nombre aléatoire. Si vos contraintes vous demande de faire plus de réplication ou plus de tirage par simulation, alors vous devrez utiliser/créer vos propres statuts de MT. Attention à respecter la norme de nommage en place. Pour en savoir plus sur la parallélisation de code utlisant des générateurs de nombres pseudo-aléatoire, veuillez vous référer à cet article :  HILL D. PASSERAT-PALMBACH J. MAZEL C., TRAORE, M.K., "Distribution of Random Streams for Simulation Practitioners", Concurrency and Computation: Practice and Experience, June 2013, Vol. 25, Issue 10, pp. 1427-1442.
+Disponible ici : https://hal.archives-ouvertes.fr/hal-01099203
 
 Le fichier bash "ReplicationSimulation.sh" permet de lancer des simulations.
 
