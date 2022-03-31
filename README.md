@@ -1,5 +1,5 @@
 # SMA-Covid
-### Propriétaire de ce repo : Benjamin Antunes, doctorant au Limos.
+### Propriétaire de ce repo : Benjamin Antunes, doctorant au Limos. Travail réalisé sous la supervision de Pr. David Hill (LIMOS).
 
 Vous êtes sur le repository du projet de modèle reproductible de simulation Covid 19.
 
