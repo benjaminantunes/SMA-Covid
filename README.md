@@ -128,4 +128,6 @@ Il est tout à fait possible de passer sur une échelle département / pays, mai
 -	probasCumulativesTrancheAge : Proportions cumulatives des individus de la population à étudier par tranches d’âge (0 à 10 ans, 10 – 20, 20 – 30 , 30 - 40 , 40 – 50 , 50 – 60, 60 – 70, 70 ans et +). 
 
 ## Expected Ouput : 
-Le dossier expectedOutput contient les résultats supposés de l'exécution du Notebook Jupyter de base sur la métropole de Lyon avec 4 réplications. Vous pouvez comparer les résultats sur cela pour vous assurer d'avoir la répétabilité, avant de pouvoir faire vos propres expériences.
+Le dossier expectedOutputNotebook contient les résultats supposés de l'exécution du Notebook Jupyter de base sur la métropole de Lyon avec 4 réplications. Vous pouvez comparer les résultats sur cela pour vous assurer d'avoir la répétabilité, avant de pouvoir faire vos propres expériences.
+
+Le dossier expectedOutputCommandLine contient les résultats supposés de l'exection courte en ligne de commande, deux réplications d'une simulation sur une version allégé de la ville de Paris, afin de tester la prise en main.
