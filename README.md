@@ -11,9 +11,24 @@ Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
 
 ## Prérequis : 
 - Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
-- Si possible etre sur une machine Ubuntu (non testé sur d'autres distributions)
+- Si possible etre sur une machine Ubuntu
 
-## Procédure de test de répétabilité sur un exemple court :
+## OS testés :
+- Pas de problèmes sur Debian et Ubuntu
+- Problème sur MacOS Catalina : Incompatibilité de Bash et C++. Aménagements réalisés pour plus de portabilité de notre SMA. 
+Commande à taper sur MacOS Catalina : *export SDKROOT="'xcrun --show-sdk-path'"*
+
+## 1ère procédure d'utilisation sans script Bash :
+Pour lancer l'execution d'une simulation, tapez la commande suivant : 
+*./exe mts10p9N00000$i  configVille configMesure nomFichierLog.txt&*
+Avec cet exécutable, on lance le programme *exe* avec un fichier de statut Mersenne Twister, puis la fichier de configuration correspondant à une ville, puis le fichier de configuration des mesures sanitaires/des différents paramètres de la simulation, et enfin le nom du fichier de log utilisé pour stocker les résultats.
+
+Pour tester la répétabilité : 
+- Lancer deux commandes : *./exe mts10p9N000000  configParisLight configNoMesure logconfigParisLight0.txt&* et *./exe mts10p9N000001  configParisLight configNoMesure logconfigParisLight1.txt&*
+- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité avec les commandes : diff logconfigParisLight0.txt ./expectedOutputCommandLine/logconfigParisLight0.txt et diff logconfigParisLight1.txt ./expectedOutputCommandLine/logconfigParisLight1.txt
+
+
+## Procédure avec script Bash sur un exemple court (Commencer directement ici si vous êtes sur un système comme Debian) :
 - Télécharger la branche master du projet, en fichier un git clone, ou bien en téléchargeant le Zip
 - Se placer dans le dossier du projet
 - Executer la commande : make clean
