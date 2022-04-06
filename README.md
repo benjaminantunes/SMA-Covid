@@ -25,7 +25,7 @@ Avec cet exécutable, on lance le programme *exe* avec un fichier de statut Mers
 
 Pour tester la répétabilité : 
 - Lancer deux commandes : *./exe mts10p9N000000  configParisLight configNoMesure logconfigParisLight0.txt&* et *./exe mts10p9N000001  configParisLight configNoMesure logconfigParisLight1.txt&*
-- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité avec les commandes : diff logconfigParisLight0.txt ./expectedOutputCommandLine/logconfigParisLight0.txt et diff logconfigParisLight1.txt ./expectedOutputCommandLine/logconfigParisLight1.txt
+- Comparer les résultats avec le dossier "expectedOutputCommandLine" la répétabilité avec les commandes : *diff logconfigParisLight0.txt ./expectedOutputCommandLine/logconfigParisLight0.txt* et *diff logconfigParisLight1.txt ./expectedOutputCommandLine/logconfigParisLight1.txt*
 
 
 ## Procédure avec script Bash sur un exemple court (Commencer directement ici si vous êtes sur un système comme Debian) :
