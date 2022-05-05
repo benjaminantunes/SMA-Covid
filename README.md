@@ -7,7 +7,8 @@ Vous êtes sur le repository du projet de modèle reproductible de simulation Co
 Articles références : A venir
 
 Ce modèle est développé en C++ pour les performances. Il est parallélisé en SPMD (plusieurs simulations tournent simultanéments). Vous serez donc limité par votre nombre de coeurs de calcul (et votre RAM). 
-Pour exécuter l'exemple, chaque simulation devrait utiliser 4 Go de RAM.
+Pour exécuter l'exemple sur le notebook, chaque simulation devrait utiliser 4 Go de RAM.
+Pour les exemples en ligne de commande avec ParisLight, très peu de ressources seront utilisées.
 
 ## Prérequis : 
 - Pouvoir exécuter un makefile en ligne de commande (Compileur C++ -> g++)
