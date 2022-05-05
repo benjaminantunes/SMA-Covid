@@ -46,6 +46,7 @@ class Human
       int               _numberOfInfections = 0;
 
       Position          _pos;
+      Position          _posDebutTour;
 
    public:
  
@@ -66,11 +67,13 @@ class Human
       void      goToHospital();
       void      goToReanimation();
       void      setPosition(int,int);
+      void      setPositionDebutTour(int,int);
       bool      getIsConfined();
       bool      getIsHospital();
       bool      getIsReanimation();
       int       getDureeReanimation();
       Position  getPosition();
+      Position  getPositionDebutTour();
       float     getTauxDeProtectionHospitalisation();
       float     getTauxDeProtectionReanimation();
       int       getNumberOfInfections();

@@ -1656,7 +1656,7 @@ void World::moveHumanSafe(int inRow, int inColumn)
 //                                                                      //
 //    Pas de sortie                                                     //
 // -------------------------------------------------------------------- //
-void World::moveHumanAsymptomatique(int inRow, int inColumn)
+void World::moveHumanAsymptomatique(int inRow, int inColumn, int inRowDepart, int inColumnDepart)
 {
 
    /*
@@ -1711,38 +1711,38 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn)
       if(_isDeplacementLimites)
       {
          //a + (b - a) * randNum0-1
-         rowDeplacement = (inRow-_nbDistanceMax) 
+         rowDeplacement = (inRowDepart-_nbDistanceMax) 
                           +
-                          ((inRow + _nbDistanceMax)
+                          ((inRowDepart + _nbDistanceMax)
                           - 
-                          (inRow - _nbDistanceMax))
+                          (inRowDepart - _nbDistanceMax))
                           * 
                           randmt->genrand_real1();
          columnDeplacement = 
-                          (inColumn-_nbDistanceMax) 
+                          (inColumnDepart-_nbDistanceMax) 
                           +
-                          ((inColumn + _nbDistanceMax)
+                          ((inColumnDepart + _nbDistanceMax)
                           - 
-                          (inColumn - _nbDistanceMax))
+                          (inColumnDepart - _nbDistanceMax))
                           * 
                           randmt->genrand_real1();
       }
       if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
       {
          //a + (b - a) * randNum0-1
-         rowDeplacement = (inRow-_nbLimiteDistanceMaxConfinement) 
+         rowDeplacement = (inRowDepart-_nbLimiteDistanceMaxConfinement) 
                           +
-                          ((inRow + _nbLimiteDistanceMaxConfinement)
+                          ((inRowDepart + _nbLimiteDistanceMaxConfinement)
                           - 
-                          (inRow - _nbLimiteDistanceMaxConfinement))
+                          (inRowDepart - _nbLimiteDistanceMaxConfinement))
                           * 
                           randmt->genrand_real1();
          columnDeplacement = 
-                          (inColumn-_nbLimiteDistanceMaxConfinement) 
+                          (inColumnDepart-_nbLimiteDistanceMaxConfinement) 
                           +
-                          ((inColumn + _nbLimiteDistanceMaxConfinement)
+                          ((inColumnDepart + _nbLimiteDistanceMaxConfinement)
                           - 
-                          (inColumn - _nbLimiteDistanceMaxConfinement))
+                          (inColumnDepart - _nbLimiteDistanceMaxConfinement))
                           *  
                           randmt->genrand_real1();
       }
@@ -2217,12 +2217,27 @@ void World::nextIteration()
       moveHumanSafe(temp.getPosX(),temp.getPosY());
    }
 
+
+   
+   /* Lors du couvre feu ou du confinement, un humain asymptomatique,
+    * qui se déplace plusieurs fois, ne doit pas pouvoir aller 
+    * au dela d'une certaine distance. Il faut donc fixer sa
+    * position de depart de déplacement. On utilisera cette 
+    * position lors de l'appel à moveHumanAsymptomatique()
+    */
+   for(Position  temp: _humanAsymptomatiquePositions)
+   {
+      _carte[temp.getPosX()][temp.getPosY()]->setPositionDebutTour(
+                                                 temp.getPosX(),
+                                                 temp.getPosY());
+   }
+   
 //////////////////////////////////////////////////////////////////// 
    // Ce code est provisoire, afin de connaitre le nombre d'iteration à avoir sur Paris pour avoir un r0 de 3 sur les premiers jours de l'épidémie.
    //int nbBoucle = 0;
      //while(_nbNouveauxCas < _humanAsymptomatiquePositions.size() * _r0 ){
         //nbBoucle++;
-
+////////////////////////////////////////////////////////////////////
    if(_isConfinement)
    {
       if(_isCouvreFeu)
@@ -2231,7 +2246,10 @@ void World::nextIteration()
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
-               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
+               moveHumanAsymptomatique(temp.getPosX(),
+                                       temp.getPosY(),
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2248,7 +2266,10 @@ void World::nextIteration()
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
-               moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
+               moveHumanAsymptomatique(temp.getPosX(),
+                                       temp.getPosY(),
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2266,7 +2287,10 @@ void World::nextIteration()
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
-            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
+            moveHumanAsymptomatique(temp.getPosX(),
+                                    temp.getPosY(),
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2283,7 +2307,10 @@ void World::nextIteration()
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
-            moveHumanAsymptomatique(temp.getPosX(),temp.getPosY());
+            moveHumanAsymptomatique(temp.getPosX(),
+                                    temp.getPosY(),
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();

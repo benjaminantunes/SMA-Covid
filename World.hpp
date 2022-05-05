@@ -113,7 +113,7 @@ class World{
       
       // Si on avait eu plusieurs classes héritant de human pour asymp, hops, etc, on aurait pu utiliser le polymorphisme sur une seule fonction.
       void                         moveHumanSafe(int,int);
-      void                         moveHumanAsymptomatique(int,int);
+      void                         moveHumanAsymptomatique(int,int,int,int);
       void                         moveHumanConfined(int,int);
       void                         moveHumanHospital(int,int);
       void                         moveHumanReanimation(int,int);

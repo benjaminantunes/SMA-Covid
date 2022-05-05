@@ -320,6 +320,39 @@ Position  Human::getPosition()
    return _pos;
 }
 
+
+// -------------------------------------------------------------------- //
+// Human::setPositionDebutTour  Position de depart lors de plusieurs    //
+//                              deplacements asymptomatiques            //
+//                                                                      //
+// En entrée:                                                           // 
+//                                                                      //
+//    inPosX :                                                          //
+//       Position de la ligne                                           //
+//                                                                      //
+//     inPosY :                                                         //
+//        Position de la colonne                                        // 
+// -------------------------------------------------------------------- //
+
+void Human::setPositionDebutTour(int inPosX,int inPosY)
+{
+   _posDebutTour.setPosX(inPosX);
+   _posDebutTour.setPosY(inPosY);
+};
+
+// -------------------------------------------------------------------- //
+// Human::getPositionDebutTour  Retourne la position de depart          //
+//                                                                      //
+// En sortie:                                                           //
+//                                                                      //
+//    Position : La position de l'humain                                //
+// -------------------------------------------------------------------- //
+
+Position  Human::getPositionDebutTour()
+{
+   return _posDebutTour;
+}
+
 // -------------------------------------------------------------------- //
 // Human::resetState  Remet l'état à 0, l'humain n'est plus malade      //
 // -------------------------------------------------------------------- //
