@@ -56,3 +56,13 @@ nbDeplacementReductionCouvreFeu||2
 isSuperContaminateur||0
 #Les personnes normales se déplace 12 fois par jour pour un R0 durant les 1er jours à 3.
 nbDeplacementSuperContaminateur||50
+###
+###
+tauxAugmentationContaminationGym||0.5
+tauxContaminationGym||0.2
+tauxAugmentationContaminationClub||0.8
+tauxContaminationClub||0.4
+tauxAugmentationContaminationShop||0.1
+tauxContaminationShop||0.1
+tauxAugmentationContaminationRestaurant||0.1
+tauxContaminationRestaurant||0.1

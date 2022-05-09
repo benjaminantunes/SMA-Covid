@@ -7,6 +7,7 @@
 #include "RandMT.hpp"
 #include "Human.hpp"
 #include "SimulationParams.hpp"
+#include "Lieu.hpp"
 
 using namespace std;
 
@@ -16,6 +17,19 @@ class World{
    private:
       int              _size;
       Human ***        _carte;
+      Lieu  ***        _carteLieu;
+      int              _nbSalleDeSport;
+      float            _tauxAugmentationContaminationGym;
+      float            _tauxContaminationGym;
+      int              _nbBoiteDeNuit;
+      float            _tauxAugmentationContaminationClub;
+      float            _tauxContaminationClub;
+      int              _nbMagasin;
+      float            _tauxAugmentationContaminationShop;
+      float            _tauxContaminationShop;
+      int              _nbRestaurant;
+      float            _tauxAugmentationContaminationRestaurant;
+      float            _tauxContaminationRestaurant;
       int              _nbPlaceHospital;
       int              _nbPlaceReanimation;
       int              _nbHumain;
@@ -55,6 +69,8 @@ class World{
       float            _tauxDeChanceDeMourirHospitalFull;
       float            _tauxContaDistanceDeux;
       float          * _histogrammeContamination;
+      
+      vector<Position> _lieuPositions;
         
       vector<Position> _humanSafePositions;
       vector<Position> _humanAsymptomatiquePositions;
@@ -104,7 +120,9 @@ class World{
       void                         displayStats();
       bool                         isValid(int,int);
       bool                         isHuman(int,int);
+      bool                         isLieu(int,int);
       bool                         isEmpty(int,int);
+      bool                         isEmptyLieu(int,int);
       void                         addAgent(SimulationParams*,float);
       void                         initialize(SimulationParams*);
       map<string,vector<Position>> vision (int,int,int);

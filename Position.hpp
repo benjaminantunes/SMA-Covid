@@ -16,9 +16,9 @@ class Position
       {
          //Redefinition du equals pour les positions
          if (inA._posX == inB._posX && inA._posY == inB._posY)
-         return true;
+            return true;
          else
-         return false;
+            return false;
       }
       
       Position(int posX = 0, int posY = 0);

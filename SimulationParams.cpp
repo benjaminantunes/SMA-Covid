@@ -59,6 +59,18 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["probasCumulativesTrancheAge"] = 47;
    _mapStringValues["nbLimiteDistanceMaxConfinement"] = 48;
    _mapStringValues["nbDeplacementJour"] = 49;
+   _mapStringValues["nbSalleDeSport"] = 50;
+   _mapStringValues["tauxAugmentationContaminationGym"] = 51;
+   _mapStringValues["tauxContaminationGym"] = 52;
+   _mapStringValues["nbBoiteDeNuit"] = 53;
+   _mapStringValues["tauxAugmentationContaminationClub"] = 54;
+   _mapStringValues["tauxContaminationClub"] = 55;
+   _mapStringValues["nbMagasin"] = 56;
+   _mapStringValues["tauxAugmentationContaminationShop"] = 57;
+   _mapStringValues["tauxContaminationShop"] = 58;
+   _mapStringValues["nbRestaurant"] = 59;
+   _mapStringValues["tauxAugmentationContaminationRestaurant"] = 60;
+   _mapStringValues["tauxContaminationRestaurant"] = 61;
 
 
 
@@ -340,7 +352,37 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                _nbLimiteDistanceMaxConfinement = stoi(paramValues);
                break;
                
+            case 51:
+               _tauxAugmentationContaminationGym = stof(paramValues);
+               break;
                
+            case 52:
+               _tauxContaminationGym = stof(paramValues);
+               break;
+               
+            case 54:
+               _tauxAugmentationContaminationClub = stof(paramValues);
+               break;
+               
+            case 55:
+               _tauxContaminationClub = stof(paramValues);
+               break;
+               
+            case 57:
+               _tauxAugmentationContaminationShop = stof(paramValues);
+               break;
+               
+            case 58:
+               _tauxContaminationShop = stof(paramValues);
+               break;
+               
+            case 60:
+               _tauxAugmentationContaminationRestaurant = stof(paramValues);
+               break;
+               
+            case 61:
+               _tauxContaminationRestaurant = stof(paramValues);
+               break;
 
          }
       }
@@ -414,6 +456,23 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                value = paramValues.substr(0, pos);
                _probasCumulativesTrancheAge[j] = stof(value);
                break;
+               
+            case 50:
+               _nbSalleDeSport = stoi(paramValues);
+               break;
+               
+            case 53:
+               _nbBoiteDeNuit = stoi(paramValues);
+               break;
+               
+            case 56:
+               _nbMagasin = stoi(paramValues);
+               break;
+               
+            case 59:
+               _nbRestaurant = stoi(paramValues);
+               break;
+               
          }
       }
       
@@ -487,6 +546,66 @@ int SimulationParams::getNbHumain()
    return _nbHumain;
 }
 
+
+int SimulationParams::getNbSalleDeSport()
+{
+   return _nbSalleDeSport;
+}
+
+float SimulationParams::getTauxAugmentationContaminationGym()
+{
+   return _tauxAugmentationContaminationGym;
+}
+
+float SimulationParams::getTauxContaminationGym()
+{
+   return _tauxContaminationGym;
+}
+
+int SimulationParams::getNbBoiteDeNuit()
+{
+   return _nbBoiteDeNuit;
+}
+
+float SimulationParams::getTauxAugmentationContaminationClub()
+{
+   return _tauxAugmentationContaminationClub;
+}
+
+float SimulationParams::getTauxContaminationClub()
+{
+   return _tauxContaminationClub;
+}
+
+int SimulationParams::getNbMagasin()
+{
+   return _nbMagasin;
+}
+
+float SimulationParams::getTauxAugmentationContaminationShop()
+{
+   return _tauxAugmentationContaminationShop;
+}
+
+float SimulationParams::getTauxContaminationShop()
+{
+   return _tauxContaminationShop;
+}
+
+int SimulationParams::getNbRestaurant()
+{
+   return _nbRestaurant;
+}
+
+float SimulationParams::getTauxAugmentationContaminationRestaurant()
+{
+   return _tauxAugmentationContaminationRestaurant;
+}
+
+float SimulationParams::getTauxContaminationRestaurant()
+{
+   return _tauxContaminationRestaurant;
+}
 
 int SimulationParams::getNbIteration()
 {
