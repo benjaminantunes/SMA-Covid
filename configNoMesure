@@ -58,6 +58,8 @@ isSuperContaminateur||0
 nbDeplacementSuperContaminateur||50
 ###
 ###
+tauxAugmentationContaminationHopitaux||0.8
+tauxContaminationHopitaux||0.2
 tauxAugmentationContaminationGym||0.5
 tauxContaminationGym||0.2
 tauxAugmentationContaminationClub||0.8

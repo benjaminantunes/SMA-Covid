@@ -20,6 +20,8 @@ class SimulationParams
       float            _probasCumulativesTrancheAge[8];
 
       //WORLD
+      int            * _tableTailleHopitaux;
+      float            _facteurTailleHopitaux;
       float            _tableTauxHospitalisationByAge[8];
       int              _nbPlaceHospital;
       int              _nbPlaceReanimation;
@@ -28,6 +30,9 @@ class SimulationParams
       int              _size;
       int              _nbMalade;
       int              _nbHumain;
+      int              _nbHopitaux;
+      float            _tauxAugmentationContaminationHopitaux;
+      float            _tauxContaminationHopitaux;
       int              _nbSalleDeSport;
       float            _tauxAugmentationContaminationGym;
       float            _tauxContaminationGym;
@@ -90,6 +95,8 @@ class SimulationParams
       float * getMaxResistanceInjectionValuesByAge();
       float * getMinResistanceInjectionValuesByAge();
       float * getTableTauxHospitalisationByAge();
+      int   * getTableTailleHopitaux();
+      float   getFacteurTailleHopitaux();
       float   getTauxVaccination();
       int     getNbPlaceHospital();
       int     getNbPlaceReanimation();
@@ -98,6 +105,9 @@ class SimulationParams
       int     getSize();
       int     getNbMalade();
       int     getNbHumain();
+      int     getNbHopitaux();
+      float   getTauxAugmentationContaminationHopitaux();
+      float   getTauxContaminationHopitaux();
       int     getNbSalleDeSport();
       float   getTauxAugmentationContaminationGym();
       float   getTauxContaminationGym();

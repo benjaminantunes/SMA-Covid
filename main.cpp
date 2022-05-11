@@ -19,18 +19,18 @@ int main(int argc, char ** argv)
    //argv[4] = le nom du fichier de log dans lequel stocker le resultat de la simu
     
 
-
    randmt =  new RandMT(argv[1]);
 
    // Ici je vais instancier un objet SimulationParams, qui va aller récupérer tous les paramètres. Ensuite, je passe cet objet dans le constructeur de World au lieu de tous les params.
 
    SimulationParams * simulationParams = new SimulationParams(argv[2],argv[3]);
+
    World * world = new World(simulationParams, argv[4], true);
-   
+  
 
    world->initialize(simulationParams);
 
-   
+
    world->startSimulation(simulationParams);
    
    

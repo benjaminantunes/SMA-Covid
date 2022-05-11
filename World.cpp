@@ -35,6 +35,12 @@ World::World(SimulationParams * inSimulationParams,
    float * tableTauxHospitalisationByAge = 
                      inSimulationParams->getTableTauxHospitalisationByAge();
                      
+   int   * tableTailleHopitaux = 
+                     inSimulationParams->getTableTailleHopitaux();
+            
+   float   facteurTailleHopitaux =
+                     inSimulationParams->getFacteurTailleHopitaux();
+                     
    float   tauxMortRea = 
                      inSimulationParams->getTauxMortRea();
                      
@@ -73,6 +79,16 @@ World::World(SimulationParams * inSimulationParams,
 
    int     nbMalade =
                      inSimulationParams->getNbMalade();
+                     
+   int     nbHopitaux =
+                     inSimulationParams->getNbHopitaux();
+                     
+   float   tauxAugmentationContaminationHopitaux =
+                     inSimulationParams->getTauxAugmentationContaminationHopitaux();
+            
+   float   tauxContaminationHopitaux =
+                     inSimulationParams->getTauxContaminationHopitaux();
+
                      
    int     nbSalleDeSport =
                      inSimulationParams->getNbSalleDeSport();
@@ -180,7 +196,6 @@ World::World(SimulationParams * inSimulationParams,
    int     nbDeplacementJour =
                      inSimulationParams->getNbDeplacementJour();
 
-
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
    {
@@ -195,12 +210,42 @@ World::World(SimulationParams * inSimulationParams,
          _carte[i][j] = nullptr;
       }
    }
-
+   
+   /*
+    * La carte de lieu sera un tableau d'octet (char) pour gagner en performance.
+    * 
+    * 
+    * 
+    */
+   
+   
+   _carteLieu = (char **) malloc(size * sizeof(char*));
+   for(int i =0; i < size; i++)
+   {
+      _carteLieu[i] = (char *) malloc (size * sizeof(char));
+   }
+   
+   for(int i = 0; i<size ;i++)
+   {
+      for(int j = 0; j<size ; j++)
+      {
+         
+         _carteLieu[i][j] = 0;
+      }
+   }
+   
+   for(int i = 0; i < 256; i++)
+   {
+      _tabAugmentionContaminationParLieu[i] = 0;
+   }
+   
    _histogrammeContamination = (float*)malloc( 11 * sizeof(float));
    _histogrammeContamination = histogrammeContamination;
    
    _tableTauxHospitalisationByAge = (float*)malloc( 8 * sizeof(float));
    _tableTauxHospitalisationByAge = tableTauxHospitalisationByAge;
+   
+   
    
    _size = size;
    _tauxMortRea = tauxMortRea;
@@ -213,17 +258,28 @@ World::World(SimulationParams * inSimulationParams,
    _tauxContaDistanceDeux = tauxContaDistanceDeux;
    _nbHumain = nbHumain;
    _nbMalade = nbMalade;
+   _facteurTailleHopitaux = facteurTailleHopitaux;
+   _nbHopitaux = nbHopitaux;
+   _tableTailleHopitaux = (int *)malloc( _nbHopitaux * sizeof(int));
+   _tableTailleHopitaux = tableTailleHopitaux;
+   _tauxAugmentationContaminationHopitaux = tauxAugmentationContaminationHopitaux;
+   _tabAugmentionContaminationParLieu['H'] = tauxAugmentationContaminationHopitaux;
+   _tauxContaminationHopitaux = tauxContaminationHopitaux;
    _nbSalleDeSport = nbSalleDeSport;
    _tauxAugmentationContaminationGym = tauxAugmentationContaminationGym;
+   _tabAugmentionContaminationParLieu['G'] = tauxAugmentationContaminationGym;
    _tauxContaminationGym = tauxContaminationGym;
    _nbBoiteDeNuit = nbBoiteDeNuit;
    _tauxAugmentationContaminationClub = tauxAugmentationContaminationClub;
+   _tabAugmentionContaminationParLieu['C'] = tauxAugmentationContaminationClub;
    _tauxContaminationClub = tauxContaminationClub;
    _nbMagasin = nbMagasin;
    _tauxAugmentationContaminationShop = tauxAugmentationContaminationShop;
+   _tabAugmentionContaminationParLieu['S'] = tauxAugmentationContaminationShop;
    _tauxContaminationShop = tauxContaminationShop;
    _nbRestaurant = nbrestaurant;
    _tauxAugmentationContaminationRestaurant = tauxAugmentationContaminationRestaurant;
+   _tabAugmentionContaminationParLieu['R'] = tauxAugmentationContaminationRestaurant;
    _tauxContaminationRestaurant = tauxContaminationRestaurant;
    _isVaccin = isVaccin;
    _tauxVaccinationRappel = tauxVaccinationRappel;
@@ -490,33 +546,6 @@ bool World::isHuman(int inRow, int inColumn)
 
 }
 
-// -------------------------------------------------------------------- //
-// World::isLieu:  Teste si la position est un lieu                     //
-//                                                                      //
-// En entrée:                                                           // 
-//                                                                      //
-//    inRow :                                                           //
-//       Ligne de la position à tester                                  //
-//    inColumn :                                                        //
-//       Colonne de la position à tester                                //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Booléen :                                                         //
-//       Oui ou non la position est un lieu                             //
-// -------------------------------------------------------------------- //
-bool World::isLieu(int inRow, int inColumn)
-{
-   if(isValid(inRow,inColumn) && _carteLieu[inRow][inColumn] != nullptr)
-   {
-      return
-         isValid(inRow,inColumn) && 
-         (_carteLieu[inRow][inColumn]->to_string() == 'L');
-   }
-   return false;
-
-}
-
 
 
 // -------------------------------------------------------------------- //
@@ -539,26 +568,6 @@ bool World::isEmpty(int inRow, int inColumn)
    return isValid(inRow,inColumn) && _carte[inRow][inColumn] == nullptr;
 }
 
-
-// -------------------------------------------------------------------- //
-// World::isEmptyLieu:  Teste si la position est vide pour les lieux    //
-//                                                                      //
-// En entrée:                                                           // 
-//                                                                      //
-//    inRow :                                                           //
-//       Ligne de la position à tester                                  //
-//    inColumn :                                                        //
-//       Colonne de la position à tester                                //
-//                                                                      //
-// En sortie:                                                           //
-//                                                                      //
-//    Booléen :                                                         //
-//       Oui ou non la position est vide                                //
-// -------------------------------------------------------------------- //
-bool World::isEmptyLieu(int inRow, int inColumn)
-{
-   return isValid(inRow,inColumn) && _carteLieu[inRow][inColumn] == nullptr;
-}
 
 // -------------------------------------------------------------------- //
 // World::addAgent:  Initialise la carte en ajoutant les Agents         //
@@ -660,69 +669,147 @@ void World::addAgent(SimulationParams * inSimulationParams,
 
    }
    
-   for(int qtyGym = 0; qtyGym <_nbSalleDeSport; qtyGym++)
+
+   
+   for(int qtyShop = 0; qtyShop < _nbMagasin; qtyShop++)
    {
-      bool varEmpty = false;
       int row;
       int column;
-      while(!varEmpty)
+      
+      row = randmt->genrand_int32()%_size ;
+      column = randmt->genrand_int32()%_size ;
+      
+      int taille = 20; //Choix arbitraire, 400m² magasin.
+      
+      
+      for(int i = row; i < row+taille; i++)
       {
-         row = randmt->genrand_int32()%_size ;
-         column = randmt->genrand_int32()%_size ;
-         varEmpty = isEmptyLieu(row,column);
+         for(int j = column; j < column+taille; j++)
+         {
+            if(isValid(i,j))
+            {
+               _carteLieu[i][j] = 'S';
+            }
+            
+         }
       }
       
-      _carteLieu[row][column] = new Lieu(row,column,_tauxAugmentationContaminationGym,_tauxContaminationGym);
-      _lieuPositions.push_back(_carteLieu[row][column]->getPosition());
    }
    
-   for(int qtyClub = 0; qtyClub <_nbBoiteDeNuit; qtyClub++)
+   
+   for(int qtyRestaurant = 0; qtyRestaurant < _nbRestaurant; qtyRestaurant++)
    {
-      bool varEmpty = false;
       int row;
       int column;
-      while(!varEmpty)
+      
+      row = randmt->genrand_int32()%_size ;
+      column = randmt->genrand_int32()%_size ;
+      
+      int taille = 20; //Choix arbitraire, 400m² magasin.
+      
+      
+      for(int i = row; i < row+taille; i++)
       {
-         row = randmt->genrand_int32()%_size ;
-         column = randmt->genrand_int32()%_size ;
-         varEmpty = isEmptyLieu(row,column);
+         for(int j = column; j < column+taille; j++)
+         {
+            if(isValid(i,j))
+            {
+               _carteLieu[i][j] = 'R';
+            }
+            
+         }
       }
       
-      _carteLieu[row][column] = new Lieu(row,column,_tauxAugmentationContaminationClub,_tauxContaminationClub);
-      _lieuPositions.push_back(_carteLieu[row][column]->getPosition());
    }
    
-   for(int qtyShop = 0; qtyShop <_nbMagasin; qtyShop++)
+   for(int qtyGym = 0; qtyGym < _nbSalleDeSport; qtyGym++)
    {
-      bool varEmpty = false;
       int row;
       int column;
-      while(!varEmpty)
+      
+      row = randmt->genrand_int32()%_size ;
+      column = randmt->genrand_int32()%_size ;
+      
+      int taille = 20; //Choix arbitraire, 400m² salle de sport.
+      
+      
+      for(int i = row; i < row+taille; i++)
       {
-         row = randmt->genrand_int32()%_size ;
-         column = randmt->genrand_int32()%_size ;
-         varEmpty = isEmptyLieu(row,column);
+         for(int j = column; j < column+taille; j++)
+         {
+            if(isValid(i,j))
+            {
+               _carteLieu[i][j] = 'G';
+            }
+            
+         }
       }
       
-      _carteLieu[row][column] = new Lieu(row,column,_tauxAugmentationContaminationShop,_tauxContaminationShop);
-      _lieuPositions.push_back(_carteLieu[row][column]->getPosition());
+   }
+   for(int qtyClub = 0; qtyClub < _nbBoiteDeNuit; qtyClub++)
+   {
+      int row;
+      int column;
+      
+      row = randmt->genrand_int32()%_size ;
+      column = randmt->genrand_int32()%_size ;
+      
+      int taille = 20; //Choix arbitraire, 400m² club.
+      
+      
+      for(int i = row; i < row+taille; i++)
+      {
+         for(int j = column; j < column+taille; j++)
+         {
+            if(isValid(i,j))
+            {
+               _carteLieu[i][j] = 'C';
+            }
+         }
+      }
+      
+   }
+   for(int qtyHopitaux = 0; qtyHopitaux < _nbHopitaux; qtyHopitaux++)
+   {
+      int row;
+      int column;
+      
+      row = randmt->genrand_int32()%_size ;
+      column = randmt->genrand_int32()%_size ;
+      
+      int taille = sqrt(_tableTailleHopitaux[qtyHopitaux]);
+      taille = taille * _facteurTailleHopitaux;
+      
+      for(int i = row; i < row+taille; i++)
+      {
+         for(int j = column; j < column+taille; j++)
+         {
+            if(isValid(i,j))
+            {
+               _carteLieu[i][j] = 'H';
+            }
+            
+         }
+      }
    }
    
-   for(int qtyRestaurant = 0; qtyRestaurant <_nbRestaurant; qtyRestaurant++)
+
+   //Portion de test
+   int compteCase = 0;
+   for(int i = 0; i < _size; i++)
    {
-      bool varEmpty = false;
-      int row;
-      int column;
-      while(!varEmpty)
+      for(int j = 0; j < _size; j++)
       {
-         row = randmt->genrand_int32()%_size ;
-         column = randmt->genrand_int32()%_size ;
-         varEmpty = isEmptyLieu(row,column);
+         if(_carteLieu[i][j] != 0)
+         {
+            compteCase++;
+         }
+         
       }
-      
-      _carteLieu[row][column] = new Lieu(row,column,_tauxAugmentationContaminationRestaurant,_tauxContaminationRestaurant);
-      _lieuPositions.push_back(_carteLieu[row][column]->getPosition());
+
    }
+   
+   printf("Le pourcentage de carte recouverte par des lieu est de : %f %%\n",((double)compteCase/(double)(_size*_size))*100);
    
    
 
@@ -780,7 +867,6 @@ map<string,vector<Position>> World::vision(int inLength,
 
    neighborhood["empty"];
    neighborhood["human"];
-   neighborhood["lieu"];
     
 
    for(int elt_1 = 0-inLength; elt_1<inLength+1;elt_1++)
@@ -809,14 +895,6 @@ map<string,vector<Position>> World::vision(int inLength,
             }
          }
 
-         for(Position  temp: neighborhood.at("lieu") )
-         {
-
-            if(temp == maPositionTest)
-            {
-               isInNeighborhood = true;
-            }
-         }
 
          
          // Tous ça pour ça : and (elt_1, elt_2) not in neighborhood
@@ -837,15 +915,6 @@ map<string,vector<Position>> World::vision(int inLength,
             }
             
          }
-         if(!isInNeighborhood )
-         {
-            if(isLieu(inRow+elt_1,inColumn+elt_2))
-            {
-               neighborhood["lieu"].push_back(_carteLieu[inRow+elt_1][inColumn+elt_2]->getPosition());
-            }
-         }
-         
-
       }
    }
 
@@ -887,14 +956,6 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
    map<string, vector<Position>> target_v1 = vision(2,inRow,inColumn);
    Position                      maPositionTest;
 
-   float tauxAugmentationConta = 0.0;
-   for(Position pos : target_v1["lieu"])
-   {
-      if(_carteLieu[pos.getPosX()][pos.getPosY()]->getTauxAugmentationContamination() > tauxAugmentationConta)
-      {
-         tauxAugmentationConta = _carteLieu[pos.getPosX()][pos.getPosY()]->getTauxAugmentationContamination();
-      }
-   }
    
    for(Position  pos : target_v1["human"])
    {
@@ -934,7 +995,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * (1 - _tauxProtectionMasqueTissu))
                       * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -978,7 +1039,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                          ->getTauxDeProtectionInfection()
                         ))
                       * (1 - _tauxProtectionMasqueTissu)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1028,7 +1089,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * (1 - _tauxProtectionMasqueChir))
                       * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1072,7 +1133,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                          ->getTauxDeProtectionInfection()
                         ))
                       * (1 - _tauxProtectionMasqueChir)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1121,7 +1182,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * (1 - _tauxProtectionMasqueFFP2))
                       * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1165,13 +1226,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                          ->getTauxDeProtectionInfection()
                         ))
                       * (1 - _tauxProtectionMasqueFFP2)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1213,13 +1275,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                          ->getTauxDeProtectionInfection()
                         ))
                       * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1256,13 +1319,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                       * (1 - _carte[pos.getPosX()][pos.getPosY()]
                          ->getTauxDeProtectionInfection()
                         )
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1308,13 +1372,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                       * (1 - _tauxProtectionMasqueTissu))
                       * (1 - _tauxProtectionTransmissionGelHydro))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1353,13 +1418,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * (1 - _tauxProtectionMasqueTissu))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1404,13 +1470,14 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                       * (1 - _tauxProtectionMasqueChir))
                       * (1 - _tauxProtectionTransmissionGelHydro))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
                   {               
                       _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
+                      {
                          _nbHumainContaminePlusieursFois++;
                       }
                       _nbNouveauxCas++;
@@ -1449,7 +1516,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * (1 - _tauxProtectionMasqueChir))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1500,7 +1567,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                       * (1 - _tauxProtectionMasqueFFP2))
                       * (1 - _tauxProtectionTransmissionGelHydro))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1545,7 +1612,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * ( 1 - _tauxProtectionMasqueFFP2))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1592,7 +1659,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                         ))
                       * ( 1 - _tauxProtectionTransmissionGelHydro))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 
@@ -1636,7 +1703,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                          ->getTauxDeProtectionInfection()
                         ))
                       * _tauxContaDistanceDeux
-                      * (1 + tauxAugmentationConta)
+                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
                     )
                 
                 

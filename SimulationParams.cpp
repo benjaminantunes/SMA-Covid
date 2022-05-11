@@ -9,7 +9,6 @@ using namespace std;
 
 SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfigParams){
 
-
    _mapStringValues["resistanceInfectionValuesByAge"] = 0;
    _mapStringValues["maxResistanceInjectionValuesByAge"] = 1;
    _mapStringValues["minResistanceInjectionValuesByAge"] = 2;
@@ -71,7 +70,11 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["nbRestaurant"] = 59;
    _mapStringValues["tauxAugmentationContaminationRestaurant"] = 60;
    _mapStringValues["tauxContaminationRestaurant"] = 61;
-
+   _mapStringValues["nbHopitaux"] = 62;
+   _mapStringValues["tauxAugmentationContaminationHopitaux"] = 63;
+   _mapStringValues["tauxContaminationHopitaux"] = 64;
+   _mapStringValues["tailleHopitauxMetreCarre"] = 65;
+   _mapStringValues["facteurTailleHopitaux"] = 66;
 
 
    string   line;
@@ -95,7 +98,6 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                                         );
          string value;
          int j = 0;
-         
          switch (_mapStringValues[paramName])
          {
             
@@ -347,7 +349,6 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                break;
                
                
-               
             case 48:
                _nbLimiteDistanceMaxConfinement = stoi(paramValues);
                break;
@@ -383,6 +384,17 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
             case 61:
                _tauxContaminationRestaurant = stof(paramValues);
                break;
+               
+               
+            case 63:
+               _tauxAugmentationContaminationHopitaux = stof(paramValues);
+               break;
+               
+            case 64:
+               _tauxContaminationHopitaux = stof(paramValues);
+               break;
+
+               
 
          }
       }
@@ -392,7 +404,6 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    }
 
    readFile.close();
-   
    
    ifstream readFileCity(inFilenameCity);
    string   lineCity;
@@ -473,13 +484,38 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                _nbRestaurant = stoi(paramValues);
                break;
                
+            case 62:
+               _nbHopitaux = stoi(paramValues);
+               break;
+               
+            case 65:
+            
+            {
+               _tableTailleHopitaux = (int*) malloc (_nbHopitaux * sizeof(int));
+               int test = 0;
+               while (((pos = paramValues.find(delimiterValues)) != string::npos) && test < _nbHopitaux )
+               {
+                  test++;
+                  value = paramValues.substr(0, pos);
+                  _tableTailleHopitaux[j] = stoi(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _tableTailleHopitaux[j] = stoi(value);
+               break;
+             
+            }
+            case 66:
+               _facteurTailleHopitaux = stof(paramValues);
+               break;
+               
          }
       }
       
       
       
    }
-
    readFileCity.close();
 
 }
@@ -506,6 +542,15 @@ float * SimulationParams::getTableTauxHospitalisationByAge()
    return _tableTauxHospitalisationByAge;
 }
 
+int * SimulationParams::getTableTailleHopitaux()
+{
+   return _tableTailleHopitaux;
+}
+
+float SimulationParams::getFacteurTailleHopitaux()
+{
+   return _facteurTailleHopitaux;
+}
 
 int SimulationParams::getNbPlaceHospital()
 {
@@ -544,6 +589,21 @@ int SimulationParams::getNbMalade()
 int SimulationParams::getNbHumain()
 {
    return _nbHumain;
+}
+
+int SimulationParams::getNbHopitaux()
+{
+   return _nbHopitaux;
+}
+
+float SimulationParams::getTauxAugmentationContaminationHopitaux()
+{
+   return _tauxAugmentationContaminationHopitaux;
+}
+
+float SimulationParams::getTauxContaminationHopitaux()
+{
+   return _tauxContaminationHopitaux;
 }
 
 
