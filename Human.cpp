@@ -645,3 +645,13 @@ void Human::updateHumanProtection()
       
    } 
 }
+
+bool Human::getIsSuperContaminateur()
+{
+   return _isSuperContaminateur;    
+}
+
+void Human::setIsSuperContaminateur(bool isSuperContaminateur)
+{
+   _isSuperContaminateur = isSuperContaminateur;   
+}

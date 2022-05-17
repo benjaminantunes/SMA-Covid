@@ -32,6 +32,9 @@ World::World(SimulationParams * inSimulationParams,
    int     size = 
                      inSimulationParams->getSize();
                      
+   int     nbIteration = 
+                     inSimulationParams->getNbIteration();
+                     
    float * tableTauxHospitalisationByAge = 
                      inSimulationParams->getTableTauxHospitalisationByAge();
                      
@@ -187,14 +190,32 @@ World::World(SimulationParams * inSimulationParams,
    int     nbDeplacementReductionCouvreFeu =
                      inSimulationParams->getNbDeplacementReductionCouvreFeu();
 
-   int     isSuperContaminateur =
-                     inSimulationParams->getIsSuperContaminateur();
+   int     nbSuperContaminateur =
+                     inSimulationParams->getNbSuperContaminateur();
 
-   int     nbDeplacementSuperContaminateur =
-                     inSimulationParams->getNbDeplacementSuperContaminateur();
+   int     rayonSuperContaminateur =
+                     inSimulationParams->getRayonSuperContaminateur();
 
    int     nbDeplacementJour =
                      inSimulationParams->getNbDeplacementJour();
+                     
+   int     nbVariants =
+                     inSimulationParams->getNbVariants();
+                     
+   float * defaultVariantHistoConta =
+                     inSimulationParams->getDefaultVariantHistoConta();
+   
+   float * variantsHistoConta =
+                     inSimulationParams->getVariantsHistoConta();
+               
+   int   * dureeVariants =
+                     inSimulationParams->getDureeVariants();
+                     
+   float * pourcentAsymptomatiqueVariants =
+                     inSimulationParams->getPourcentAsymptomatiqueVariants();
+                     
+   float * tableTauxHospitalisationByAgeVariants =
+                     inSimulationParams->getTableTauxHospitalisationByAgeVariants();
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
@@ -248,6 +269,7 @@ World::World(SimulationParams * inSimulationParams,
    
    
    _size = size;
+   _nbIteration = nbIteration;
    _tauxMortRea = tauxMortRea;
    _r0 = r0;
    _nbPlaceHospital = nbPlaceHospital;
@@ -302,9 +324,15 @@ World::World(SimulationParams * inSimulationParams,
    _tauxDeDivisionAsymptomatique = tauxDeDivisionAsymptomatique;
    _isCouvreFeu = isCouvreFeu;
    _nbDeplacementReductionCouvreFeu = nbDeplacementReductionCouvreFeu;
-   _isSuperContaminateur = isSuperContaminateur;
-   _nbDeplacementSuperContaminateur = nbDeplacementSuperContaminateur;
+   _nbSuperContaminateur = nbSuperContaminateur;
+   _rayonSuperContaminateur = rayonSuperContaminateur;
    _nbDeplacementJour = nbDeplacementJour;
+   _nbVariants = nbVariants;
+   _defaultVariantHistoConta = defaultVariantHistoConta;
+   _variantsHistoConta = variantsHistoConta;
+   _dureeVariants = dureeVariants;
+   _pourcentAsymptomatiqueVariants = pourcentAsymptomatiqueVariants;
+   _tableTauxHospitalisationByAgeVariants = tableTauxHospitalisationByAgeVariants;
    _log = inLog;
    _stats["dead"] = 0;
    _stats["contamined"] = 0;
@@ -315,9 +343,115 @@ World::World(SimulationParams * inSimulationParams,
       _logfile.open(inNomFichierLog,ios::out);
    }
    
+   initTimeline();
+
+
+}
+
+// -------------------------------------------------------------------- //
+// World::initTimeline  Initialise les valeurs clés du variant au cours //
+//                      du temps.                                       //
+//                                                                      //
+// En entrée:                                                           //
+//                                                                      //
+//    Pas d'entrée                                                      //
+//                                                                      //
+// En sortie:                                                           // 
+//                                                                      //
+//   Pas de sortie                                                      //
+// -------------------------------------------------------------------- //
+void World::initTimeline()
+{
+   int dureeVariantsCumulative[_nbVariants];
+   
+   dureeVariantsCumulative[0] = _dureeVariants[0];
+   for(int i = 1; i<_nbVariants; i++)
+   {
+      dureeVariantsCumulative[i] = _dureeVariants[i] + dureeVariantsCumulative[i-1];
+   }
+   
+   _timelineContamination = (float **) malloc(_nbIteration * sizeof(float*));
+   for(int i =0; i < _nbIteration; i++)
+   {
+      _timelineContamination[i] = (float *) malloc (11 * sizeof(float));
+   }
+   
+   int compteur = 0;
+   for(int nb = 0; nb<_nbVariants; nb++)
+   {
+      for(compteur; compteur<dureeVariantsCumulative[nb] ;compteur++)
+      {
+         for(int j = 0; j<11 ; j++)
+         {
+            
+            _timelineContamination[compteur][j] = _variantsHistoConta[j + 11*nb];
+         }
+      }
+      
+      //On remplit la timeline avec les variants, mais s'ils ne font pas toute la durée on complète avec des valeurs par défaut.
+      for(compteur; compteur<_nbIteration ;compteur++)
+      {
+         for(int j = 0; j<11 ; j++)
+         {
+            
+            _timelineContamination[compteur][j] = _defaultVariantHistoConta[j];
+         }
+      }
+   }
+   
+   
+   
+   _timelineAsymptomatique = (float *) malloc(_nbIteration * sizeof(float));
+
+   compteur = 0;
+   for(int nb = 0; nb<_nbVariants; nb++)
+   {
+      for(compteur; compteur<dureeVariantsCumulative[nb] ;compteur++)
+      { 
+         _timelineAsymptomatique[compteur] = _pourcentAsymptomatiqueVariants[nb];
+      }
+      for(compteur; compteur<_nbIteration; compteur++)
+      {
+         _timelineAsymptomatique[compteur] = 0.2; //Default asymptomatique
+      }
+   }
+   
+   
+   
+   
+   
+   _timelineHospByAge = (float **) malloc(_nbIteration * sizeof(float*));
+   for(int i =0; i < _nbIteration; i++)
+   {
+      _timelineHospByAge[i] = (float *) malloc (8 * sizeof(float));
+   }
+   
+   compteur = 0;
+   for(int nb = 0; nb<_nbVariants; nb++)
+   {
+      for(compteur; compteur<dureeVariantsCumulative[nb] ;compteur++)
+      {
+         for(int j = 0; j<8 ; j++)
+         {
+            
+            _timelineHospByAge[compteur][j] = _tableTauxHospitalisationByAgeVariants[j + 8*nb];
+         }
+      }
+      
+      //On remplit la timeline avec les variants, mais s'ils ne font pas toute la durée on complète avec des valeurs par défaut.
+      for(compteur; compteur<_nbIteration ;compteur++)
+      {
+         for(int j = 0; j<8 ; j++)
+         {
+            
+            _timelineHospByAge[compteur][j] = _tableTauxHospitalisationByAgeVariants[j]; //On va dire que le defaut c'est le 1er variant.
+         }
+      }
+   }
    
 
 
+   
 }
 
 // -------------------------------------------------------------------- //
@@ -608,6 +742,8 @@ void World::addAgent(SimulationParams * inSimulationParams,
       exit(1);
    }
 
+   int tempCompt = _nbSuperContaminateur;
+   
    for(int qtyAgent = 0; qtyAgent < _nbHumain-_nbMalade; qtyAgent++)
    {        
       bool  varEmpty = false;
@@ -625,7 +761,14 @@ void World::addAgent(SimulationParams * inSimulationParams,
 
          
       _carte[row][column] = new Human(inSimulationParams,row,column);
-        
+      
+      //On va créer X super contaminateur parmis les humains.
+      if(tempCompt > 0)
+      {
+         _carte[row][column]->setIsSuperContaminateur(true);
+      }
+      tempCompt--;
+      
       if(_isVaccin == 1)
       {
          float randValue = randmt->genrand_real1();
@@ -769,6 +912,7 @@ void World::addAgent(SimulationParams * inSimulationParams,
       }
       
    }
+   
    for(int qtyHopitaux = 0; qtyHopitaux < _nbHopitaux; qtyHopitaux++)
    {
       int row;
@@ -951,9 +1095,17 @@ map<string,vector<Position>> World::vision(int inLength,
 // -------------------------------------------------------------------- //
 void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurrentColumn)
 {
+   map<string, vector<Position>> target_v1;
 
-
-   map<string, vector<Position>> target_v1 = vision(2,inRow,inColumn);
+   if(_carte[inCurrentRow][inCurrentColumn]->getIsSuperContaminateur())
+   {
+      target_v1 = vision(_rayonSuperContaminateur,inRow,inColumn);
+   }
+   else
+   {
+      target_v1 = vision(2,inRow,inColumn);
+   }
+   
    Position                      maPositionTest;
 
    
@@ -978,7 +1130,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
             distance = distanceColumn;
          }
 
-         if(distance == 1)
+         if(distance == 1 || _carte[inCurrentRow][inCurrentColumn]->getIsSuperContaminateur())
          {   
             if(_isMasqueTissu)
             {
@@ -986,7 +1138,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1031,7 +1183,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (_histogrammeContamination[
+                     (_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1080,7 +1232,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1125,7 +1277,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (_histogrammeContamination[
+                     (_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1173,7 +1325,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1218,7 +1370,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (_histogrammeContamination[
+                     (_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1267,7 +1419,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (_histogrammeContamination[
+                     (_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1312,7 +1464,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     _histogrammeContamination[
+                     _timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1362,7 +1514,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (((_histogrammeContamination[
+                     (((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1409,7 +1561,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1460,7 +1612,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (((_histogrammeContamination[
+                     (((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1507,7 +1659,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1557,7 +1709,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (((_histogrammeContamination[
+                     (((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1603,7 +1755,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1650,7 +1802,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     ((_histogrammeContamination[
+                     ((_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1695,7 +1847,7 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
                {
                   if(randomValue 
                      < 
-                     (_histogrammeContamination[
+                     (_timelineContamination[_iteration][
                             _carte[inCurrentRow][inCurrentColumn]
                                ->getState()-1
                                         ] 
@@ -1938,7 +2090,7 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, int inRowDepart, in
 
 
          float randValue = randmt->genrand_real1();
-         if(randValue < 1 - _pourcentAsymptomatique)
+         if(randValue < 1 - _timelineAsymptomatique[_iteration])
          {
             // entre 15% et 30% de chance qu'il soit asymptomatique et qu'il continue de se déplacer
             _nbCasCovidConnuTotal++;
@@ -2088,9 +2240,9 @@ void World::moveHumanConfined(int inRow, int inColumn)
 
          if(randValue 
             < 
-            (_tableTauxHospitalisationByAge[
+            (_timelineHospByAge[_iteration][
                       _carte[inRow][inColumn]->getAge()
-                                              ]
+                                           ]
                                               /100)
              * ( 1 -_carte[inRow][inColumn]->getTauxDeProtectionHospitalisation())
            )
@@ -2504,7 +2656,8 @@ void World::nextIteration()
                moveHumanAsymptomatique(temp.getPosX(),
                                        temp.getPosY(),
                                        _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
-                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY()); 
+            
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2521,10 +2674,12 @@ void World::nextIteration()
          {
             for(Position  temp: _humanAsymptomatiquePositions)
             {
+               
                moveHumanAsymptomatique(temp.getPosX(),
                                        temp.getPosY(),
                                        _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
-                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
+                                       _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY()); 
+               
             }
             _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
             _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2541,11 +2696,12 @@ void World::nextIteration()
       for(int x = 0; x < _nbDeplacementJour - _nbDeplacementReductionCouvreFeu; x++)
       {
          for(Position  temp: _humanAsymptomatiquePositions)
-         {
+         {            
             moveHumanAsymptomatique(temp.getPosX(),
                                     temp.getPosY(),
                                     _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
-                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY()); 
+            
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();
@@ -2562,10 +2718,12 @@ void World::nextIteration()
       {
          for(Position  temp: _humanAsymptomatiquePositions)
          {
+            
             moveHumanAsymptomatique(temp.getPosX(),
                                     temp.getPosY(),
                                     _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosX(),
-                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY());
+                                    _carte[temp.getPosX()][temp.getPosY()]->getPositionDebutTour().getPosY()); 
+            
          }
          _humanAsymptomatiquePositions = _newCurrentHumanAsymptomatiquePositions;
          _newCurrentHumanAsymptomatiquePositions.clear();

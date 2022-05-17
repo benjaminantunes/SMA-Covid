@@ -53,8 +53,8 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["tauxDeDivisionAsymptomatique"] = 42;
    _mapStringValues["isCouvreFeu"] = 43;
    _mapStringValues["nbDeplacementReductionCouvreFeu"] = 44;
-   _mapStringValues["isSuperContaminateur"] = 45;
-   _mapStringValues["nbDeplacementSuperContaminateur"] = 46;
+   _mapStringValues["nbSuperContaminateur"] = 45;
+   _mapStringValues["rayonSuperContaminateur"] = 46;
    _mapStringValues["probasCumulativesTrancheAge"] = 47;
    _mapStringValues["nbLimiteDistanceMaxConfinement"] = 48;
    _mapStringValues["nbDeplacementJour"] = 49;
@@ -75,6 +75,13 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["tauxContaminationHopitaux"] = 64;
    _mapStringValues["tailleHopitauxMetreCarre"] = 65;
    _mapStringValues["facteurTailleHopitaux"] = 66;
+   _mapStringValues["nbVariants"] = 67;
+   _mapStringValues["defaultVariantHistoConta"] = 68;
+   _mapStringValues["variantsHistoConta"] = 69;
+   _mapStringValues["dureeVariants"] = 70;
+   _mapStringValues["pourcentAsymptomatiqueVariants"] = 71;
+   _mapStringValues["tableTauxHospitalisationByAgeVariants"] = 72;
+   
 
 
    string   line;
@@ -341,11 +348,11 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                break;
                
             case 45:
-               _isSuperContaminateur = stoi(paramValues);
+               _nbSuperContaminateur = stoi(paramValues);
                break;
                
             case 46:
-               _nbDeplacementSuperContaminateur = stoi(paramValues);
+               _rayonSuperContaminateur = stoi(paramValues);
                break;
                
                
@@ -393,6 +400,76 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
             case 64:
                _tauxContaminationHopitaux = stof(paramValues);
                break;
+               
+            case 67:
+               _nbVariants = stoi(paramValues);
+               break;
+               
+            case 68:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _defaultVariantHistoConta[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _defaultVariantHistoConta[j] = stof(value);
+               break;
+               
+            case 69:
+               _variantsHistoConta = (float *) malloc (_nbVariants * 11 * sizeof(float));
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _variantsHistoConta[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _variantsHistoConta[j] = stof(value);
+               break;
+               
+            case 70:
+               _dureeVariants = (int *) malloc (_nbVariants  * sizeof(int));
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _dureeVariants[j] = stoi(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _dureeVariants[j] = stoi(value);
+               break;
+               
+            case 71:
+               _pourcentAsymptomatiqueVariants = (float *) malloc (_nbVariants  * sizeof(float));
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _pourcentAsymptomatiqueVariants[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _pourcentAsymptomatiqueVariants[j] = stof(value);
+               break;
+               
+            case 72:
+               _tableTauxHospitalisationByAgeVariants = (float *) malloc (_nbVariants * 8 * sizeof(float));
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _tableTauxHospitalisationByAgeVariants[j] = stof(value);
+                  j++;
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _tableTauxHospitalisationByAgeVariants[j] = stof(value);
+               break;
+
+            
 
                
 
@@ -836,14 +913,14 @@ int SimulationParams::getNbDeplacementReductionCouvreFeu()
    return _nbDeplacementReductionCouvreFeu;
 }
 
-int SimulationParams::getIsSuperContaminateur()
+int SimulationParams::getNbSuperContaminateur()
 {
-   return _isSuperContaminateur;
+   return _nbSuperContaminateur;
 }
 
-int SimulationParams::getNbDeplacementSuperContaminateur()
+int SimulationParams::getRayonSuperContaminateur()
 {
-   return _nbDeplacementSuperContaminateur;
+   return _rayonSuperContaminateur;
 }
 
 float * SimulationParams::getProbasCumulativesTrancheAge()
@@ -854,4 +931,34 @@ float * SimulationParams::getProbasCumulativesTrancheAge()
 int SimulationParams::getNbDeplacementJour()
 {
    return _nbDeplacementJour;
+}
+
+int SimulationParams::getNbVariants()
+{
+   return _nbVariants;
+}
+
+float * SimulationParams::getDefaultVariantHistoConta()
+{
+   return _defaultVariantHistoConta; 
+}
+
+float * SimulationParams::getVariantsHistoConta()
+{
+   return _variantsHistoConta;
+}
+
+int * SimulationParams::getDureeVariants()
+{
+   return _dureeVariants;
+}
+
+float * SimulationParams::getPourcentAsymptomatiqueVariants()
+{
+   return _pourcentAsymptomatiqueVariants;
+}
+
+float * SimulationParams::getTableTauxHospitalisationByAgeVariants()
+{
+   return _tableTauxHospitalisationByAgeVariants;
 }

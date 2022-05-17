@@ -25,6 +25,7 @@ class Human
       bool              _isConfined = false;
       bool              _isHospital = false;
       bool              _isReanimation = false;
+      bool              _isSuperContaminateur = false;
       float             _tauxDeProtectionInfection = 0;
       float             _tauxDeProtectionHospitalisation = 0;
       float             _tauxDeProtectionReanimation = 0;
@@ -78,5 +79,7 @@ class Human
       float     getTauxDeProtectionReanimation();
       int       getNumberOfInfections();
       void      updateHumanProtection();
+      void      setIsSuperContaminateur(bool);
+      bool      getIsSuperContaminateur();
 
 };

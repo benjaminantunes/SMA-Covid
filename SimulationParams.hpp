@@ -20,6 +20,13 @@ class SimulationParams
       float            _probasCumulativesTrancheAge[8];
 
       //WORLD
+   
+      int              _nbVariants;
+      float            _defaultVariantHistoConta[11];
+      float          * _variantsHistoConta;
+      int            * _dureeVariants;
+      float          * _pourcentAsymptomatiqueVariants;
+      float          * _tableTauxHospitalisationByAgeVariants;
       int            * _tableTailleHopitaux;
       float            _facteurTailleHopitaux;
       float            _tableTauxHospitalisationByAge[8];
@@ -83,8 +90,8 @@ class SimulationParams
       int              _isCouvreFeu;
       int              _nbDeplacementReductionCouvreFeu;
       
-      int              _isSuperContaminateur;
-      int              _nbDeplacementSuperContaminateur;
+      int              _nbSuperContaminateur;
+      int              _rayonSuperContaminateur;
 
 
       map<string, int> _mapStringValues;
@@ -152,9 +159,15 @@ class SimulationParams
       float   getTauxDeDivisionAsymptomatique();
       int     getIsCouvreFeu();
       int     getNbDeplacementReductionCouvreFeu();
-      int     getIsSuperContaminateur();
-      int     getNbDeplacementSuperContaminateur();
+      int     getNbSuperContaminateur();
+      int     getRayonSuperContaminateur();
       float * getProbasCumulativesTrancheAge();
       int     getNbDeplacementJour();
+      int     getNbVariants();
+      float * getDefaultVariantHistoConta();
+      float * getVariantsHistoConta();
+      int   * getDureeVariants();
+      float * getPourcentAsymptomatiqueVariants();
+      float * getTableTauxHospitalisationByAgeVariants();
 
 };

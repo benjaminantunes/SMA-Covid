@@ -15,8 +15,9 @@ extern RandMT * randmt;
 class World{
    private:
       int              _size;
-      Human ***        _carte;
-      char  **         _carteLieu;
+      int              _nbIteration;
+      Human        *** _carte;
+      char          ** _carteLieu;
       double           _tabAugmentionContaminationParLieu[256];
       float            _facteurTailleHopitaux;
       int              _nbHopitaux;
@@ -58,9 +59,19 @@ class World{
       float            _tauxDeDivisionAsymptomatique;
       int              _isCouvreFeu;
       int              _nbDeplacementReductionCouvreFeu;
-      int              _isSuperContaminateur;
-      int              _nbDeplacementSuperContaminateur;
+      int              _nbSuperContaminateur;
+      int              _rayonSuperContaminateur;
       int              _nbDeplacementJour;
+      int              _nbVariants;
+      float          * _defaultVariantHistoConta;
+      float          * _variantsHistoConta;
+      int            * _dureeVariants;
+      float          * _pourcentAsymptomatiqueVariants;
+      float          * _tableTauxHospitalisationByAgeVariants;
+      
+      float         ** _timelineContamination;
+      float          * _timelineAsymptomatique;
+      float         ** _timelineHospByAge;
    
       // On considère ici le taux de mortalité réel, en supposant qu'on a deux fois plus de chance d'avoir été en réanimation (50% des gens en réa meurent) et deux fois plus de chance d'avoir été hospitalisé (50% de personnes hospitalisés vont en réa)
       // Ces chiffres sont purement arbitraires, à mettre en param
@@ -118,6 +129,7 @@ class World{
       World(SimulationParams*,char *, bool);
       ~World();
       void                         writeLog(string);
+      void                         initTimeline();
       static void                  pause();
       void                         display();
       void                         updateStats(string);

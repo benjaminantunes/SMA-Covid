@@ -1,3 +1,13 @@
+###
+nbVariants||5
+defaultVariantHistoConta||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
+## De 11 en 11
+variantsHistoConta||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
+dureeVariants||50,50,50,50,50
+pourcentAsymptomatiqueVariants||0.2,0.2,0.2,0.2,0.2
+## De 8 en 8
+tableTauxHospitalisationByAgeVariants||0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0
+###
 tauxMortRea||0.3
 ####
 #IsVaccin vaccine XX% de la population au debut de la simulation (XX etant defini par le taux de vaccination)
@@ -53,9 +63,8 @@ tauxDeDivisionAsymptomatique||0.5
 isCouvreFeu||0
 nbDeplacementReductionCouvreFeu||2
 ####
-isSuperContaminateur||0
-#Les personnes normales se déplace 12 fois par jour pour un R0 durant les 1er jours à 3.
-nbDeplacementSuperContaminateur||50
+nbSuperContaminateur||0
+rayonSuperContaminateur||10
 ###
 ###
 tauxAugmentationContaminationHopitaux||0.8
