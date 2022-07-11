@@ -729,13 +729,13 @@ void World::addAgent(SimulationParams * inSimulationParams,
    int maxAgents = pow(_size,2) * inWorldMax;
    
 
-
+    /*
    if(_nbHumain > maxAgents)
    {
       cout << "trop d'agent" << endl;
       exit(1);
    }
-
+    */
    if(_nbMalade > _nbHumain)
    {
       cout << "trop de malade" << endl;
@@ -1931,10 +1931,9 @@ void World::humanGoFromTo(int  inFromRow,
    if(!inDie)
    {   
       _carte[inToRow][inToColumn] = _carte[inFromRow][inFromColumn];
-      _carte[inToRow][inToColumn]->setPosition(inFromRow,inToColumn);
-      _carte[inFromRow][inFromColumn] = nullptr;
-      // Interet de rajouter cette ligne ? Bizarre
       _carte[inToRow][inToColumn]->setPosition(inToRow,inToColumn);
+      _carte[inFromRow][inFromColumn] = nullptr;
+
    }
    else
    {
