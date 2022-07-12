@@ -81,6 +81,8 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["dureeVariants"] = 70;
    _mapStringValues["pourcentAsymptomatiqueVariants"] = 71;
    _mapStringValues["tableTauxHospitalisationByAgeVariants"] = 72;
+   _mapStringValues["timelineVaccination"] = 73;
+   _mapStringValues["timelineVaccinationRappel"] = 74;
    
 
 
@@ -467,6 +469,30 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                }
                value = paramValues.substr(0, pos);
                _tableTauxHospitalisationByAgeVariants[j] = stof(value);
+               break;
+               
+               
+            case 73:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineVaccination.push_back(stoi(value));
+               break;
+               
+               
+            case 74:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccinationRappel.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineVaccinationRappel.push_back(stoi(value));
                break;
 
             
@@ -961,4 +987,14 @@ float * SimulationParams::getPourcentAsymptomatiqueVariants()
 float * SimulationParams::getTableTauxHospitalisationByAgeVariants()
 {
    return _tableTauxHospitalisationByAgeVariants;
+}
+
+deque<int>  SimulationParams::getTimelineVaccination()
+{
+   return _timelineVaccination;
+}
+
+deque<int>  SimulationParams::getTimelineVaccinationRappel()
+{
+   return _timelineVaccinationRappel;
 }

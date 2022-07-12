@@ -45,6 +45,7 @@ class Human
       float           * _tauxDeProtectionReaInfectionByAge;
       float           * _probasCumulativesTrancheAge;
       int               _numberOfInfections = 0;
+      int               _numberOfInjections = 0;
 
       Position          _pos;
       Position          _posDebutTour;
@@ -78,6 +79,7 @@ class Human
       float     getTauxDeProtectionHospitalisation();
       float     getTauxDeProtectionReanimation();
       int       getNumberOfInfections();
+      int       getNumberOfInjections();
       void      updateHumanProtection();
       void      setIsSuperContaminateur(bool);
       bool      getIsSuperContaminateur();

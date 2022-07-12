@@ -162,6 +162,7 @@ void Human::contamine()
 
 void Human::vaccine()
 {
+   _numberOfInjections++;
    double randomValue = _minResistanceInjectionValuesByAge[_age]
                    + (
                      _maxResistanceInjectionValuesByAge[_age]
@@ -187,6 +188,11 @@ void Human::vaccine()
    }
    _daysSinceLastInfectionOrInjection = 0;
    
+}
+
+
+int Human::getNumberOfInjections(){
+    return _numberOfInjections;
 }
 
 // -------------------------------------------------------------------- //

@@ -80,8 +80,12 @@ class World{
       float          * _tableTauxHospitalisationByAge;
       int            * _tableTailleHopitaux;
       float            _pourcentAsymptomatique;
-      float            _tauxVaccination;
-      float            _tauxVaccinationRappel;
+      //float            _tauxVaccination;
+      //float            _tauxVaccinationRappel;
+      deque<int>       _timelineVaccination;
+      deque<int>       _timelineVaccinationRappel;
+      int              _totalPersonneVaccine = 0;
+      int              _totalPersonneVaccineRappel = 0;
       float            _tauxDeChanceDeMourirHospitalFull;
       float            _tauxContaDistanceDeux;
       float          * _histogrammeContamination;
@@ -142,6 +146,7 @@ class World{
       map<string,vector<Position>> vision (int,int,int);
       void                         contamination(int,int,int, int);
       void                         humanGoFromTo(int,int,int,int, bool die = false);
+      void                         gestionVaccination();
       
       // Si on avait eu plusieurs classes héritant de human pour asymp, hops, etc, on aurait pu utiliser le polymorphisme sur une seule fonction.
       void                         moveHumanSafe(int,int);

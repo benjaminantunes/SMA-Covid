@@ -58,10 +58,13 @@ World::World(SimulationParams * inSimulationParams,
                      
    float   pourcentAsymptomatique = 
                      inSimulationParams->getPourcentAsymptomatique();
-                     
+/*                     
    float   tauxVaccination = 
                      inSimulationParams->getTauxVaccination();
-                     
+*/ 
+           _timelineVaccination =
+                     inSimulationParams->getTimelineVaccination();
+   
    float   tauxDeChanceDeMourirHospitalFull = 
                      inSimulationParams->getTauxDeChanceDeMourirHospitalFull();
                      
@@ -70,10 +73,13 @@ World::World(SimulationParams * inSimulationParams,
                      
    float   tauxContaDistanceDeux = 
                      inSimulationParams->getTauxContaDistanceDeux();
-                     
+/*                     
    float   tauxVaccinationRappel =
                      inSimulationParams->getTauxVaccinationRappel();
-                     
+*/ 
+           _timelineVaccinationRappel =
+                     inSimulationParams->getTimelineVaccinationRappel();
+
    int     isVaccin =
                      inSimulationParams->getIsVaccin();
 
@@ -275,7 +281,7 @@ World::World(SimulationParams * inSimulationParams,
    _nbPlaceHospital = nbPlaceHospital;
    _nbPlaceReanimation = nbPlaceReanimation;
    _pourcentAsymptomatique = pourcentAsymptomatique;
-   _tauxVaccination = tauxVaccination;
+   //_tauxVaccination = tauxVaccination;
    _tauxDeChanceDeMourirHospitalFull = tauxDeChanceDeMourirHospitalFull;
    _tauxContaDistanceDeux = tauxContaDistanceDeux;
    _nbHumain = nbHumain;
@@ -304,7 +310,7 @@ World::World(SimulationParams * inSimulationParams,
    _tabAugmentionContaminationParLieu['R'] = tauxAugmentationContaminationRestaurant;
    _tauxContaminationRestaurant = tauxContaminationRestaurant;
    _isVaccin = isVaccin;
-   _tauxVaccinationRappel = tauxVaccinationRappel;
+   //_tauxVaccinationRappel = tauxVaccinationRappel;
    _isMedicament = isMedicament;
    _tauxProtectionReaMedicament = tauxProtectionReaMedicament;
    _isMasqueTissu = isMasqueTissu;
@@ -768,7 +774,7 @@ void World::addAgent(SimulationParams * inSimulationParams,
          _carte[row][column]->setIsSuperContaminateur(true);
       }
       tempCompt--;
-      
+/*      
       if(_isVaccin == 1)
       {
          float randValue = randmt->genrand_real1();
@@ -784,11 +790,13 @@ void World::addAgent(SimulationParams * inSimulationParams,
          }
          
       }
+      */
       updateStats("safe");
       _humanSafePositions.push_back(_carte[row][column]->getPosition());
       
    }
    
+
 
    for(int qtyAgents = 0; qtyAgents<_nbMalade;qtyAgents++)
    {
@@ -2540,7 +2548,72 @@ void World::moveHumanReanimation(int inRow, int inColumn)
 
 }
 
+void World::gestionVaccination()
+{
+   int dateVaccination = _timelineVaccination.front();
+   if(_iteration == dateVaccination)
+   {
+      _timelineVaccination.pop_front();
+      int proportionVaccination = _timelineVaccination.front();
+      int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
+      int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccine;
+      _timelineVaccination.pop_front();
+      //_totalPersonneVaccine = nbVaccineTotal;
+      int compteur = 0;
+      for(Position  temp: _humanSafePositions)
+      {
+         if(compteur == nbPersonneAVacciner)
+         {
+            _totalPersonneVaccine = nbVaccineTotal;
+            break;
+         }
+         if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 0){
+            _carte[temp.getPosX()][temp.getPosY()]->vaccine();
+            compteur++;
+         }
+      }
+      _totalPersonneVaccine += compteur;
+      
+      //Je ne peux vacciner que des personnes saines
+      // Or, si je veux vacciner 50% de la population globale,
+      // Mais que 80% des personnes sont malades, alors je ne peux pas.
+      // Je ne vais donc vacciner que la partie vaccinable.
+      // Et lorsque cela sera possible, je vaccinerai les personnes restantes pour coller aux params.
+      
+   }
+   
+   int dateVaccinationRappel = _timelineVaccinationRappel.front();
+   if(_iteration == dateVaccinationRappel)
+   {
+      _timelineVaccinationRappel.pop_front();
+      int proportionVaccination = _timelineVaccinationRappel.front();
+      int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
+      int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccineRappel;
+      _timelineVaccinationRappel.pop_front();
+      //_totalPersonneVaccineRappel = nbVaccineTotal;
+      
+      int compteur = 0;
+      for(Position  temp: _humanSafePositions)
+      {
+         if(compteur == nbPersonneAVacciner)
+         {
+            _totalPersonneVaccineRappel = nbVaccineTotal;
+            break;
+         }
+         if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 1){
+            _carte[temp.getPosX()][temp.getPosY()]->vaccineRappel();
+            compteur++;
+         }
+      }
+      
+      _totalPersonneVaccineRappel += compteur;
 
+      
+   }
+    
+   
+   
+}
 
 
 // -------------------------------------------------------------------- //
@@ -2557,6 +2630,11 @@ void World::moveHumanReanimation(int inRow, int inColumn)
 // -------------------------------------------------------------------- //
 void World::nextIteration()
 {
+   
+   gestionVaccination();
+   
+   
+   
    writeLog(to_string(_iteration));
    writeLog(to_string(_nbNouveauxCas));
    writeLog(to_string(_nbPersonneHospital));
