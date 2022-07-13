@@ -83,6 +83,14 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["tableTauxHospitalisationByAgeVariants"] = 72;
    _mapStringValues["timelineVaccination"] = 73;
    _mapStringValues["timelineVaccinationRappel"] = 74;
+   _mapStringValues["timelineMasqueTissu"] = 75;
+   _mapStringValues["timelineMasqueChir"] = 76;
+   _mapStringValues["timelineMasqueFFP2"] = 77;
+   _mapStringValues["timelineGelHydroalcolique"] = 78;
+   _mapStringValues["timelineConfinement"] = 79;
+   _mapStringValues["timelineCouvreFeu"] = 80;
+   _mapStringValues["timelineMedicament"] = 81;
+   _mapStringValues["timelineDeplacementLimites"] = 82;
    
 
 
@@ -493,6 +501,104 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                }
                value = paramValues.substr(0, pos);
                _timelineVaccinationRappel.push_back(stoi(value));
+               break;
+               
+            case 75:
+                printf("Here I am oh\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineMasqueTissu.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineMasqueTissu.push_back(stoi(value));
+               break;
+               
+            case 76:
+                printf("Here I am oh1\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+printf("Here I am oh1.5\n");
+                  _timelineMasqueChir.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineMasqueChir.push_back(stoi(value));
+               printf("Here I am oh1.8\n");
+               break;
+               
+            case 77:
+                printf("Here I am oh2\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineMasqueFFP2.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineMasqueFFP2.push_back(stoi(value));
+               break;
+               
+            case 78:
+               printf("Here I am oh3\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineGelHydroalcolique.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineGelHydroalcolique.push_back(stoi(value));
+               break;
+               
+            case 79:
+               printf("Here I am oh4\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineConfinement.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineConfinement.push_back(stoi(value));
+               break;
+               
+            case 80:
+               printf("Here I am oh5\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineCouvreFeu.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineCouvreFeu.push_back(stoi(value));
+               break;
+               
+            case 81:
+               printf("Here I am oh6\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineMedicament.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineMedicament.push_back(stoi(value));
+               break;
+               
+            case 82:
+               printf("Here I am oh7\n");
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineDeplacementLimites.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               value = paramValues.substr(0, pos);
+               _timelineDeplacementLimites.push_back(stoi(value));
                break;
 
             
@@ -997,4 +1103,44 @@ deque<int>  SimulationParams::getTimelineVaccination()
 deque<int>  SimulationParams::getTimelineVaccinationRappel()
 {
    return _timelineVaccinationRappel;
+}
+
+deque<int>  SimulationParams::getTimelineMasqueTissu()
+{
+   return _timelineMasqueTissu;
+}
+
+deque<int>  SimulationParams::getTimelineMasqueChir()
+{
+   return _timelineMasqueChir;
+}
+
+deque<int>  SimulationParams::getTimelineMasqueFFP2()
+{
+   return _timelineMasqueFFP2;
+}
+
+deque<int>  SimulationParams::getTimelineGelHydroalcolique()
+{
+   return _timelineGelHydroalcolique;
+}
+
+deque<int>  SimulationParams::getTimelineConfinement()
+{
+   return _timelineConfinement;
+}
+
+deque<int>  SimulationParams::getTimelineCouvreFeu()
+{
+   return _timelineCouvreFeu;
+}
+
+deque<int>  SimulationParams::getTimelineMedicament()
+{
+   return _timelineMedicament;
+}
+
+deque<int>  SimulationParams::getTimelineDeplacementLimites()
+{
+   return _timelineDeplacementLimites;
 }

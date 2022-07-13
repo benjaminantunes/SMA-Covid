@@ -46,24 +46,40 @@ tauxDeProtectionReaVaccinRappelByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
 tauxDeProtectionHospInfectionByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
 tauxDeProtectionReaInfectionByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
 ####
+#Pour la gestion des timelines :
+#Vous devez mettre des dates pour lesquelles l'état va changer
+#Par exemple : timelineMasqueTissu||30,150,250,350
+#signifie qu'au jour 30, la présence de masque en tissu va etre inversé, de même au jour 150, etc.
+#Si, au départ de la simulation, isMasqueTissu est à 0 (false),
+#alors, les masques en tissu vont etre activé le 30eme jour, puis désactivé le 150eme,
+#pour etre ensuite ré-activé le 250eme, etc.
+#Si vous ne mettez rien, alors l'état de la mesure barrière restera la meme qu'au départ de la simu.
+####
 isMedicament||0
+timelineMedicament||200
 tauxProtectionReaMedicament||0.5
 ####
 isMasqueTissu||0
+timelineMasqueTissu||30,150,250,350
 tauxProctectionMasqueTissu||0.2
 isMasqueChir||0
+timelineMasqueChir||30,150,250,350
 tauxProtectionMasqueChir||0.4
 isMasqueFFP2||0
+timelineMasqueFFP2||30,150,250,350
 tauxProtectionMasqueFFP2||0.6
 ####
 isConfinement||0
+timelineConfinement||50,80
 nbDeplacementReductionConfinement||5
 nbLimiteDistanceMaxConfinement||50
 ####
 isDeplacementLimites||0
+timelineDeplacementLimites||
 nbDistanceMax||50
 ####
 isGelHydroalcolique||0
+timelineGelHydroalcolique||5
 tauxProtectionTransmissionGelHydro||0.2
 ####
 isTestCovid||0
@@ -71,6 +87,7 @@ isTestCovid||0
 tauxDeDivisionAsymptomatique||0.5
 ####
 isCouvreFeu||0
+timelineCouvreFeu||
 nbDeplacementReductionCouvreFeu||2
 ####
 nbSuperContaminateur||0

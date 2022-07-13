@@ -67,31 +67,39 @@ class SimulationParams
       int              _nbDeplacementJour;
       
       int              _isMedicament;
+      deque<int>       _timelineMedicament;
       float            _tauxProtectionReaMedicament;
       
       int              _isMasqueTissu;
+      deque<int>       _timelineMasqueTissu;
       float            _tauxProtectionMasqueTissu;
       
       int              _isMasqueChir;
+      deque<int>       _timelineMasqueChir;
       float            _tauxProtectionMasqueChir;
       
       int              _isMasqueFFP2;
+      deque<int>       _timelineMasqueFFP2;
       float            _tauxProtectionMasqueFFP2;
       
       int              _isConfinement;
+      deque<int>       _timelineConfinement;
       int              _nbDeplacementReductionConfinement;
       int              _nbLimiteDistanceMaxConfinement;
       
       int              _isDeplacementLimites;
+      deque<int>       _timelineDeplacementLimites;
       int              _nbDistanceMax;
       
       int              _isGelHydroalcolique;
+      deque<int>       _timelineGelHydroalcolique;
       float            _tauxProtectionTransmissionGelHydro;
       
       int              _isTestCovid;
       float            _tauxDeDivisionAsymptomatique;
       
       int              _isCouvreFeu;
+      deque<int>       _timelineCouvreFeu;
       int              _nbDeplacementReductionCouvreFeu;
       
       int              _nbSuperContaminateur;
@@ -175,5 +183,13 @@ class SimulationParams
       float     * getTableTauxHospitalisationByAgeVariants();
       deque<int>  getTimelineVaccination();
       deque<int>  getTimelineVaccinationRappel();
+      deque<int>  getTimelineMasqueTissu();
+      deque<int>  getTimelineMasqueChir();
+      deque<int>  getTimelineMasqueFFP2();
+      deque<int>  getTimelineGelHydroalcolique();
+      deque<int>  getTimelineConfinement();
+      deque<int>  getTimelineCouvreFeu();
+      deque<int>  getTimelineMedicament();
+      deque<int>  getTimelineDeplacementLimites();
 
 };

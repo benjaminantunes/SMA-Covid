@@ -84,6 +84,14 @@ class World{
       //float            _tauxVaccinationRappel;
       deque<int>       _timelineVaccination;
       deque<int>       _timelineVaccinationRappel;
+      deque<int>       _timelineMasqueTissu;
+      deque<int>       _timelineMasqueChir;
+      deque<int>       _timelineMasqueFFP2;
+      deque<int>       _timelineGelHydroalcolique;
+      deque<int>       _timelineConfinement;
+      deque<int>       _timelineCouvreFeu;
+      deque<int>       _timelineMedicament;
+      deque<int>       _timelineDeplacementLimites;
       int              _totalPersonneVaccine = 0;
       int              _totalPersonneVaccineRappel = 0;
       float            _tauxDeChanceDeMourirHospitalFull;
@@ -147,6 +155,7 @@ class World{
       void                         contamination(int,int,int, int);
       void                         humanGoFromTo(int,int,int,int, bool die = false);
       void                         gestionVaccination();
+      void                         gestionMesuresBarrieres();
       
       // Si on avait eu plusieurs classes héritant de human pour asymp, hops, etc, on aurait pu utiliser le polymorphisme sur une seule fonction.
       void                         moveHumanSafe(int,int);

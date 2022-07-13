@@ -120,8 +120,7 @@ World::World(SimulationParams * inSimulationParams,
                      inSimulationParams->getTauxContaminationClub();
                      
    int     nbMagasin =
-                     inSimulationParams->getNbMagasin();
-                     
+                     inSimulationParams->getNbMagasin();                     
                      
    float   tauxAugmentationContaminationShop =
                      inSimulationParams->getTauxAugmentationContaminationShop();
@@ -130,8 +129,7 @@ World::World(SimulationParams * inSimulationParams,
                      inSimulationParams->getTauxContaminationShop();
                      
    int     nbrestaurant =
-                     inSimulationParams->getNbRestaurant();                     
-                     
+                     inSimulationParams->getNbRestaurant();                                          
                      
    float   tauxAugmentationContaminationRestaurant =
                      inSimulationParams->getTauxAugmentationContaminationRestaurant();
@@ -222,6 +220,34 @@ World::World(SimulationParams * inSimulationParams,
                      
    float * tableTauxHospitalisationByAgeVariants =
                      inSimulationParams->getTableTauxHospitalisationByAgeVariants();
+  
+   printf("Here I am 0\n");
+   _timelineMasqueTissu = 
+                     inSimulationParams->getTimelineMasqueTissu();
+   printf("Here I am 1\n");
+   _timelineMasqueChir =
+                     inSimulationParams->getTimelineMasqueChir();
+                     
+   _timelineMasqueFFP2 =
+                     inSimulationParams->getTimelineMasqueFFP2();
+                     
+   _timelineGelHydroalcolique = 
+                     inSimulationParams->getTimelineGelHydroalcolique();
+                     
+   _timelineConfinement =
+                     inSimulationParams->getTimelineConfinement();
+                     printf("Here I am 2\n");
+                     
+   _timelineCouvreFeu =
+                     inSimulationParams->getTimelineCouvreFeu();
+                     
+                     printf("Here I am 3\n");
+   _timelineMedicament =
+                     inSimulationParams->getTimelineMedicament();
+                     printf("Here I am 4\n");
+                     
+   _timelineDeplacementLimites = 
+                     inSimulationParams->getTimelineDeplacementLimites();
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
@@ -2550,67 +2576,211 @@ void World::moveHumanReanimation(int inRow, int inColumn)
 
 void World::gestionVaccination()
 {
-   int dateVaccination = _timelineVaccination.front();
-   if(_iteration == dateVaccination)
-   {
-      _timelineVaccination.pop_front();
-      int proportionVaccination = _timelineVaccination.front();
-      int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
-      int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccine;
-      _timelineVaccination.pop_front();
-      //_totalPersonneVaccine = nbVaccineTotal;
-      int compteur = 0;
-      for(Position  temp: _humanSafePositions)
+   if(!_timelineVaccination.empty()){
+      int dateVaccination = _timelineVaccination.front();
+      if(_iteration == dateVaccination)
       {
-         if(compteur == nbPersonneAVacciner)
+         _timelineVaccination.pop_front();
+         int proportionVaccination = _timelineVaccination.front();
+         int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
+         int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccine;
+         _timelineVaccination.pop_front();
+         //_totalPersonneVaccine = nbVaccineTotal;
+         int compteur = 0;
+         for(Position  temp: _humanSafePositions)
          {
-            _totalPersonneVaccine = nbVaccineTotal;
-            break;
+            if(compteur == nbPersonneAVacciner)
+            {
+               _totalPersonneVaccine = nbVaccineTotal;
+               break;
+            }
+            if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 0)
+            {
+               _carte[temp.getPosX()][temp.getPosY()]->vaccine();
+               compteur++;
+            }
          }
-         if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 0){
-            _carte[temp.getPosX()][temp.getPosY()]->vaccine();
-            compteur++;
+         _totalPersonneVaccine += compteur;
+         
+         //Je ne peux vacciner que des personnes saines
+         // Or, si je veux vacciner 50% de la population globale,
+         // Mais que 80% des personnes sont malades, alors je ne peux pas.
+         // Je ne vais donc vacciner que la partie vaccinable.
+         // Et lorsque cela sera possible, je vaccinerai les personnes restantes pour coller aux params.
+         
+      }
+   }
+   
+   
+   if(!_timelineVaccinationRappel.empty())
+   {
+      int dateVaccinationRappel = _timelineVaccinationRappel.front();
+      if(_iteration == dateVaccinationRappel)
+      {
+         _timelineVaccinationRappel.pop_front();
+         int proportionVaccination = _timelineVaccinationRappel.front();
+         int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
+         int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccineRappel;
+         _timelineVaccinationRappel.pop_front();
+         //_totalPersonneVaccineRappel = nbVaccineTotal;
+         
+         int compteur = 0;
+         for(Position  temp: _humanSafePositions)
+         {
+            if(compteur == nbPersonneAVacciner)
+            {
+               _totalPersonneVaccineRappel = nbVaccineTotal;
+               break;
+            }
+            if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 1)
+            {
+               _carte[temp.getPosX()][temp.getPosY()]->vaccineRappel();
+               compteur++;
+            }
+         }
+         
+         _totalPersonneVaccineRappel += compteur;
+
+         
+      }
+   }
+   
+    
+   
+   
+}
+
+
+void World::gestionMesuresBarrieres()
+{
+   if(!_timelineMasqueTissu.empty())
+   {
+      if(_iteration == _timelineMasqueTissu.front())
+      {
+         _timelineMasqueTissu.pop_front();
+         if(_isMasqueTissu)
+         {
+            _isMasqueTissu = 0;
+         }
+         else
+         {
+            _isMasqueTissu = 1;
          }
       }
-      _totalPersonneVaccine += compteur;
-      
-      //Je ne peux vacciner que des personnes saines
-      // Or, si je veux vacciner 50% de la population globale,
-      // Mais que 80% des personnes sont malades, alors je ne peux pas.
-      // Je ne vais donc vacciner que la partie vaccinable.
-      // Et lorsque cela sera possible, je vaccinerai les personnes restantes pour coller aux params.
       
    }
    
-   int dateVaccinationRappel = _timelineVaccinationRappel.front();
-   if(_iteration == dateVaccinationRappel)
+   if(!_timelineMasqueChir.empty())
    {
-      _timelineVaccinationRappel.pop_front();
-      int proportionVaccination = _timelineVaccinationRappel.front();
-      int nbVaccineTotal = _nbHumain * ((float)proportionVaccination /(float)100);
-      int nbPersonneAVacciner = nbVaccineTotal - _totalPersonneVaccineRappel;
-      _timelineVaccinationRappel.pop_front();
-      //_totalPersonneVaccineRappel = nbVaccineTotal;
-      
-      int compteur = 0;
-      for(Position  temp: _humanSafePositions)
+      if(_iteration == _timelineMasqueChir.front())
       {
-         if(compteur == nbPersonneAVacciner)
+         _timelineMasqueChir.pop_front();
+         if(_isMasqueChir)
          {
-            _totalPersonneVaccineRappel = nbVaccineTotal;
-            break;
+            _isMasqueChir = 0;
          }
-         if(_carte[temp.getPosX()][temp.getPosY()]->getNumberOfInjections() == 1){
-            _carte[temp.getPosX()][temp.getPosY()]->vaccineRappel();
-            compteur++;
+         else
+         {
+            _isMasqueChir = 1;
          }
       }
-      
-      _totalPersonneVaccineRappel += compteur;
-
-      
    }
-    
+   
+   if(!_timelineMasqueFFP2.empty())
+   {
+      if(_iteration == _timelineMasqueFFP2.front())
+      {
+         _timelineMasqueFFP2.pop_front();
+         if(_isMasqueFFP2)
+         {
+            _isMasqueFFP2 = 0;
+         }
+         else
+         {
+            _isMasqueFFP2 = 1;
+         }
+      }
+   }
+   
+   if(!_timelineGelHydroalcolique.empty())
+   {
+      if(_iteration == _timelineGelHydroalcolique.front())
+      {
+         _timelineGelHydroalcolique.pop_front();
+         if(_isGelHydroalcolique)
+         {
+            _isGelHydroalcolique = 0;
+         }
+         else
+         {
+            _isGelHydroalcolique = 1;
+         }
+      }
+   }
+   
+   if(!_timelineConfinement.empty())
+   {
+      if(_iteration == _timelineConfinement.front())
+      {
+         _timelineConfinement.pop_front();
+         if(_isConfinement)
+         {
+            _isConfinement = 0;
+         }
+         else
+         {
+            _isConfinement = 1;
+         }
+      }
+   }
+   
+   if(!_timelineCouvreFeu.empty())
+   {
+      if(_iteration == _timelineCouvreFeu.front())
+      {
+         _timelineCouvreFeu.pop_front();
+         if(_isCouvreFeu)
+         {
+            _isCouvreFeu = 0;
+         }
+         else
+         {
+            _isCouvreFeu = 1;
+         }
+      }
+   }
+   
+   if(!_timelineMedicament.empty())
+   {
+      if(_iteration == _timelineMedicament.front())
+      {
+         _timelineMedicament.pop_front();
+         if(_isMedicament)
+         {
+            _isMedicament = 0;
+         }
+         else
+         {
+            _isMedicament = 1;
+         }
+      }
+   }
+   
+   if(!_timelineDeplacementLimites.empty())
+   {
+      if(_iteration == _timelineDeplacementLimites.front())
+      {
+         _timelineDeplacementLimites.pop_front();
+         if(_isDeplacementLimites)
+         {
+            _isDeplacementLimites = 0;
+         }
+         else
+         {
+            _isDeplacementLimites = 1;
+         }
+      }
+   }
    
    
 }
@@ -2633,7 +2803,7 @@ void World::nextIteration()
    
    gestionVaccination();
    
-   
+   gestionMesuresBarrieres();
    
    writeLog(to_string(_iteration));
    writeLog(to_string(_nbNouveauxCas));
