@@ -1,0 +1,106 @@
+###
+nbVariants||5
+defaultVariantHistoConta||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
+## De 11 en 11
+variantsHistoConta||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
+dureeVariants||50,50,50,50,50
+pourcentAsymptomatiqueVariants||0.2,0.2,0.2,0.2,0.2
+## De 8 en 8
+tableTauxHospitalisationByAgeVariants||0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0,0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0
+###
+tauxMortRea||0.3
+####
+#IsVaccin vaccine XX% de la population au debut de la simulation (XX etant defini par le taux de vaccination)
+####
+isVaccin||0
+r0||3
+resistanceInfectionValuesByAge||0.999,0.999,0.999,0.999,0.99,0.90,0.80,0.70
+maxResistanceInjectionValuesByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+minResistanceInjectionValuesByAge||0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.3
+tableTauxHospitalisationByAge||0.05,1.0,2.0,3.5,5.5,10.0,15.0,25.0
+histogrammeContamination||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
+pourcentAsymptomatique||0.2
+tauxDeChanceDeMourirHospitalFull||0.2
+##tauxVaccination||0.7
+tauxContaDistanceDeux||0.7
+###
+#Pour la timelineVaccination, veuillez formatter vos paramètres de la manière suivante :
+#JourSimu,ProportionVaccine,JourSimu,ProportionVaccine,....
+#Ainsi, 50,10,100,30,150,60 signifie qu'au jour 50, 10 %de la population est vaccine.
+#au jour 100, 30% de la population est vaccine. Au jour 150, 60% de la population est vaccine.
+#Le pas de temps est discret, ainsi, d'un coup la population va passer de 10% à 30% de vaccine par exemple.
+#a vous de choisir une granularité plus fine (ne pas prendre des écart de 50 jours, possibilité de faire évoluer chaque jour)
+###
+timelineVaccination||20,40,50,60,80,70
+timelineVaccinationRappel||200,10,250,30,300,60
+##tauxVaccinationRappel||0.4
+######
+##https://covidtracker/vaximpact
+### Valable pour delta probablement, données DREES, 16 janvier
+### Au pire pour l'instant je code juste, et je me soucis des valeurs reelles dans les articles plus tard. De plus, ça pourrait être selon les variants...
+##### Valeurs arbitraire
+tauxDeProtectionHospVaccinByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+tauxDeProtectionReaVaccinByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+tauxDeProtectionHospVaccinRappelByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+tauxDeProtectionReaVaccinRappelByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+tauxDeProtectionHospInfectionByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+tauxDeProtectionReaInfectionByAge||0.8,0.8,0.8,0.7,0.6,0.6,0.5,0.4
+####
+#Pour la gestion des timelines :
+#Vous devez mettre des dates pour lesquelles l'état va changer
+#Par exemple : timelineMasqueTissu||30,150,250,350
+#signifie qu'au jour 30, la présence de masque en tissu va etre inversé, de même au jour 150, etc.
+#Si, au départ de la simulation, isMasqueTissu est à 0 (false),
+#alors, les masques en tissu vont etre activé le 30eme jour, puis désactivé le 150eme,
+#pour etre ensuite ré-activé le 250eme, etc.
+#Si vous ne mettez rien, alors l'état de la mesure barrière restera la meme qu'au départ de la simu.
+####
+isMedicament||0
+timelineMedicament||200
+tauxProtectionReaMedicament||0.5
+####
+isMasqueTissu||0
+timelineMasqueTissu||30,150,250,350
+tauxProctectionMasqueTissu||0.2
+isMasqueChir||0
+timelineMasqueChir||30,150,250,350
+tauxProtectionMasqueChir||0.4
+isMasqueFFP2||0
+timelineMasqueFFP2||30,150,250,350
+tauxProtectionMasqueFFP2||0.6
+####
+isConfinement||0
+timelineConfinement||50,80
+nbDeplacementReductionConfinement||5
+nbLimiteDistanceMaxConfinement||50
+####
+isDeplacementLimites||0
+timelineDeplacementLimites||
+nbDistanceMax||50
+####
+isGelHydroalcolique||0
+timelineGelHydroalcolique||5
+tauxProtectionTransmissionGelHydro||0.2
+####
+isTestCovid||0
+##Ils restent asymptomatique mais se confinent, faut que je vois comment les confiner sans les faire aller en hosp + rea + mort.
+tauxDeDivisionAsymptomatique||0.5
+####
+isCouvreFeu||0
+timelineCouvreFeu||
+nbDeplacementReductionCouvreFeu||2
+####
+nbSuperContaminateur||0
+rayonSuperContaminateur||10
+###
+###
+tauxAugmentationContaminationHopitaux||0.8
+tauxContaminationHopitaux||0.2
+tauxAugmentationContaminationGym||0.5
+tauxContaminationGym||0.2
+tauxAugmentationContaminationClub||0.8
+tauxContaminationClub||0.4
+tauxAugmentationContaminationShop||0.1
+tauxContaminationShop||0.1
+tauxAugmentationContaminationRestaurant||0.1
+tauxContaminationRestaurant||0.1
