@@ -91,6 +91,12 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["timelineCouvreFeu"] = 80;
    _mapStringValues["timelineMedicament"] = 81;
    _mapStringValues["timelineDeplacementLimites"] = 82;
+   _mapStringValues["tauxObesitePopulation"] = 83;
+   _mapStringValues["tauxAugmentationReaObesite"] = 84;
+   _mapStringValues["tauxAugmentationHospObesite"] = 85;
+   _mapStringValues["tauxDiabetePopulation"] = 86;
+   _mapStringValues["tauxAugmentationReaDiabete"] = 87;
+   _mapStringValues["tauxAugmentationHospDiabete"] = 88;
    
 
 
@@ -662,7 +668,29 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                }
                break;
 
-            
+            case 83:
+               _tauxObesitePopulation = stof(paramValues);
+               break;
+               
+            case 84:
+               _tauxAugmentationReaObesite = stof(paramValues);
+               break;
+               
+            case 85:
+               _tauxAugmentationHospObesite = stof(paramValues);
+               break;
+               
+            case 86:
+               _tauxDiabetePopulation = stof(paramValues);
+               break;
+               
+            case 87:
+               _tauxAugmentationReaDiabete = stof(paramValues);
+               break;
+               
+            case 88:
+               _tauxAugmentationHospDiabete = stof(paramValues);
+               break;
 
                
 
@@ -1204,4 +1232,34 @@ deque<int>  SimulationParams::getTimelineMedicament()
 deque<int>  SimulationParams::getTimelineDeplacementLimites()
 {
    return _timelineDeplacementLimites;
+}
+
+float SimulationParams::getTauxObesitePopulation()
+{
+   return _tauxObesitePopulation;
+}
+
+float SimulationParams::getTauxAugmentationReaObesite()
+{
+   return _tauxAugmentationReaObesite;
+}
+
+float SimulationParams::getTauxAugmentationHospObesite()
+{
+   return _tauxAugmentationHospObesite;
+}
+
+float SimulationParams::getTauxDiabetePopulation()
+{
+   return _tauxDiabetePopulation;
+}
+
+float SimulationParams::getTauxAugmentationReaDiabete()
+{
+   return _tauxAugmentationReaDiabete;
+}
+
+float SimulationParams::getTauxAugmentationHospDiabete()
+{
+   return _tauxAugmentationHospDiabete;
 }

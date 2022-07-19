@@ -244,6 +244,13 @@ World::World(SimulationParams * inSimulationParams,
                      
    _timelineDeplacementLimites = 
                      inSimulationParams->getTimelineDeplacementLimites();
+                     
+   _tauxObesitePopulation =
+                     inSimulationParams->getTauxObesitePopulation();
+                     
+   _tauxDiabetePopulation =
+                     inSimulationParams->getTauxDiabetePopulation();
+   
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
@@ -813,6 +820,21 @@ void World::addAgent(SimulationParams * inSimulationParams,
          
       }
       */
+      
+      float randValue = randmt->genrand_real1();
+      if(randValue < _tauxObesitePopulation)
+      {
+         _carte[row][column]->setIsObese();
+      }
+      
+      randValue = randmt->genrand_real1();
+      if(randValue < _tauxDiabetePopulation)
+      {
+         _carte[row][column]->setIsDiabete();
+      }
+      
+      
+      
       updateStats("safe");
       _humanSafePositions.push_back(_carte[row][column]->getPosition());
       
@@ -2274,6 +2296,7 @@ void World::moveHumanConfined(int inRow, int inColumn)
                                            ]
                                               /100)
              * ( 1 -_carte[inRow][inColumn]->getTauxDeProtectionHospitalisation())
+             * (1 + _carte[inRow][inColumn]->getTauxComorbiditeHosp())
            )
              
          {
@@ -2382,6 +2405,7 @@ void World::moveHumanHospital(int inRow, int inColumn)
                < 
                (tauxReaIfHospByAge[_carte[inRow][inColumn]->getAge()] * _tauxProtectionReaMedicament)
                * (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation())
+               * (1 + _carte[inRow][inColumn]->getTauxComorbiditeRea())
                
               )
             {
@@ -2423,8 +2447,9 @@ void World::moveHumanHospital(int inRow, int inColumn)
             if(randValue 
                < 
                tauxReaIfHospByAge[_carte[inRow][inColumn]->getAge()] 
-               * 
-               (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation()))
+               * (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation())
+               * (1 + _carte[inRow][inColumn]->getTauxComorbiditeRea())
+              )
             {
             
                if(_nbPersonneReanimation < _nbPlaceReanimation)

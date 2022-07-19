@@ -97,6 +97,8 @@ class World{
       float            _tauxDeChanceDeMourirHospitalFull;
       float            _tauxContaDistanceDeux;
       float          * _histogrammeContamination;
+      float            _tauxObesitePopulation;
+      float            _tauxDiabetePopulation;
       
         
       vector<Position> _humanSafePositions;

@@ -66,6 +66,19 @@ Human::Human(SimulationParams * inSimulationParams,
    
    _probasCumulativesTrancheAge = 
       inSimulationParams->getProbasCumulativesTrancheAge();
+      
+   _tauxAugmentationReaObesite = 
+      inSimulationParams->getTauxAugmentationReaObesite();
+      
+   _tauxAugmentationHospObesite =
+      inSimulationParams->getTauxAugmentationHospObesite();
+   
+   _tauxAugmentationReaDiabete =
+      inSimulationParams->getTauxAugmentationReaDiabete();
+   
+   _tauxAugmentationHospDiabete = 
+      inSimulationParams->getTauxAugmentationHospDiabete();
+   
    
    
    // https://www.insee.fr/fr/statistiques/2381474#figure1_radio2
@@ -660,4 +673,30 @@ bool Human::getIsSuperContaminateur()
 void Human::setIsSuperContaminateur(bool isSuperContaminateur)
 {
    _isSuperContaminateur = isSuperContaminateur;   
+}
+
+
+void Human::setIsObese()
+{
+   _isObese = true;
+   _tauxComorbiditeRea += _tauxAugmentationReaObesite;
+   _tauxComorbiditeHosp += _tauxAugmentationHospObesite;
+   
+}
+
+void Human::setIsDiabete()
+{
+   _isDiabete = true;
+   _tauxComorbiditeRea += _tauxAugmentationReaDiabete;
+   _tauxComorbiditeHosp += _tauxAugmentationHospDiabete;
+}
+
+float     Human::getTauxComorbiditeRea()
+{
+   return _tauxComorbiditeRea;
+}
+
+float     Human::getTauxComorbiditeHosp()
+{
+   return _tauxComorbiditeHosp;
 }

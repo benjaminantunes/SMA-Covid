@@ -20,10 +20,16 @@ class SimulationParams
       float            _tauxDeProtectionHospInfectionByAge[8];
       float            _tauxDeProtectionReaInfectionByAge[8];
       float            _probasCumulativesTrancheAge[8];
+      float            _tauxAugmentationReaObesite;
+      float            _tauxAugmentationHospObesite;
+      float            _tauxAugmentationReaDiabete;
+      float            _tauxAugmentationHospDiabete;
 
       //WORLD
    
       int              _nbVariants;
+      float            _tauxObesitePopulation;
+      float            _tauxDiabetePopulation;
       float            _defaultVariantHistoConta[11];
       float          * _variantsHistoConta;
       int            * _dureeVariants;
@@ -191,5 +197,11 @@ class SimulationParams
       deque<int>  getTimelineCouvreFeu();
       deque<int>  getTimelineMedicament();
       deque<int>  getTimelineDeplacementLimites();
+      float       getTauxObesitePopulation();
+      float       getTauxAugmentationReaObesite();
+      float       getTauxAugmentationHospObesite();
+      float       getTauxDiabetePopulation();
+      float       getTauxAugmentationReaDiabete();
+      float       getTauxAugmentationHospDiabete();
 
 };
