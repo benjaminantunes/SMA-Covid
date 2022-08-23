@@ -675,6 +675,7 @@ void Human::setIsSuperContaminateur(bool isSuperContaminateur)
    _isSuperContaminateur = isSuperContaminateur;   
 }
 
+
 void Human::setIsObese()
 {
    _isObese = true;
@@ -699,4 +700,3 @@ float     Human::getTauxComorbiditeHosp()
 {
    return _tauxComorbiditeHosp;
 }
-

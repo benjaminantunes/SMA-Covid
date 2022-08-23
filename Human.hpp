@@ -55,7 +55,6 @@ class Human
       float             _tauxAugmentationReaDiabete;
       float             _tauxAugmentationHospDiabete;
 
-
       Position          _pos;
       Position          _posDebutTour;
 

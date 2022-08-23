@@ -25,7 +25,6 @@ class SimulationParams
       float            _tauxAugmentationReaDiabete;
       float            _tauxAugmentationHospDiabete;
 
-
       //WORLD
    
       int              _nbVariants;
@@ -204,6 +203,5 @@ class SimulationParams
       float       getTauxDiabetePopulation();
       float       getTauxAugmentationReaDiabete();
       float       getTauxAugmentationHospDiabete();
-
 
 };
