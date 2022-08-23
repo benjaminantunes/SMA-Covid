@@ -221,13 +221,8 @@ World::World(SimulationParams * inSimulationParams,
    float * tableTauxHospitalisationByAgeVariants =
                      inSimulationParams->getTableTauxHospitalisationByAgeVariants();
   
-
    _timelineMasqueTissu = 
                      inSimulationParams->getTimelineMasqueTissu();
-
-   _timelineMasqueTissu = 
-                     inSimulationParams->getTimelineMasqueTissu();
-
 
    _timelineMasqueChir =
                      inSimulationParams->getTimelineMasqueChir();
@@ -240,18 +235,10 @@ World::World(SimulationParams * inSimulationParams,
                      
    _timelineConfinement =
                      inSimulationParams->getTimelineConfinement();
-
                      
    _timelineCouvreFeu =
                      inSimulationParams->getTimelineCouvreFeu();
                      
-
-   _timelineMedicament =
-                     inSimulationParams->getTimelineMedicament();
-                     
-   _timelineDeplacementLimites = 
-                     inSimulationParams->getTimelineDeplacementLimites();
-
    _timelineMedicament =
                      inSimulationParams->getTimelineMedicament();
                      
@@ -264,7 +251,6 @@ World::World(SimulationParams * inSimulationParams,
    _tauxDiabetePopulation =
                      inSimulationParams->getTauxDiabetePopulation();
    
-
 
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
@@ -834,7 +820,7 @@ void World::addAgent(SimulationParams * inSimulationParams,
          
       }
       */
-
+      
       float randValue = randmt->genrand_real1();
       if(randValue < _tauxObesitePopulation)
       {
@@ -846,6 +832,8 @@ void World::addAgent(SimulationParams * inSimulationParams,
       {
          _carte[row][column]->setIsDiabete();
       }
+      
+      
       
       updateStats("safe");
       _humanSafePositions.push_back(_carte[row][column]->getPosition());
@@ -2309,7 +2297,6 @@ void World::moveHumanConfined(int inRow, int inColumn)
                                               /100)
              * ( 1 -_carte[inRow][inColumn]->getTauxDeProtectionHospitalisation())
              * (1 + _carte[inRow][inColumn]->getTauxComorbiditeHosp())
-
            )
              
          {
@@ -2460,8 +2447,6 @@ void World::moveHumanHospital(int inRow, int inColumn)
             if(randValue 
                < 
                tauxReaIfHospByAge[_carte[inRow][inColumn]->getAge()] 
-               * 
-               (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation()))
                * (1 - _carte[inRow][inColumn]->getTauxDeProtectionReanimation())
                * (1 + _carte[inRow][inColumn]->getTauxComorbiditeRea())
               )
