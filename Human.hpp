@@ -46,6 +46,15 @@ class Human
       float           * _probasCumulativesTrancheAge;
       int               _numberOfInfections = 0;
       int               _numberOfInjections = 0;
+      bool              _isObese = false;
+      bool              _isDiabete = false;
+      float             _tauxComorbiditeRea = 0.0;
+      float             _tauxComorbiditeHosp = 0.0;
+      float             _tauxAugmentationReaObesite;
+      float             _tauxAugmentationHospObesite;
+      float             _tauxAugmentationReaDiabete;
+      float             _tauxAugmentationHospDiabete;
+
 
       Position          _pos;
       Position          _posDebutTour;
@@ -83,5 +92,9 @@ class Human
       void      updateHumanProtection();
       void      setIsSuperContaminateur(bool);
       bool      getIsSuperContaminateur();
+      void      setIsObese();
+      void      setIsDiabete();
+      float     getTauxComorbiditeRea();
+      float     getTauxComorbiditeHosp();
 
 };

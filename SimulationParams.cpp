@@ -91,6 +91,12 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["timelineCouvreFeu"] = 80;
    _mapStringValues["timelineMedicament"] = 81;
    _mapStringValues["timelineDeplacementLimites"] = 82;
+   _mapStringValues["tauxObesitePopulation"] = 83;
+   _mapStringValues["tauxAugmentationReaObesite"] = 84;
+   _mapStringValues["tauxAugmentationHospObesite"] = 85;
+   _mapStringValues["tauxDiabetePopulation"] = 86;
+   _mapStringValues["tauxAugmentationReaDiabete"] = 87;
+   _mapStringValues["tauxAugmentationHospDiabete"] = 88;
    
 
 
@@ -487,8 +493,16 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                   _timelineVaccination.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineVaccination.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
+
                break;
                
                
@@ -499,109 +513,184 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
                   _timelineVaccinationRappel.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineVaccinationRappel.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 75:
-                printf("Here I am oh\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineMasqueTissu.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineMasqueTissu.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 76:
-                printf("Here I am oh1\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
-printf("Here I am oh1.5\n");
                   _timelineMasqueChir.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineMasqueChir.push_back(stoi(value));
-               printf("Here I am oh1.8\n");
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 77:
-                printf("Here I am oh2\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineMasqueFFP2.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineMasqueFFP2.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 78:
-               printf("Here I am oh3\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineGelHydroalcolique.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineGelHydroalcolique.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 79:
-               printf("Here I am oh4\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineConfinement.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineConfinement.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 80:
-               printf("Here I am oh5\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineCouvreFeu.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineCouvreFeu.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 81:
-               printf("Here I am oh6\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineMedicament.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineMedicament.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
                
             case 82:
-               printf("Here I am oh7\n");
                while ((pos = paramValues.find(delimiterValues)) != string::npos)
                {
                   value = paramValues.substr(0, pos);
                   _timelineDeplacementLimites.push_back(stoi(value));
                   paramValues.erase(0, pos + delimiterValues.length());
                }
-               value = paramValues.substr(0, pos);
-               _timelineDeplacementLimites.push_back(stoi(value));
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _timelineVaccination.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
                break;
 
-            
+            case 83:
+               _tauxObesitePopulation = stof(paramValues);
+               break;
+               
+            case 84:
+               _tauxAugmentationReaObesite = stof(paramValues);
+               break;
+               
+            case 85:
+               _tauxAugmentationHospObesite = stof(paramValues);
+               break;
+               
+            case 86:
+               _tauxDiabetePopulation = stof(paramValues);
+               break;
+               
+            case 87:
+               _tauxAugmentationReaDiabete = stof(paramValues);
+               break;
+               
+            case 88:
+               _tauxAugmentationHospDiabete = stof(paramValues);
+               break;
 
                
 
@@ -1143,4 +1232,34 @@ deque<int>  SimulationParams::getTimelineMedicament()
 deque<int>  SimulationParams::getTimelineDeplacementLimites()
 {
    return _timelineDeplacementLimites;
+}
+
+float SimulationParams::getTauxObesitePopulation()
+{
+   return _tauxObesitePopulation;
+}
+
+float SimulationParams::getTauxAugmentationReaObesite()
+{
+   return _tauxAugmentationReaObesite;
+}
+
+float SimulationParams::getTauxAugmentationHospObesite()
+{
+   return _tauxAugmentationHospObesite;
+}
+
+float SimulationParams::getTauxDiabetePopulation()
+{
+   return _tauxDiabetePopulation;
+}
+
+float SimulationParams::getTauxAugmentationReaDiabete()
+{
+   return _tauxAugmentationReaDiabete;
+}
+
+float SimulationParams::getTauxAugmentationHospDiabete()
+{
+   return _tauxAugmentationHospDiabete;
 }

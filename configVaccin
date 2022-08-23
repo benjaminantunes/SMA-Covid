@@ -104,3 +104,11 @@ tauxAugmentationContaminationShop||0.1
 tauxContaminationShop||0.1
 tauxAugmentationContaminationRestaurant||0.1
 tauxContaminationRestaurant||0.1
+####
+tauxObesitePopulation||0.5
+tauxAugmentationReaObesite||0.3
+tauxAugmentationHospObesite||0.3
+tauxDiabetePopulation||0.1
+tauxAugmentationReaDiabete||0.1
+tauxAugmentationHospDiabete||0.1
+
