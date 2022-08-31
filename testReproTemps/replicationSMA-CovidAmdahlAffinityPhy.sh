@@ -1,0 +1,7 @@
+#!/bin/bash
+for i in `seq 1 $1`;
+do
+	echo '##########' >> resSMA-CovidAmdahlAffinityPhy.txt
+    ./totalSMA-CovidAmdahlAffinityPhy.sh >> resSMA-CovidAmdahlAffinityPhy.txt
+done
+
