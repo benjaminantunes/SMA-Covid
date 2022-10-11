@@ -8,6 +8,9 @@ sys     1m52,485s
 
 RAM : 11.1% => 0.111 * 768 = 85 Go RAM
 
+Une fois la simu en cours avec 746 000 000 agents, 1,46% de la carte recouverte par des lieu, on arrive à 33% de la RAM par simu.
+.33 * 768 = 253Go RAM par simu sur l'europe.
+
 
 ###############################
 
@@ -54,11 +57,11 @@ RAM : 69,5 % => 0.695 * 768 = 533.76 Go RAM
 
 ###############################
 
-size : 100 000
+size : 300 000
 nb agent : 100 000
 
 Time : 
-RAM : 
+RAM : Je coupe à 95% pour ne pas bloquer la machine. = 768 Go ++
 
 
 ###############################

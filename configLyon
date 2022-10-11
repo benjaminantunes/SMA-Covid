@@ -13,3 +13,10 @@ nbSalleDeSport||0
 nbBoiteDeNuit||0
 nbMagasin||0
 nbRestaurant||0
+##
+##https://www.bien-dans-ma-ville.fr/classement-ville-nb-habitant-puy-de-dome/
+##Les 4 champs ci-dessous sont corrélés via l'indice de l'information
+tailleVille||23000
+nbHabitant||1411571
+coordonneeX||0
+coordonneeY||0

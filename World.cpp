@@ -220,6 +220,25 @@ World::World(SimulationParams * inSimulationParams,
                      
    float * tableTauxHospitalisationByAgeVariants =
                      inSimulationParams->getTableTauxHospitalisationByAgeVariants();
+     
+   
+   vector<int> tailleVilles = 
+                     inSimulationParams->getTailleVilles();
+                     
+   vector<int> nbHabitants = 
+                     inSimulationParams->getNbHabitants();
+                     
+   vector<int> coordonneesX = 
+                     inSimulationParams->getCoordonneesX();
+                     
+   vector<int> coordonneesY = 
+                     inSimulationParams->getCoordonneesY();
+                    
+                   
+   for(int i=0; i<tailleVilles.size();i++)
+   {
+      _listVille.push_back(City(tailleVilles[i],nbHabitants[i],coordonneesX[i],coordonneesY[i]));
+   }
   
    _timelineMasqueTissu = 
                      inSimulationParams->getTimelineMasqueTissu();
@@ -251,7 +270,6 @@ World::World(SimulationParams * inSimulationParams,
    _tauxDiabetePopulation =
                      inSimulationParams->getTauxDiabetePopulation();
    
-
    _carte = (Human ***)malloc(size * sizeof(Human**));
    for(int i = 0; i < size; i++)
    {
@@ -273,7 +291,6 @@ World::World(SimulationParams * inSimulationParams,
     * 
     * 
     */
-   
    
    _carteLieu = (char **) malloc(size * sizeof(char*));
    for(int i =0; i < size; i++)
@@ -383,6 +400,7 @@ World::World(SimulationParams * inSimulationParams,
 
 }
 
+
 // -------------------------------------------------------------------- //
 // World::initTimeline  Initialise les valeurs clés du variant au cours //
 //                      du temps.                                       //
@@ -398,13 +416,13 @@ World::World(SimulationParams * inSimulationParams,
 void World::initTimeline()
 {
    int dureeVariantsCumulative[_nbVariants];
-   
+
    dureeVariantsCumulative[0] = _dureeVariants[0];
    for(int i = 1; i<_nbVariants; i++)
    {
       dureeVariantsCumulative[i] = _dureeVariants[i] + dureeVariantsCumulative[i-1];
    }
-   
+
    _timelineContamination = (float **) malloc(_nbIteration * sizeof(float*));
    for(int i =0; i < _nbIteration; i++)
    {
@@ -416,6 +434,7 @@ void World::initTimeline()
    {
       for(compteur; compteur<dureeVariantsCumulative[nb] ;compteur++)
       {
+        
          for(int j = 0; j<11 ; j++)
          {
             
@@ -584,11 +603,11 @@ void World::display()
          {
             // Null n'existe pas en C++. J'ai initialisé à NULL, 
             //donc j'imagine un tableau rempli de 0.
-            cout << World::SYMBOL_EMPTY;
+            cout << World::SYMBOL_EMPTY << "   " ;
          }
          else
          {            
-            cout << _carte[row][column]->to_string();
+            cout << _carte[row][column]->to_string() << "   ";
          }
 
       }
@@ -777,10 +796,79 @@ void World::addAgent(SimulationParams * inSimulationParams,
       exit(1);
    }
 
+   
    int tempCompt = _nbSuperContaminateur;
    
-   for(int qtyAgent = 0; qtyAgent < _nbHumain-_nbMalade; qtyAgent++)
-   {        
+   int sommeHabitantsInVille = 0;
+   int nbMaladeParVille = _nbMalade/_listVille.size();
+
+   
+   for(City c : _listVille)
+   {
+      c.toString();
+      int compteurMalade = 0;
+      for(int i = 0; i<c.getNbHab();i++)
+      {
+         bool  varEmpty = false;
+         int   row;
+         int   column;
+         
+
+         while(!varEmpty)
+         { 
+            //Les algos de recherche aléatoire resteront plus performants jusqu'a une certaine densité. A surveiller.
+            // On cherche une position libre sur la carte 
+            row = (randmt->genrand_int32()%c.getTaille()) + c.getCoordX();
+            column = (randmt->genrand_int32()%c.getTaille()) + c.getCoordY();
+            varEmpty = isEmpty(row,column);
+         }
+
+
+         _carte[row][column] = new Human(inSimulationParams,row,column);
+         
+         if(compteurMalade < nbMaladeParVille)
+         {
+             _carte[row][column]->contamine();
+             updateStats("contamined");
+             _humanAsymptomatiquePositions.push_back(_carte[row][column]->getPosition());
+             compteurMalade++;
+         }
+         else
+         {
+            updateStats("safe");
+            _humanSafePositions.push_back(_carte[row][column]->getPosition());
+         }
+         _carte[row][column]->setVille(c);
+         //On va créer X super contaminateur parmis les humains.
+         if(tempCompt > 0)
+         {
+               _carte[row][column]->setIsSuperContaminateur(true);
+         }
+         tempCompt--;
+         float randValue = randmt->genrand_real1();
+         if(randValue < _tauxObesitePopulation)
+         {
+            _carte[row][column]->setIsObese();
+         }
+         
+         randValue = randmt->genrand_real1();
+         if(randValue < _tauxDiabetePopulation)
+         {
+            _carte[row][column]->setIsDiabete();
+         }
+         
+
+      }  
+      sommeHabitantsInVille += c.getNbHab();
+   }
+   
+   
+   
+   
+   
+   
+   for(int qtyAgent = 0; qtyAgent < _nbHumain-sommeHabitantsInVille; qtyAgent++)
+   { 
       bool  varEmpty = false;
       int   row;
       int   column;
@@ -797,12 +885,8 @@ void World::addAgent(SimulationParams * inSimulationParams,
          
       _carte[row][column] = new Human(inSimulationParams,row,column);
       
-      //On va créer X super contaminateur parmis les humains.
-      if(tempCompt > 0)
-      {
-         _carte[row][column]->setIsSuperContaminateur(true);
-      }
-      tempCompt--;
+      City ville(-1,-1,-1,-1);
+      _carte[row][column]->setVille(ville);
 /*      
       if(_isVaccin == 1)
       {
@@ -841,29 +925,22 @@ void World::addAgent(SimulationParams * inSimulationParams,
    }
    
 
-
+/*
    for(int qtyAgents = 0; qtyAgents<_nbMalade;qtyAgents++)
    {
-      
-      bool varEmpty = false;
-      int row;
-      int column;
-      while(!varEmpty)
-      {
-         row = randmt->genrand_int32()%_size ;
-         column = randmt->genrand_int32()%_size ;
-         varEmpty = isEmpty(row,column);
-      }
-      
-      _carte[row][column] = new Human(inSimulationParams,row,column);
-      updateStats("safe");
-      _carte[row][column]->contamine();
+      int index;
+
+      index = randmt->genrand_int32()%_humanSafePositions.size();
+      _carte[_humanSafePositions[index].getPosX()][_humanSafePositions[index].getPosY()]->contamine();
       updateStats("contamined");
-      _humanAsymptomatiquePositions.push_back(_carte[row][column]->getPosition());
+      _humanAsymptomatiquePositions.push_back(_humanSafePositions[index]);
+      
+      // Je rajoute le malade dans asymptomatique, et je le retire de safe.
+      _humanSafePositions.erase(_humanSafePositions.begin() + index);
       
 
    }
-   
+*/   
 
    
    for(int qtyShop = 0; qtyShop < _nbMagasin; qtyShop++)
@@ -1182,766 +1259,60 @@ void World::contamination(int inRow, int inColumn, int inCurrentRow, int inCurre
             distance = distanceColumn;
          }
 
-         if(distance == 1 || _carte[inCurrentRow][inCurrentColumn]->getIsSuperContaminateur())
-         {   
-            if(_isMasqueTissu)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueTissu))
-                      * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                   }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     (_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueTissu)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                   }
-               
-               }
- 
-            }
-            else if(_isMasqueChir)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueChir))
-                      * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                   }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     (_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueChir)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                   }
-               
-               }
-            }
-            else if(_isMasqueFFP2)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueFFP2))
-                      * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                   }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     (_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueFFP2)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               
-               }
-            }
-            else
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     (_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionTransmissionGelHydro)
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     _timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        )
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-            }
-         }
-         else if(distance == 2)
+         
+         if(_carte[inCurrentRow][inCurrentColumn]->getIsSuperContaminateur())
          {
-            if(_isMasqueTissu)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     (((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueTissu))
-                      * (1 - _tauxProtectionTransmissionGelHydro))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueTissu))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               
-               }
- 
-            }
-            else if(_isMasqueChir)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     (((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueChir))
-                      * (1 - _tauxProtectionTransmissionGelHydro))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1)
-                      {
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueChir))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()
-                                                              ));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               
-               }
-            }
-            else if(_isMasqueFFP2)
-            {
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     (((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * (1 - _tauxProtectionMasqueFFP2))
-                      * (1 - _tauxProtectionTransmissionGelHydro))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * ( 1 - _tauxProtectionMasqueFFP2))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-            }
-            else{
-               if(_isGelHydroalcolique)
-               {
-                  if(randomValue 
-                     < 
-                     ((_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * ( 1 - _tauxProtectionTransmissionGelHydro))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-               else
-               {
-                  if(randomValue 
-                     < 
-                     (_timelineContamination[_iteration][
-                            _carte[inCurrentRow][inCurrentColumn]
-                               ->getState()-1
-                                        ] 
-                      * (1 - _carte[pos.getPosX()][pos.getPosY()]
-                         ->getTauxDeProtectionInfection()
-                        ))
-                      * _tauxContaDistanceDeux
-                      * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
-                    )
-                
-                
-                  {               
-                      _carte[pos.getPosX()][pos.getPosY()]->contamine();
-                      if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
-                         _nbHumainContaminePlusieursFois++;
-                      }
-                      _nbNouveauxCas++;
-                      _newNextHumanAsymptomatiquePositions.push_back(
-                                                      Position(pos.getPosX(),
-                                                               pos.getPosY()));
-               
-               
-                      maPositionTest.setPosX(pos.getPosX());
-                      maPositionTest.setPosY(pos.getPosY());
-                      int index = 0;
-                      for(Position  temp: _newHumanSafePositions )
-                      {
-                         if(temp == maPositionTest)
-                         {
-                            _newHumanSafePositions.erase(
-                                           _newHumanSafePositions.begin()+index
-                                                       );
-                         }
-                         index++;
-                      }
-
-                      updateStats("contamined");
-                  }
-               }
-            }
+            distance = 1;
          }
-      }
+         
+ 
+         if(randomValue 
+            < 
+            _timelineContamination[_iteration][
+                     _carte[inCurrentRow][inCurrentColumn]
+                        ->getState()-1
+                                 ] 
+               * (1 - _carte[pos.getPosX()][pos.getPosY()]
+                  ->getTauxDeProtectionInfection()
+               )
+               * (1 - (_tauxProtectionMasqueTissu * _isMasqueTissu))
+               * (1 - (_tauxProtectionMasqueChir * _isMasqueChir))
+               * (1 - (_tauxProtectionMasqueFFP2 * _isMasqueFFP2))
+               * (1 - (_tauxProtectionTransmissionGelHydro * _isGelHydroalcolique))
+               * (1 - ((1 - _tauxContaDistanceDeux) * (distance - 1)))
+               * (1 + _tabAugmentionContaminationParLieu[_carteLieu[pos.getPosX()][pos.getPosY()]])
+            )
+         
+         
+         { 
+            //cout << "Je rentre pour conta" << endl;
+            _carte[pos.getPosX()][pos.getPosY()]->contamine();
+            if(_carte[pos.getPosX()][pos.getPosY()]->getNumberOfInfections() > 1){
+               _nbHumainContaminePlusieursFois++;
+            }
+            _nbNouveauxCas++;
+            _newNextHumanAsymptomatiquePositions.push_back(
+                                          Position(pos.getPosX(),
+                                                   pos.getPosY()));
+   
+   
+            maPositionTest.setPosX(pos.getPosX());
+            maPositionTest.setPosY(pos.getPosY());
+            int index = 0;
+            for(Position  temp: _newHumanSafePositions )
+            {
+               if(temp == maPositionTest)
+               {
+                  _newHumanSafePositions.erase(
+                                 _newHumanSafePositions.begin()+index
+                                             );
+               }
+               index++;
+            }
+
+            updateStats("contamined");
+         }      
+      } 
    }
 }
 
@@ -2024,54 +1395,71 @@ void World::moveHumanSafe(int inRow, int inColumn)
       _carte[inRow][inColumn]->decreaseResistance();
    }
    
-   int rowDeplacement;
-   int columnDeplacement;
-   if(_isDeplacementLimites)
+   
+   int rowDeplacement = -1;
+   int columnDeplacement = -1;
+   
+   if(_carte[inRow][inColumn]->getVille().getTaille() > 0)
    {
-      //a + (b - a) * randNum0-1
-      rowDeplacement = (inRow-_nbDistanceMax) 
-                       +
-                       ((inRow + _nbDistanceMax)
-                       - 
-                       (inRow - _nbDistanceMax))
-                       * 
-                       randmt->genrand_real1();
-      columnDeplacement = 
-                       (inColumn-_nbDistanceMax) 
-                       +
-                       ((inColumn + _nbDistanceMax)
-                       - 
-                       (inColumn - _nbDistanceMax))
-                       * 
-                       randmt->genrand_real1();
-   }
-   if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
-   {
-      //a + (b - a) * randNum0-1
-      rowDeplacement = (inRow-_nbLimiteDistanceMaxConfinement) 
-                       +
-                       ((inRow + _nbLimiteDistanceMaxConfinement)
-                       - 
-                       (inRow - _nbLimiteDistanceMaxConfinement))
-                       * 
-                       randmt->genrand_real1();
-      columnDeplacement = 
-                       (inColumn-_nbLimiteDistanceMaxConfinement) 
-                       +
-                       ((inColumn + _nbLimiteDistanceMaxConfinement)
-                       - 
-                       (inColumn - _nbLimiteDistanceMaxConfinement))
-                       * 
-                       randmt->genrand_real1();
+      City villeHumain = _carte[inRow][inColumn]->getVille();
+      int coordX = villeHumain.getCoordX();
+      int coordY = villeHumain.getCoordY();
+      int taille = villeHumain.getTaille();
+      
+      if(_isDeplacementLimites)
+      {
+         
+         //Mode aléatoire : Si des humains se situent aux frontières de ville, cela peut-il augmenter énormément le nombre de tentative ?
+         while(rowDeplacement < coordX || rowDeplacement > coordX+taille-1 || columnDeplacement < coordY || columnDeplacement < coordY+taille-1)
+         {
+            rowDeplacement = randmt->uniform(inRow-_nbDistanceMax, inRow + _nbDistanceMax); 
+            columnDeplacement = randmt->uniform(inColumn -_nbDistanceMax, inColumn + _nbDistanceMax); 
+         }
+         
+         
+         
+      }
+      if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+      {
+         //Mode aléatoire : Si des humains se situent aux frontières de ville, cela peut-il augmenter énormément le nombre de tentative ?
+         while(rowDeplacement < coordX || rowDeplacement > coordX+taille-1 || columnDeplacement < coordY || columnDeplacement < coordY+taille-1)
+         {
+            rowDeplacement = randmt->uniform(inRow-_nbLimiteDistanceMaxConfinement, inRow + _nbLimiteDistanceMaxConfinement); 
+            columnDeplacement = randmt->uniform(inColumn -_nbLimiteDistanceMaxConfinement, inColumn + _nbLimiteDistanceMaxConfinement);
+         }
+  
+      }
+      else
+      {
+         // Il peut se déplacer n'importe ou dans sa ville
+         rowDeplacement = (randmt->genrand_int32()%taille) + coordX;
+         columnDeplacement = (randmt->genrand_int32()%taille) + coordY; 
+      }
+   
    }
    else
    {
-      // Il peut se déplacer de 0 à size
-      rowDeplacement = randmt->genrand_int32()%_size; 
-      columnDeplacement = randmt->genrand_int32()%_size; 
+      if(_isDeplacementLimites)
+      {
+            rowDeplacement = randmt->uniform(inRow-_nbDistanceMax, inRow + _nbDistanceMax); 
+            columnDeplacement = randmt->uniform(inColumn -_nbDistanceMax, inColumn + _nbDistanceMax); 
+
+      }
+      if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+      {
+
+         rowDeplacement = randmt->uniform(inRow-_nbLimiteDistanceMaxConfinement, inRow + _nbLimiteDistanceMaxConfinement); 
+         columnDeplacement = randmt->uniform(inColumn -_nbLimiteDistanceMaxConfinement, inColumn + _nbLimiteDistanceMaxConfinement);
+ 
+      }
+      else
+      {
+         // Il peut se déplacer de 0 à size
+         rowDeplacement = randmt->genrand_int32()%_size; 
+         columnDeplacement = randmt->genrand_int32()%_size; 
+      }  
    }
    
- 
    map<string, vector<Position>> target_v1 = vision(1,rowDeplacement,columnDeplacement);
 
    if(target_v1["empty"].size() != 0)
@@ -2164,51 +1552,68 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, int inRowDepart, in
    {
    
 
-      int rowDeplacement;
-      int columnDeplacement;
-      if(_isDeplacementLimites)
+      int rowDeplacement = -1;
+      int columnDeplacement = -1;
+   
+      if(_carte[inRow][inColumn]->getVille().getTaille() > 0)
       {
-         //a + (b - a) * randNum0-1
-         rowDeplacement = (inRowDepart-_nbDistanceMax) 
-                          +
-                          ((inRowDepart + _nbDistanceMax)
-                          - 
-                          (inRowDepart - _nbDistanceMax))
-                          * 
-                          randmt->genrand_real1();
-         columnDeplacement = 
-                          (inColumnDepart-_nbDistanceMax) 
-                          +
-                          ((inColumnDepart + _nbDistanceMax)
-                          - 
-                          (inColumnDepart - _nbDistanceMax))
-                          * 
-                          randmt->genrand_real1();
-      }
-      if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
-      {
-         //a + (b - a) * randNum0-1
-         rowDeplacement = (inRowDepart-_nbLimiteDistanceMaxConfinement) 
-                          +
-                          ((inRowDepart + _nbLimiteDistanceMaxConfinement)
-                          - 
-                          (inRowDepart - _nbLimiteDistanceMaxConfinement))
-                          * 
-                          randmt->genrand_real1();
-         columnDeplacement = 
-                          (inColumnDepart-_nbLimiteDistanceMaxConfinement) 
-                          +
-                          ((inColumnDepart + _nbLimiteDistanceMaxConfinement)
-                          - 
-                          (inColumnDepart - _nbLimiteDistanceMaxConfinement))
-                          *  
-                          randmt->genrand_real1();
+         City villeHumain = _carte[inRow][inColumn]->getVille();
+         int coordX = villeHumain.getCoordX();
+         int coordY = villeHumain.getCoordY();
+         int taille = villeHumain.getTaille();
+         
+         if(_isDeplacementLimites)
+         {
+            
+            //Mode aléatoire : Si des humains se situent aux frontières de ville, cela peut-il augmenter énormément le nombre de tentative ?
+            while(rowDeplacement < coordX || rowDeplacement > coordX+taille-1 || columnDeplacement < coordY || columnDeplacement < coordY+taille-1)
+            {
+               rowDeplacement = randmt->uniform(inRow-_nbDistanceMax, inRow + _nbDistanceMax); 
+               columnDeplacement = randmt->uniform(inColumn -_nbDistanceMax, inColumn + _nbDistanceMax); 
+            }
+            
+            
+            
+         }
+         if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+         {
+            //Mode aléatoire : Si des humains se situent aux frontières de ville, cela peut-il augmenter énormément le nombre de tentative ?
+            while(rowDeplacement < coordX || rowDeplacement > coordX+taille-1 || columnDeplacement < coordY || columnDeplacement < coordY+taille-1)
+            {
+               rowDeplacement = randmt->uniform(inRow-_nbLimiteDistanceMaxConfinement, inRow + _nbLimiteDistanceMaxConfinement); 
+               columnDeplacement = randmt->uniform(inColumn -_nbLimiteDistanceMaxConfinement, inColumn + _nbLimiteDistanceMaxConfinement);
+            }
+   
+         }
+         else
+         {
+            // Il peut se déplacer n'importe ou dans sa ville
+            rowDeplacement = (randmt->genrand_int32()%taille) + coordX;
+            columnDeplacement = (randmt->genrand_int32()%taille) + coordY; 
+         }
+      
       }
       else
       {
-         // Il peut se déplacer de 0 à size
-         rowDeplacement = randmt->genrand_int32()%_size; 
-         columnDeplacement = randmt->genrand_int32()%_size; 
+         if(_isDeplacementLimites)
+         {
+               rowDeplacement = randmt->uniform(inRow-_nbDistanceMax, inRow + _nbDistanceMax); 
+               columnDeplacement = randmt->uniform(inColumn -_nbDistanceMax, inColumn + _nbDistanceMax); 
+
+         }
+         if(_isConfinement && (_nbLimiteDistanceMaxConfinement < _nbDistanceMax))
+         {
+
+            rowDeplacement = randmt->uniform(inRow-_nbLimiteDistanceMaxConfinement, inRow + _nbLimiteDistanceMaxConfinement); 
+            columnDeplacement = randmt->uniform(inColumn -_nbLimiteDistanceMaxConfinement, inColumn + _nbLimiteDistanceMaxConfinement);
+   
+         }
+         else
+         {
+            // Il peut se déplacer de 0 à size
+            rowDeplacement = randmt->genrand_int32()%_size; 
+            columnDeplacement = randmt->genrand_int32()%_size; 
+         }  
       }
       map<string, vector<Position>> target_v1 = vision(1,rowDeplacement,columnDeplacement);
 
@@ -2884,7 +2289,7 @@ void World::nextIteration()
    _nbNouveauxHospitalisation = 0;
    _nbNouveauxReanimation = 0;
    _nbMorts = 0;
-   _iteration += 1;
+
 
    
    for(Position  temp: _humanSafePositions)
@@ -3057,6 +2462,8 @@ void World::nextIteration()
    _newHumanConfinedPositions.clear();
    _newHumanHospitalPositions.clear();
    _newHumanReanimationPositions.clear();
+   
+   _iteration += 1;
    
 }
 

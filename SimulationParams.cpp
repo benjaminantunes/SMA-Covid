@@ -97,6 +97,10 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
    _mapStringValues["tauxDiabetePopulation"] = 86;
    _mapStringValues["tauxAugmentationReaDiabete"] = 87;
    _mapStringValues["tauxAugmentationHospDiabete"] = 88;
+   _mapStringValues["tailleVille"] = 89;
+   _mapStringValues["nbHabitant"] = 90;
+   _mapStringValues["coordonneeX"] = 91;
+   _mapStringValues["coordonneeY"] = 92;
    
 
 
@@ -807,7 +811,83 @@ SimulationParams::SimulationParams(char * inFilenameCity, char * inFilenameConfi
             case 66:
                _facteurTailleHopitaux = stof(paramValues);
                break;
+             
                
+               
+               
+               
+               
+            case 89:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _tailleVilles.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _tailleVilles.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
+               break;
+               
+            case 90:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _nbHabitants.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _nbHabitants.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
+               break;
+               
+            case 91:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _coordonneesX.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _coordonneesX.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
+               break;
+               
+            case 92:
+               while ((pos = paramValues.find(delimiterValues)) != string::npos)
+               {
+                  value = paramValues.substr(0, pos);
+                  _coordonneesY.push_back(stoi(value));
+                  paramValues.erase(0, pos + delimiterValues.length());
+               }
+               try
+               {
+                  value = paramValues.substr(0, pos);
+                  _coordonneesY.push_back(stoi(value));
+               }
+               catch(...)
+               {
+                  break;
+               }
+               break;
          }
       }
       
@@ -1262,4 +1342,21 @@ float SimulationParams::getTauxAugmentationReaDiabete()
 float SimulationParams::getTauxAugmentationHospDiabete()
 {
    return _tauxAugmentationHospDiabete;
+}
+
+vector<int> SimulationParams::getTailleVilles()
+{
+    return _tailleVilles;
+}
+vector<int> SimulationParams::getNbHabitants()
+{
+    return _nbHabitants;
+}
+vector<int> SimulationParams::getCoordonneesX()
+{
+    return _coordonneesX;
+}
+vector<int> SimulationParams::getCoordonneesY()
+{
+    return _coordonneesY;
 }

@@ -213,6 +213,52 @@ double RandMT::genrand_res53(void)
 }
 
 
+/* -------------------------------------------------------------------- */
+/* negExp   Reproduit un nombre qui suit une distribution de Poisson de */
+/*          moyenne donnée                                              */
+/*                                                                      */
+/* En entrée:   inMean La moyenne sur laquelle se base cette technique  */
+/*                                                                      */
+/* En sortie:   La fonction de distribution inverse (Poisson)           */
+/* -------------------------------------------------------------------- */
+double RandMT::negExp(double inMean)
+{
+    /* On utilise genrand_real2() pour exclure le 1 des tirages, qui aboutirait sur log(0) */
+    return -inMean * log(1 - genrand_real2());
+}
+
+
+/* -------------------------------------------------------------------- */
+/* uniform      Tirage uniforme entre 'a' et 'b'                        */
+/*                                                                      */
+/* En entrée:   a, b Deux nombres réels de précision double             */
+/*                                                                      */
+/* En sortie:   Retourne un nombre pseudo-aléatoire entre 'a' et 'b' de */
+/*              précision double, uniformément réparti                  */
+/* -------------------------------------------------------------------- */
+double RandMT::uniform(double a, double b)
+{
+    return a + (b - a) * genrand_real1();
+}
+
+
+/* -------------------------------------------------------------------- */
+/* boxMuller    Simule une distribution Gaussienne centrée réduite      */
+/*                                                                      */
+/* En entrée:   x1, x2  Deux pointeurs vers des réels double précision  */
+/*                      qui suivront à leur sortie une loi centrée      */
+/*                      réduite                                         */
+/*                                                                      */
+/* En sortie:                                                           */
+/* -------------------------------------------------------------------- */
+double RandMT::boxMuller(double inMoy)
+{
+    double  rn1 = genrand_real2();
+    double  rn2 = genrand_real2();
+
+    return (cos(2 * M_PI * rn2) * sqrt(-2 * log(rn1))) + inMoy;
+}
+
 
 
 

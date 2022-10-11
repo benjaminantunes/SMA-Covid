@@ -691,12 +691,21 @@ void Human::setIsDiabete()
    _tauxComorbiditeHosp += _tauxAugmentationHospDiabete;
 }
 
-float     Human::getTauxComorbiditeRea()
+float Human::getTauxComorbiditeRea()
 {
    return _tauxComorbiditeRea;
 }
 
-float     Human::getTauxComorbiditeHosp()
+float Human::getTauxComorbiditeHosp()
 {
    return _tauxComorbiditeHosp;
+}
+
+City Human::getVille()
+{
+   return _ville; 
+}
+
+void Human::setVille(City ville){
+    _ville = ville;
 }

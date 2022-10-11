@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include <math.h>
 
 // To keep this all as one file (easier distribution) the class is
 // in the code, cut'n'paste this bit to create a .h for use in
@@ -58,6 +59,9 @@ public:
    unsigned long getCompteur();
    void          saveStatus(string inFileName);
    void          restoreStatus(string inFileName);
+   double        boxMuller(double inMoy);
+   double        uniform(double a, double b);
+   double        negExp(double inMean);
 
 };
 

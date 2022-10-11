@@ -1,4 +1,6 @@
 ###
+###ATTENTION : Si vous mettez plus de variants/durées de variants qu'il n'y a de jours dans la simu,
+## via le paramètre nbIteration, alors le programme plante.
 nbVariants||5
 defaultVariantHistoConta||0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.6,0.4,0.2
 ## De 11 en 11
@@ -59,14 +61,16 @@ isMedicament||0
 timelineMedicament||200
 tauxProtectionReaMedicament||0.5
 ####
+### ATTENTION : Si vous mettez des timelines supperposés sur les masques, 
+###alors les effets se multiplieront (cumule)
 isMasqueTissu||0
-timelineMasqueTissu||30,150,250,350
+timelineMasqueTissu||
 tauxProctectionMasqueTissu||0.2
 isMasqueChir||0
-timelineMasqueChir||30,150,250,350
+timelineMasqueChir||
 tauxProtectionMasqueChir||0.4
 isMasqueFFP2||0
-timelineMasqueFFP2||30,150,250,350
+timelineMasqueFFP2||
 tauxProtectionMasqueFFP2||0.6
 ####
 isConfinement||0
@@ -79,7 +83,7 @@ timelineDeplacementLimites||
 nbDistanceMax||50
 ####
 isGelHydroalcolique||0
-timelineGelHydroalcolique||5
+timelineGelHydroalcolique||
 tauxProtectionTransmissionGelHydro||0.2
 ####
 isTestCovid||0

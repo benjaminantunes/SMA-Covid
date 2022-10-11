@@ -5,6 +5,7 @@
 #include "Position.hpp"
 #include "RandMT.hpp"
 #include "SimulationParams.hpp"
+#include "City.hpp"
 
 extern RandMT * randmt;
 
@@ -54,7 +55,7 @@ class Human
       float             _tauxAugmentationHospObesite;
       float             _tauxAugmentationReaDiabete;
       float             _tauxAugmentationHospDiabete;
-
+      City              _ville;
       Position          _pos;
       Position          _posDebutTour;
 
@@ -84,6 +85,8 @@ class Human
       int       getDureeReanimation();
       Position  getPosition();
       Position  getPositionDebutTour();
+      City      getVille();
+      void      setVille(City);
       float     getTauxDeProtectionHospitalisation();
       float     getTauxDeProtectionReanimation();
       int       getNumberOfInfections();
@@ -95,5 +98,6 @@ class Human
       void      setIsDiabete();
       float     getTauxComorbiditeRea();
       float     getTauxComorbiditeHosp();
+      
 
 };

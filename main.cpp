@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
 
    SimulationParams * simulationParams = new SimulationParams(argv[2],argv[3]);
 
-   World * world = new World(simulationParams, argv[4], false);
+   World * world = new World(simulationParams, argv[4], true);
   
 
    world->initialize(simulationParams);

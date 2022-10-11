@@ -18,6 +18,7 @@ class World{
       int              _nbIteration;
       Human        *** _carte;
       char          ** _carteLieu;
+      vector<City>     _listVille;
       double           _tabAugmentionContaminationParLieu[256];
       float            _facteurTailleHopitaux;
       int              _nbHopitaux;

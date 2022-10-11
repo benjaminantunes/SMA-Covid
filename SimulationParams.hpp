@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <deque>
+#include <vector>
 
 using namespace std;
 
@@ -110,6 +111,10 @@ class SimulationParams
       
       int              _nbSuperContaminateur;
       int              _rayonSuperContaminateur;
+      vector<int>      _tailleVilles;
+      vector<int>      _nbHabitants;
+      vector<int>      _coordonneesX;
+      vector<int>      _coordonneesY;
 
 
       map<string, int> _mapStringValues;
@@ -203,5 +208,9 @@ class SimulationParams
       float       getTauxDiabetePopulation();
       float       getTauxAugmentationReaDiabete();
       float       getTauxAugmentationHospDiabete();
+      vector<int> getTailleVilles();
+      vector<int> getNbHabitants();
+      vector<int> getCoordonneesX();
+      vector<int> getCoordonneesY();
 
 };

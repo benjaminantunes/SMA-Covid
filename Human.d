@@ -1,1 +1,2 @@
-Human.o: Human.cpp Human.hpp Position.hpp RandMT.hpp SimulationParams.hpp
+Human.o: Human.cpp Human.hpp Position.hpp RandMT.hpp SimulationParams.hpp \
+ City.hpp
