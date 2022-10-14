@@ -1,5 +1,5 @@
-size||10246
-nbHumain||2165423
+size||78746
+nbHumain||184083
 nbMalade||1000
 nbIteration||365
 nbPlaceHospital||1000000
@@ -16,7 +16,7 @@ nbRestaurant||0
 ##
 ##https://www.bien-dans-ma-ville.fr/classement-ville-nb-habitant-puy-de-dome/
 ##Les 4 champs ci-dessous sont corrélés via l'indice de l'information
-tailleVille||10246
-nbHabitant||2165423
-coordonneeX||0
-coordonneeY||10246
+tailleVille||5567,4898,5916,5744,5656,4472,3162,3464,4358,4690,5196,3316,4795,4242,6244
+nbHabitant||16942,14625,5386,4039,4018,3507,3040,3165,2802,2662,2507,2464,2052,2109,1939
+coordonneeX||5567,10465,16381,22125,27781,32253,35415,38879,43237,47927,53123,56439,61234,65476,71720
+coordonneeY||0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
