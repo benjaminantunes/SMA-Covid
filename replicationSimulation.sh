@@ -1,14 +1,15 @@
 #!/bin/bash
-j=0
-for param in "$@"
+# ./replicationSimulation nbRepli configVaccin config1 config2 config3 ....
+compteur=0
+for j in  `seq 0 $1`;
 do
-    j=$(($j + 1))
-    if [ $j -le $(($# - 2)) ]
-    then
-        for i in `seq 0 $((${@: -1}-1))`;
-        do
-            time ./exe mts10p9N00000$i  $param ${@: -2:1} log$param$i.txt&
-        done
-    fi
+
+    for ((i=3; i<=$#; i++));
+    do
+        echo mts000M00$(printf "%04d" $compteur)  $j $2 ${!i}
+        time ./exe mts000M00$(printf "%04d" $compteur)  $j $2 ${!i}&
+        compteur=$(($compteur+1))
+    done
+    
 done
 wait

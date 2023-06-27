@@ -121,6 +121,7 @@ class SimulationParams
 
    public:
       SimulationParams(char *, char *);
+      ~SimulationParams();
       float     * getResistanceInfectionValuesByAge();
       float     * getMaxResistanceInjectionValuesByAge();
       float     * getMinResistanceInjectionValuesByAge();

@@ -1,0 +1,22 @@
+size||78140
+nbHumain||1175623
+nbMalade||1000
+nbIteration||365
+nbPlaceHospital||1000000
+nbPlaceReanimation||1000000
+nbDeplacementJour||30
+probasCumulativesTrancheAge||0.177,0.296,0.411,0.535,0.667,0.793,0.905,1.0
+nbHopitaux||0
+tailleHopitauxMetreCarre||1500,800,600,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200
+facteurTailleHopitaux||0
+nbSalleDeSport||0
+nbBoiteDeNuit||0
+nbMagasin||0
+nbRestaurant||0
+##
+##https://www.bien-dans-ma-ville.fr/classement-ville-nb-habitant-puy-de-dome/
+##Les 4 champs ci-dessous sont corrélés via l'indice de l'information
+tailleVille||7549,9746,4898,7141,4898,5656,3316,7071,5291,5916,3316,4123,4795,2449,3605
+nbHabitant||295542,78308,43858,29600,26385,23028,22534,16705,17453,12307,11344,10197,10344,9310,11086
+coordonneeX||7549,17295,22193,29334,34232,39888,43204,50275,55566,61482,64798,68921,73716,76165,0
+coordonneeY||0,0,0,0,0,0,0,0,0,0,0,0,0,0,9746

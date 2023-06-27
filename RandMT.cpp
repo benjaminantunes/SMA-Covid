@@ -60,6 +60,7 @@ void RandMT::saveStatus(std::string inFileName)
 void RandMT::restoreStatus(std::string inFileName)
 {
 
+   std::cout << inFileName << std::endl;
    std::ifstream monFlux(inFileName.c_str());
    if(monFlux)
    {

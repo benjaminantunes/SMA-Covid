@@ -1360,3 +1360,11 @@ vector<int> SimulationParams::getCoordonneesY()
 {
     return _coordonneesY;
 }
+
+SimulationParams::~SimulationParams(){
+    free(_variantsHistoConta);
+    free(_dureeVariants);
+    free(_pourcentAsymptomatiqueVariants);
+    free(_tableTauxHospitalisationByAgeVariants);
+    //free(_tableTailleHopitaux); 
+}

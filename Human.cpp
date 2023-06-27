@@ -709,3 +709,9 @@ City Human::getVille()
 void Human::setVille(City ville){
     _ville = ville;
 }
+
+
+Human::~Human(){
+    // Je pense que comme ça vient de inSimulationParams, alors je dois free dans SimulationParams.
+    
+}

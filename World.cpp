@@ -312,10 +312,10 @@ World::World(SimulationParams * inSimulationParams,
       _tabAugmentionContaminationParLieu[i] = 0;
    }
    
-   _histogrammeContamination = (float*)malloc( 11 * sizeof(float));
+   //_histogrammeContamination = (float*)malloc( 11 * sizeof(float));
    _histogrammeContamination = histogrammeContamination;
    
-   _tableTauxHospitalisationByAge = (float*)malloc( 8 * sizeof(float));
+   //_tableTauxHospitalisationByAge = (float*)malloc( 8 * sizeof(float));
    _tableTauxHospitalisationByAge = tableTauxHospitalisationByAge;
    
    
@@ -334,7 +334,7 @@ World::World(SimulationParams * inSimulationParams,
    _nbMalade = nbMalade;
    _facteurTailleHopitaux = facteurTailleHopitaux;
    _nbHopitaux = nbHopitaux;
-   _tableTailleHopitaux = (int *)malloc( _nbHopitaux * sizeof(int));
+   //_tableTailleHopitaux = (int *)malloc( _nbHopitaux * sizeof(int));
    _tableTailleHopitaux = tableTailleHopitaux;
    _tauxAugmentationContaminationHopitaux = tauxAugmentationContaminationHopitaux;
    _tabAugmentionContaminationParLieu['H'] = tauxAugmentationContaminationHopitaux;
@@ -521,7 +521,67 @@ void World::initTimeline()
 // -------------------------------------------------------------------- //
 World::~World()
 {
-    
+   /****
+    * Pour les executions à la suite, il faut faire des free
+    */
+   
+   // Les new sont libérés avec delete(), les malloc sont libérés avec free()
+   for(int i = 0; i<_size ;i++)
+   {
+      for(int j = 0; j<_size ; j++)
+      {
+         
+         delete(_carte[i][j]);
+         
+         
+      }
+   }
+   /*
+   for(int i = 0; i<_size ;i++)
+   {
+      for(int j = 0; j<_size ; j++)
+      {
+         
+         free(_carte[i][j]);
+      }
+   }
+   */
+   for(int i = 0; i<_size; i++){
+      free(_carte[i]);
+   }
+
+   free(_carte);
+
+   for(int i = 0; i<_size; i++){
+      free(_carteLieu[i]);
+   }
+
+   free(_carteLieu);
+   
+   for(int i = 0; i<_nbIteration; i++){
+      free(_timelineContamination[i]);
+   }
+
+   free(_timelineContamination);
+   
+   for(int i = 0; i<_nbIteration; i++){
+      free(_timelineHospByAge[i]);
+   }
+
+   free(_timelineHospByAge);
+   
+
+   free(_timelineAsymptomatique);
+   free(_tableTailleHopitaux);
+   
+
+   //On ne libère pas un tableau de taille fixe ?
+   //free(_tabAugmentionContaminationParLieu);
+
+   //free(_histogrammeContamination);
+
+   //free(_tableTauxHospitalisationByAge);
+   
    if(_log)
    {
       _logfile.close();
@@ -1398,8 +1458,9 @@ void World::moveHumanSafe(int inRow, int inColumn)
    
    int rowDeplacement = -1;
    int columnDeplacement = -1;
-   
-   if(_carte[inRow][inColumn]->getVille().getTaille() > 0)
+   double probaMoveOutsideCity  = randmt->genrand_real1();
+   //25% de chance pour une personne appartenant a une ville de sortir.
+   if(_carte[inRow][inColumn]->getVille().getTaille() > 0 && probaMoveOutsideCity > 0.25)
    {
       City villeHumain = _carte[inRow][inColumn]->getVille();
       int coordX = villeHumain.getCoordX();
@@ -1554,8 +1615,10 @@ void World::moveHumanAsymptomatique(int inRow, int inColumn, int inRowDepart, in
 
       int rowDeplacement = -1;
       int columnDeplacement = -1;
+      double probaMoveOutsideCity  = randmt->genrand_real1();
+      //25% de chance pour une personne appartenant a une ville de sortir.
    
-      if(_carte[inRow][inColumn]->getVille().getTaille() > 0)
+      if(_carte[inRow][inColumn]->getVille().getTaille() > 0 && probaMoveOutsideCity > 0.25)
       {
          City villeHumain = _carte[inRow][inColumn]->getVille();
          int coordX = villeHumain.getCoordX();
@@ -2509,6 +2572,8 @@ void World::startSimulation(SimulationParams * inSimulationParams)
    writeLog("CompteurRand:" + to_string(randmt->getCompteur()));
    writeLog("NbHumainSimuDepart:" + to_string(_nbHumain));
    //cout << "\033[2J" << endl;
+   
+
    displayStats();
    
 }

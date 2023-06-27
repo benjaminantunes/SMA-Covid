@@ -62,7 +62,7 @@ class Human
    public:
  
       Human(SimulationParams*,int,int);
-      
+      ~Human();
       void      contamine();
       void      vaccine();
       void      vaccineRappel();
