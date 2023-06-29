@@ -1,7 +1,7 @@
 #!/bin/bash
 # ./replicationSimulation nbRepli configVaccin config1 config2 config3 ....
 compteur=0
-for j in  `seq 0 $1`;
+for j in  `seq 0 $(($1 -1))`;
 do
 
     for ((i=3; i<=$#; i++));
